@@ -1,0 +1,5368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget App - Mobile Wireframes</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: #1a1a2e;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.875rem;
+      color: #888;
+      margin-bottom: 40px;
+    }
+
+    .section-header {
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #6c63ff;
+      margin: 60px 0 30px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .wireframes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .screen-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6c63ff;
+      margin-bottom: 16px;
+    }
+
+    .phone {
+      width: 280px;
+      height: 580px;
+      background: #0f0f1a;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 
+        0 0 0 2px #333,
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 0 20px rgba(108, 99, 255, 0.05);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #fafafa;
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #000;
+    }
+
+    /* Header */
+    .header {
+      background: #2c2c2e;
+      color: #fff;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .header-subtitle {
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+
+    .header-icon {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: #f5f5f5;
+    }
+
+    /* Account Cards */
+    .account-section {
+      padding: 12px;
+    }
+
+    .section-title {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .account-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .account-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .account-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .account-balance {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #76cd26;
+    }
+
+    .account-balance.negative {
+      color: #c0392b;
+    }
+
+    .account-sub {
+      font-size: 0.6rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Summary Card */
+    .summary-card {
+      background: linear-gradient(135deg, #76cd26, #8bd93e);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px;
+      color: #fff;
+    }
+
+    .summary-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2c2c2e;
+    }
+
+    .summary-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 4px;
+      color: #fff;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 24px;
+      border-top: 1px solid #eee;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.55rem;
+      color: #999;
+    }
+
+    .nav-item.active {
+      color: #76cd26;
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      border: 2px solid currentColor;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+
+    .nav-item.active .nav-icon {
+      background: #76cd26;
+      border-color: #76cd26;
+      color: #fff;
+    }
+
+    /* FAB */
+    .fab {
+      position: absolute;
+      bottom: 80px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+      background: #76cd26;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 300;
+      box-shadow: 0 4px 12px rgba(45, 90, 39, 0.4);
+    }
+
+    /* Entry Header */
+    .entry-header {
+      background: #fff;
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .entry-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      padding: 20px 0;
+      background: #fff;
+    }
+
+    .entry-amount span {
+      color: #999;
+    }
+
+    .entry-amount.expense {
+      color: #c0392b;
+    }
+
+    .entry-amount.income {
+      color: #76cd26;
+    }
+
+    .entry-amount.transfer {
+      color: #888;
+    }
+
+    /* Entry Fields */
+    .entry-fields {
+      background: #fff;
+      margin: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .entry-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .entry-field:last-child {
+      border-bottom: none;
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .field-value {
+      font-size: 0.8rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .field-value.placeholder {
+      color: #bbb;
+    }
+
+    .voice-btn {
+      background: #e8f5e9;
+      border: 2px dashed #76cd26;
+      border-radius: 12px;
+      margin: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #76cd26;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .mic-icon {
+      font-size: 1.2rem;
+    }
+
+    .save-btn {
+      background: #76cd26;
+      margin: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      color: #fff;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    /* Type Toggle (Expense/Income/Transfer) */
+    .type-toggle {
+      display: flex;
+      margin: 12px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .type-btn {
+      flex: 1;
+      padding: 10px 6px;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 8px;
+      color: #999;
+    }
+
+    .type-btn.expense.active {
+      background: #c0392b;
+      color: #fff;
+    }
+
+    .type-btn.income.active {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    .type-btn.transfer.active {
+      background: #888;
+      color: #fff;
+    }
+
+    .transfer-hint {
+      font-size: 0.7rem;
+      color: #888;
+      text-align: center;
+      margin: 0 12px 8px;
+    }
+
+    /* Budget Screen */
+    .month-selector {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .month-arrow {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    .month-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .budget-summary {
+      background: #fff;
+      display: flex;
+      padding: 12px;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .budget-stat {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      background: #f8f8f8;
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #76cd26;
+    }
+
+    .stat-value.warning {
+      color: #e67e22;
+    }
+
+    .stat-label {
+      font-size: 0.55rem;
+      color: #888;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    .category-group {
+      margin: 12px;
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .group-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+    }
+
+    .group-total {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: #888;
+    }
+
+    .category-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .category-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-name {
+      font-size: 0.8rem;
+      color: #333;
+    }
+
+    .category-available {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #76cd26;
+    }
+
+    .category-available.overspent {
+      color: #c0392b;
+    }
+
+    .category-bar {
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .category-bar-fill {
+      height: 100%;
+      background: #76cd26;
+      border-radius: 2px;
+    }
+
+    .category-bar-fill.overspent {
+      background: #c0392b;
+    }
+
+    /* Category Detail Screen */
+    .detail-header {
+      background: #2c2c2e;
+      color: #fff;
+      padding: 16px;
+    }
+
+    .detail-back {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .detail-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .detail-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .detail-stat {
+      font-size: 0.65rem;
+    }
+
+    .detail-stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .detail-stat-label {
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    .transaction-list {
+      padding: 0 12px 12px;
+    }
+
+    .transaction-date {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      padding: 8px 4px;
+    }
+
+    .transaction-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .transaction-payee {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .transaction-account {
+      font-size: 0.6rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .transaction-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #c0392b;
+    }
+
+    .transaction-amount.inflow {
+      color: #76cd26;
+    }
+
+    .cleared-dot {
+      width: 6px;
+      height: 6px;
+      background: #76cd26;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+
+    .uncleared-dot {
+      width: 6px;
+      height: 6px;
+      border: 1.5px solid #999;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+
+    /* Screen notes */
+    .screen-notes {
+      margin-top: 16px;
+      max-width: 280px;
+      font-size: 0.7rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .screen-notes ul {
+      margin-top: 8px;
+      padding-left: 16px;
+    }
+
+    .screen-notes li {
+      margin-bottom: 4px;
+    }
+
+    /* Split Transaction Styles */
+    .split-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #fff;
+      margin: 12px 12px 0;
+      border-radius: 12px 12px 0 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .split-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .split-add {
+      font-size: 0.7rem;
+      color: #76cd26;
+      font-weight: 600;
+    }
+
+    .split-item {
+      background: #fff;
+      margin: 0 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .split-item:last-child {
+      border-radius: 0 0 12px 12px;
+      border-bottom: none;
+    }
+
+    .split-category {
+      font-size: 0.8rem;
+      color: #333;
+    }
+
+    .split-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .split-delete {
+      color: #c0392b;
+      font-size: 0.8rem;
+      margin-left: 12px;
+    }
+
+    .split-remaining {
+      background: #fff3cd;
+      margin: 0 12px;
+      padding: 12px 16px;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    .remaining-label {
+      color: #856404;
+    }
+
+    .remaining-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      color: #856404;
+    }
+
+    .split-balanced {
+      background: #d4edda;
+    }
+
+    .split-balanced .remaining-label,
+    .split-balanced .remaining-amount {
+      color: #155724;
+    }
+
+    .save-btn.disabled {
+      background: #ccc;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      background: #fff;
+      display: flex;
+      padding: 12px;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .quick-btn {
+      flex: 1;
+      padding: 10px 8px;
+      background: #edfce0;
+      border: 1px solid #76cd26;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #76cd26;
+    }
+
+    .quick-btn.secondary {
+      background: #f8f8f8;
+      border-color: #ddd;
+      color: #666;
+    }
+
+    .budget-to-assign {
+      background: linear-gradient(135deg, #76cd26, #8bd93e);
+      margin: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .assign-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .assign-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    /* Editable Category Item */
+    .category-edit-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .category-edit-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-amounts {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .amount-col {
+      text-align: right;
+    }
+
+    .amount-label {
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 2px;
+    }
+
+    .amount-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .amount-input {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #76cd26;
+      background: #edfce0;
+      border: 1px solid #76cd26;
+      border-radius: 6px;
+      padding: 6px 8px;
+      width: 70px;
+      text-align: right;
+    }
+
+    .amount-input.unchanged {
+      background: #fff;
+      border-color: #ddd;
+      color: #333;
+    }
+
+    .last-month-hint {
+      font-size: 0.55rem;
+      color: #76cd26;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      bottom: 100px;
+      left: 12px;
+      right: 12px;
+      background: #333;
+      color: #fff;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast-icon {
+      color: #4ade80;
+    }
+
+    .toast-undo {
+      margin-left: auto;
+      color: #6c63ff;
+      font-weight: 600;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .modal-subtitle {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      padding: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .modal-btn.cancel {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .modal-btn.confirm {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    /* Tab Toggle */
+    .tab-toggle {
+      display: flex;
+      background: #f0f0f0;
+      margin: 12px;
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      color: #666;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: #76cd26;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: #fff;
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+    }
+
+    .filter-chip {
+      padding: 6px 12px;
+      background: #f0f0f0;
+      border-radius: 16px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .filter-chip.active {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    /* Transaction List (full screen) */
+    .transaction-date-header {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      padding: 16px 4px 8px;
+    }
+
+    .transaction-row {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .transaction-row.just-cleared {
+      background: #edfce0;
+    }
+
+    .transaction-left {
+      flex: 1;
+    }
+
+    .transaction-meta {
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .transaction-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .transaction-amount.expense {
+      color: #c0392b;
+    }
+
+    .transaction-amount.income {
+      color: #76cd26;
+    }
+
+    .transaction-amount.transfer {
+      color: #888;
+    }
+
+    .cleared-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .cleared-indicator.cleared {
+      background: #76cd26;
+    }
+
+    .cleared-indicator.uncleared {
+      border: 2px solid #999;
+    }
+
+    .cleared-indicator.animated {
+      box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.3);
+    }
+
+    .recurring-badge {
+      font-size: 0.7rem;
+      color: #6c63ff;
+      margin-left: 4px;
+    }
+
+    /* Clear toast */
+    .clear-toast {
+      position: absolute;
+      bottom: 140px;
+      left: 12px;
+      right: 12px;
+      background: #333;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clear-toast .toast-icon {
+      color: #4ade80;
+    }
+
+    /* Recurring List */
+    .recurring-list {
+      padding: 0 12px 12px;
+    }
+
+    .recurring-section-header {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      padding: 16px 4px 8px;
+    }
+
+    .recurring-row {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .recurring-left {
+      flex: 1;
+    }
+
+    .recurring-payee {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .recurring-meta {
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .recurring-right {
+      text-align: right;
+    }
+
+    .recurring-amount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #c0392b;
+    }
+
+    .recurring-amount.income {
+      color: #76cd26;
+    }
+
+    .recurring-next {
+      font-size: 0.6rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    /* Bottom Sheet */
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 12px 16px 32px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: #ddd;
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+
+    .sheet-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .sheet-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .sheet-subtitle {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .sheet-fields {
+      background: #f8f8f8;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .sheet-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sheet-field:last-child {
+      border-bottom: none;
+    }
+
+    .sheet-field-label {
+      font-size: 0.8rem;
+      color: #333;
+    }
+
+    .sheet-field-value {
+      font-size: 0.8rem;
+      color: #76cd26;
+      font-weight: 500;
+    }
+
+    .sheet-note {
+      font-size: 0.7rem;
+      color: #888;
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .sheet-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .sheet-btn.cancel {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .sheet-btn.confirm {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    /* Flow Arrow */
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #444;
+      padding: 0 10px;
+    }
+
+    /* Settings Styles */
+    .settings-section {
+      padding: 12px;
+    }
+
+    .settings-section-title {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .settings-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-row.draggable {
+      gap: 12px;
+    }
+
+    .settings-label {
+      flex: 1;
+      font-size: 0.85rem;
+      color: #333;
+    }
+
+    .settings-value {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .drag-handle {
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    /* Account Type Picker */
+    .type-picker {
+      display: flex;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .type-option {
+      flex: 1;
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .type-option.active {
+      border-color: #76cd26;
+      background: #edfce0;
+    }
+
+    .type-icon {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .type-name {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .type-option.active .type-name {
+      color: #76cd26;
+    }
+
+    .helper-text {
+      font-size: 0.7rem;
+      color: #888;
+      text-align: center;
+      padding: 12px 24px;
+      line-height: 1.4;
+    }
+
+    /* Category Management */
+    .category-manage-group {
+      margin: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .category-group-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #f8f8f8;
+      gap: 12px;
+    }
+
+    .group-name-editable {
+      flex: 1;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .group-actions {
+      color: #888;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .category-manage-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+    }
+
+    .category-manage-item:last-child {
+      border-bottom: none;
+    }
+
+    .category-icon {
+      font-size: 1.1rem;
+    }
+
+    .category-name-text {
+      flex: 1;
+      font-size: 0.85rem;
+      color: #333;
+    }
+
+    .category-chevron {
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    .add-group-btn {
+      margin: 12px;
+      padding: 14px;
+      background: #fff;
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #888;
+    }
+
+    /* Icon Picker */
+    .icon-picker {
+      margin: 12px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .icon-picker-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    .icon-option {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      border: 2px solid transparent;
+    }
+
+    .icon-option.active {
+      border-color: #76cd26;
+      background: #edfce0;
+    }
+
+    /* Delete Zone */
+    .delete-zone {
+      margin: 24px 12px 12px;
+      text-align: center;
+    }
+
+    .delete-btn {
+      color: #c0392b;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .delete-hint {
+      font-size: 0.65rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Action List (bottom sheet) */
+    .action-list {
+      margin: 0 0 12px;
+    }
+
+    .action-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      gap: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .action-item:last-child {
+      border-bottom: none;
+    }
+
+    .action-item.danger .action-label {
+      color: #c0392b;
+    }
+
+    .action-icon {
+      font-size: 1.1rem;
+    }
+
+    .action-label {
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    /* Voice Input Overlay */
+    .voice-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .voice-modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .voice-indicator {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mic-circle {
+      width: 64px;
+      height: 64px;
+      background: #76cd26;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border: 3px solid #76cd26;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-out infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #eee;
+      border-top-color: #76cd26;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .voice-status {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .voice-transcript {
+      font-size: 0.8rem;
+      color: #666;
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    .voice-hint {
+      font-size: 0.7rem;
+      color: #999;
+    }
+
+    /* Clarification Modal */
+    .voice-modal.clarification {
+      padding: 24px;
+    }
+
+    .clarify-question {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .clarify-context {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .clarify-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .clarify-option {
+      padding: 14px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .clarify-cancel {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 8px;
+    }
+
+    /* Just created highlight */
+    .transaction-row.just-created {
+      background: #edfce0;
+      border-left: 3px solid #76cd26;
+    }
+
+    /* Success toast */
+    .success-toast {
+      position: absolute;
+      bottom: 140px;
+      left: 12px;
+      right: 12px;
+      background: #333;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .success-toast .toast-icon {
+      color: #76cd26;
+    }
+
+    .success-toast .toast-undo {
+      margin-left: auto;
+      color: #6c63ff;
+      font-weight: 600;
+    }
+
+    /* Onboarding Styles */
+    .onboarding-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      background: #fff;
+    }
+
+    .onboarding-logo {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .onboarding-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .onboarding-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .onboarding-buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .onboarding-btn {
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .onboarding-btn.primary {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    .onboarding-btn.secondary {
+      background: #fff;
+      border: 2px solid #ddd;
+      color: #333;
+    }
+
+    .onboarding-divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: #999;
+      font-size: 0.75rem;
+    }
+
+    .onboarding-divider::before,
+    .onboarding-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+
+    .onboarding-divider span {
+      padding: 0 12px;
+    }
+
+    .social-buttons {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* Setup Steps */
+    .setup-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .setup-subtitle {
+      font-size: 0.8rem;
+      color: #888;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .setup-steps {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .setup-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: #ccc;
+    }
+
+    .setup-step.completed {
+      color: #76cd26;
+    }
+
+    .setup-step.active {
+      color: #333;
+    }
+
+    .step-check,
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .step-check {
+      background: #76cd26;
+      color: #fff;
+    }
+
+    .step-number {
+      border: 2px solid currentColor;
+    }
+
+    .setup-step.active .step-number {
+      background: #333;
+      color: #fff;
+      border-color: #333;
+    }
+
+    .step-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .skip-link {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    /* Multi-User Styles */
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: #76cd26;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-right: 12px;
+    }
+
+    .user-avatar.pending {
+      background: #ddd;
+      color: #888;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .user-email {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .user-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .user-badge.owner {
+      background: #edfce0;
+      color: #76cd26;
+    }
+
+    .user-remove {
+      font-size: 0.75rem;
+      color: #c0392b;
+    }
+
+    /* Email Preview */
+    .email-preview {
+      flex: 1;
+      background: #fff;
+      margin: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .email-app-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .email-back {
+      font-size: 0.85rem;
+      color: #007aff;
+    }
+
+    .email-actions {
+      color: #007aff;
+    }
+
+    .email-content {
+      padding: 16px;
+    }
+
+    .email-from {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .email-subject {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 4px;
+    }
+
+    .email-date {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 4px;
+      margin-bottom: 16px;
+    }
+
+    .email-body {
+      font-size: 0.8rem;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .email-body p {
+      margin-bottom: 16px;
+    }
+
+    .email-cta {
+      background: #76cd26;
+      color: #fff;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin: 24px 0;
+    }
+
+    .email-footer {
+      font-size: 0.7rem;
+      color: #888;
+    }
+
+    /* Invite Accept Screen */
+    .invite-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .invite-details {
+      width: 100%;
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 24px 0;
+    }
+
+    .invite-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .invite-label {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .invite-value {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .decline-link {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    /* Projection Mode */
+    .projection-banner {
+      background: #76cd26;
+      color: #fff;
+      padding: 10px 16px;
+      text-align: center;
+      margin: 0;
+    }
+
+    .projection-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .projection-sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #f5f5f5;
+    }
+
+    .projection-income-card {
+      background: #fff;
+      margin: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .income-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .income-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .income-input {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #76cd26;
+      background: #edfce0;
+      border: 1px solid #76cd26;
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 120px;
+      text-align: right;
+    }
+
+    .income-hint {
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 8px;
+    }
+
+    .projection-summary {
+      display: flex;
+      gap: 12px;
+      margin: 0 12px 12px;
+    }
+
+    .projection-stat {
+      flex: 1;
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .projection-stat.available {
+      background: #edfce0;
+    }
+
+    .projection-stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .projection-stat.available .projection-stat-value {
+      color: #76cd26;
+    }
+
+    .projection-stat-label {
+      font-size: 0.6rem;
+      color: #888;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .projection-hint {
+      font-size: 0.65rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    .projection-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .projection-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .projection-amounts {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .projection-diff {
+      font-size: 0.65rem;
+      color: #76cd26;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .projection-footer {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .clear-projections-btn {
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #888;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .apply-projections-btn {
+      background: #76cd26;
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Move Money Modal */
+    .move-options {
+      margin: 16px 0;
+    }
+
+    .move-option {
+      padding: 14px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .move-category {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .move-available {
+      font-size: 0.75rem;
+      color: #76cd26;
+      font-weight: 600;
+    }
+
+    .move-hint {
+      font-size: 0.65rem;
+      color: #888;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .move-progress {
+      background: #edfce0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .move-progress-text {
+      font-size: 0.75rem;
+      color: #76cd26;
+      font-weight: 500;
+    }
+
+    .move-table-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 16px 12px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 8px;
+    }
+
+    .move-col-left {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    .move-col-right {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #888;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <h1>Budget App — Mobile Wireframes</h1>
+  <p class="subtitle">YNAB-inspired envelope budgeting for iOS</p>
+
+  <!-- ==================== CORE SCREENS ==================== -->
+  <div class="section-header">Core Screens</div>
+
+  <div class="wireframes">
+    
+    <!-- Screen 1: Dashboard/Accounts -->
+    <div class="screen-container">
+      <div class="screen-label">1. Dashboard</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div>
+              <div class="header-title">My Budget</div>
+              <div class="header-subtitle">January 2026</div>
+            </div>
+            <div class="header-icon">⚙</div>
+          </div>
+          
+          <div class="content">
+            <div class="summary-card">
+              <div class="summary-label">Available to Budget</div>
+              <div class="summary-amount">$1,247.50</div>
+            </div>
+            
+            <div class="account-section">
+              <div class="section-title">Cash Accounts</div>
+              <div class="account-card">
+                <div class="account-row">
+                  <div class="account-name">Checking</div>
+                  <div class="account-balance">$3,421.18</div>
+                </div>
+                <div class="account-sub">Cleared: $3,521.18 • Uncleared: -$100.00</div>
+              </div>
+              <div class="account-card">
+                <div class="account-row">
+                  <div class="account-name">Savings</div>
+                  <div class="account-balance">$8,500.00</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="account-section">
+              <div class="section-title">Credit Cards</div>
+              <div class="account-card">
+                <div class="account-row">
+                  <div class="account-name">Visa</div>
+                  <div class="account-balance negative">-$842.33</div>
+                </div>
+                <div class="account-sub">Payment needed</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="fab">+</div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item active">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Tap account → view transactions</li>
+          <li>Tap + FAB → add transaction</li>
+          <li>Green card shows budget health</li>
+          <li>Cleared/uncleared visible per account</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Screen 2: Add Expense -->
+    <div class="screen-container">
+      <div class="screen-label">2. Add Expense</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">✕ Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">New Transaction</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">Save</div>
+            </div>
+          </div>
+
+          <div class="type-toggle">
+            <div class="type-btn expense active">Expense</div>
+            <div class="type-btn income">Income</div>
+            <div class="type-btn transfer">Transfer</div>
+          </div>
+          
+          <div class="entry-amount expense">
+            <span>$</span>120.00
+          </div>
+          
+          <div class="entry-fields">
+            <div class="entry-field">
+              <div class="field-label">Payee</div>
+              <div class="field-value">Costco</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Category</div>
+              <div class="field-value">Groceries</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Account</div>
+              <div class="field-value">Checking</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Date</div>
+              <div class="field-value">Today, Jan 15</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Cleared</div>
+              <div class="field-value">○ Not yet</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Memo</div>
+              <div class="field-value placeholder">Add note...</div>
+            </div>
+          </div>
+          
+          <div class="voice-btn">
+            <span class="mic-icon">🎤</span>
+            Tap to speak transaction
+          </div>
+          
+          <div class="save-btn">Save Transaction</div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Expense (red) / Income (green) / Transfer (gray)</li>
+          <li>Amount color matches selection</li>
+          <li>Voice input for hands-free</li>
+          <li>Payee auto-fills default category</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Screen 2B: Transfer -->
+    <div class="screen-container">
+      <div class="screen-label">2B. Transfer</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">✕ Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">New Transaction</div>
+              <div class="field-label" style="color: #888; font-weight: 600;">Save</div>
+            </div>
+          </div>
+
+          <div class="type-toggle">
+            <div class="type-btn expense">Expense</div>
+            <div class="type-btn income">Income</div>
+            <div class="type-btn transfer active">Transfer</div>
+          </div>
+          
+          <div class="entry-amount transfer">
+            <span>$</span>500.00
+          </div>
+          
+          <div class="entry-fields">
+            <div class="entry-field">
+              <div class="field-label">From</div>
+              <div class="field-value">Checking</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">To</div>
+              <div class="field-value">Savings</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Date</div>
+              <div class="field-value">Today, Jan 15</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Cleared</div>
+              <div class="field-value">○ Not yet</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Memo</div>
+              <div class="field-value placeholder">Add note...</div>
+            </div>
+          </div>
+          
+          <div class="transfer-hint">
+            Creates linked transactions in both accounts
+          </div>
+          
+          <div class="save-btn" style="background: #888;">Save Transfer</div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Transfer differences:</strong>
+        <ul>
+          <li>Gray color scheme</li>
+          <li>From/To instead of single Account</li>
+          <li>No Payee or Category fields</li>
+          <li>Creates entries in both accounts</li>
+          <li>Doesn't affect budget categories</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Screen 3: Budget View -->
+    <div class="screen-container">
+      <div class="screen-label">3. Budget View</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div class="header-icon">+</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">January 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+          
+          <div class="budget-summary">
+            <div class="budget-stat">
+              <div class="stat-value">$1,247</div>
+              <div class="stat-label">To Budget</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value">$2,180</div>
+              <div class="stat-label">Budgeted</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value warning">$1,842</div>
+              <div class="stat-label">Spent</div>
+            </div>
+          </div>
+          
+          <div class="content" style="padding-bottom: 80px;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Monthly Bills</div>
+                <div class="group-total">$1,200 budgeted</div>
+              </div>
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">🏠 Rent</div>
+                  <div class="category-available">$0.00</div>
+                </div>
+                <div class="category-bar">
+                  <div class="category-bar-fill" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">⚡ Electric</div>
+                  <div class="category-available">$45.00</div>
+                </div>
+                <div class="category-bar">
+                  <div class="category-bar-fill" style="width: 70%"></div>
+                </div>
+              </div>
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">📱 Phone</div>
+                  <div class="category-available">$0.00</div>
+                </div>
+                <div class="category-bar">
+                  <div class="category-bar-fill" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$680 budgeted</div>
+              </div>
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="category-available overspent">-$42.18</div>
+                </div>
+                <div class="category-bar">
+                  <div class="category-bar-fill overspent" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">⛽ Gas</div>
+                  <div class="category-available">$28.50</div>
+                </div>
+                <div class="category-bar">
+                  <div class="category-bar-fill" style="width: 60%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Swipe months or tap arrows</li>
+          <li>Tap category → detail view</li>
+          <li>Long-press → quick budget entry</li>
+          <li>Red shows overspent categories</li>
+          <li>Progress bars show spent vs budgeted</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Screen 4: Category Detail -->
+    <div class="screen-container">
+      <div class="screen-label">4. Category Detail</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="detail-header">
+            <div class="detail-back">‹ Budget</div>
+            <div class="detail-title">🛒 Groceries</div>
+            <div class="detail-stats">
+              <div class="detail-stat">
+                <div class="detail-stat-value">$400</div>
+                <div class="detail-stat-label">Budgeted</div>
+              </div>
+              <div class="detail-stat">
+                <div class="detail-stat-value">$442</div>
+                <div class="detail-stat-label">Spent</div>
+              </div>
+              <div class="detail-stat">
+                <div class="detail-stat-value" style="color: #ffcccc;">-$42</div>
+                <div class="detail-stat-label">Available</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="content">
+            <div class="transaction-list">
+              <div class="transaction-date">Today, January 15</div>
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-account">Checking</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div class="transaction-amount">-$120.00</div>
+                  <div class="uncleared-dot"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-date">January 12</div>
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-payee">Whole Foods</div>
+                  <div class="transaction-account">Visa</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div class="transaction-amount">-$87.43</div>
+                  <div class="cleared-dot"></div>
+                </div>
+              </div>
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-payee">Trader Joe's</div>
+                  <div class="transaction-account">Checking</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div class="transaction-amount">-$62.18</div>
+                  <div class="cleared-dot"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-date">January 8</div>
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-payee">Publix</div>
+                  <div class="transaction-account">Checking</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div class="transaction-amount">-$94.22</div>
+                  <div class="cleared-dot"></div>
+                </div>
+              </div>
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-account">Visa</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div class="transaction-amount">-$78.35</div>
+                  <div class="cleared-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Tap transaction → edit</li>
+          <li>Swipe left → delete</li>
+          <li>Green dot = cleared</li>
+          <li>Empty dot = uncleared</li>
+          <li>Header shows category health</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== SPLIT TRANSACTION ==================== -->
+  <div class="section-header">Split Transaction</div>
+
+  <div class="wireframes">
+    
+    <!-- Split Step 1: Initial -->
+    <div class="screen-container">
+      <div class="screen-label">5A. Start Split</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">✕ Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">New Transaction</div>
+              <div class="field-label" style="color: #999;">Save</div>
+            </div>
+          </div>
+
+          <div class="type-toggle">
+            <div class="type-btn expense active">Expense</div>
+            <div class="type-btn income">Income</div>
+            <div class="type-btn transfer">Transfer</div>
+          </div>
+          
+          <div class="entry-amount expense">
+            <span>$</span>156.42
+          </div>
+          
+          <div class="entry-fields">
+            <div class="entry-field">
+              <div class="field-label">Payee</div>
+              <div class="field-value">Target</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Category</div>
+              <div class="field-value" style="color: #76cd26;">↔ Split Transaction</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Account</div>
+              <div class="field-value">Checking</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Date</div>
+              <div class="field-value">Today, Jan 15</div>
+            </div>
+          </div>
+
+          <div class="split-header">
+            <div class="split-title">Split Categories</div>
+            <div class="split-add">+ Add Split</div>
+          </div>
+          
+          <div class="split-item">
+            <div>
+              <div class="split-category">🛒 Groceries</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="split-amount">$89.50</div>
+              <div class="split-delete">✕</div>
+            </div>
+          </div>
+          
+          <div class="split-item" style="border-radius: 0;">
+            <div>
+              <div class="split-category">🏠 Household</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="split-amount">$42.00</div>
+              <div class="split-delete">✕</div>
+            </div>
+          </div>
+
+          <div class="split-remaining">
+            <div class="remaining-label">Remaining to assign</div>
+            <div class="remaining-amount">$24.92</div>
+          </div>
+          
+          <div class="save-btn disabled">Assign Remaining $24.92</div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Tap "Split Transaction" in category</li>
+          <li>Add multiple category splits</li>
+          <li>Yellow bar shows unassigned $</li>
+          <li>Can't save until balanced</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Split Step 2: Balanced -->
+    <div class="screen-container">
+      <div class="screen-label">5B. Balanced</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">✕ Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">New Transaction</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">Save</div>
+            </div>
+          </div>
+
+          <div class="type-toggle">
+            <div class="type-btn expense active">Expense</div>
+            <div class="type-btn income">Income</div>
+            <div class="type-btn transfer">Transfer</div>
+          </div>
+          
+          <div class="entry-amount expense">
+            <span>$</span>156.42
+          </div>
+          
+          <div class="entry-fields">
+            <div class="entry-field">
+              <div class="field-label">Payee</div>
+              <div class="field-value">Target</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Category</div>
+              <div class="field-value" style="color: #76cd26;">↔ 3 Categories</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Account</div>
+              <div class="field-value">Checking</div>
+            </div>
+            <div class="entry-field">
+              <div class="field-label">Date</div>
+              <div class="field-value">Today, Jan 15</div>
+            </div>
+          </div>
+
+          <div class="split-header">
+            <div class="split-title">Split Categories</div>
+            <div class="split-add">+ Add Split</div>
+          </div>
+          
+          <div class="split-item">
+            <div>
+              <div class="split-category">🛒 Groceries</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="split-amount">$89.50</div>
+              <div class="split-delete">✕</div>
+            </div>
+          </div>
+          
+          <div class="split-item">
+            <div>
+              <div class="split-category">🏠 Household</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="split-amount">$42.00</div>
+              <div class="split-delete">✕</div>
+            </div>
+          </div>
+          
+          <div class="split-item" style="border-radius: 0;">
+            <div>
+              <div class="split-category">👕 Clothing</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="split-amount">$24.92</div>
+              <div class="split-delete">✕</div>
+            </div>
+          </div>
+
+          <div class="split-remaining split-balanced">
+            <div class="remaining-label">✓ Fully assigned</div>
+            <div class="remaining-amount">$0.00</div>
+          </div>
+          
+          <div class="save-btn">Save Transaction</div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Green bar = ready to save</li>
+          <li>Shows "3 Categories" in field</li>
+          <li>Tap any split to edit amount</li>
+          <li>Swipe split row to delete</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== BUDGET ENTRY ==================== -->
+  <div class="section-header">Budget Entry</div>
+
+  <div class="wireframes">
+    
+    <!-- Budget Entry: Quick Actions -->
+    <div class="screen-container">
+      <div class="screen-label">6A. Budget with Quick Fill</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Done</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="quick-actions">
+            <div class="quick-btn">📋 Copy Last Month</div>
+            <div class="quick-btn secondary">↺ Reset All</div>
+          </div>
+          
+          <div class="budget-to-assign">
+            <div>
+              <div class="assign-label">Ready to Assign</div>
+            </div>
+            <div class="assign-amount">$4,250.00</div>
+          </div>
+          
+          <div class="content" style="padding-bottom: 80px;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Monthly Bills</div>
+                <div class="group-total">$0 / $1,200 last mo</div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">🏠 Rent</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$1,400</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$0">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">⚡ Electric</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$145</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$0">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">📱 Phone</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$85</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$0">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$0 / $680 last mo</div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$400</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$0">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>"Copy Last Month" fills all at once</li>
+          <li>Last month amounts shown for reference</li>
+          <li>Tap any field to manually enter</li>
+          <li>Group totals show comparison</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Budget Entry: Overwrite Warning -->
+    <div class="screen-container">
+      <div class="screen-label">6B. Overwrite Warning</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Done</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="quick-actions">
+            <div class="quick-btn">📋 Copy Last Month</div>
+            <div class="quick-btn secondary">↺ Reset All</div>
+          </div>
+
+          <div class="modal-overlay">
+            <div class="modal">
+              <div class="modal-header">
+                <div class="modal-title">Overwrite Budget?</div>
+                <div class="modal-subtitle">This will overwrite 3 categories you've already budgeted.</div>
+              </div>
+              
+              <div class="modal-actions">
+                <div class="modal-btn cancel">Cancel</div>
+                <div class="modal-btn confirm">Proceed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Only shows if categories already have amounts</li>
+          <li>Shows count being overwritten</li>
+          <li>If all $0, copies instantly (no popup)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Budget Entry: After Copy with Edits -->
+    <div class="screen-container">
+      <div class="screen-label">6C. After Copy + Edit</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Done</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="quick-actions">
+            <div class="quick-btn">📋 Copy Last Month</div>
+            <div class="quick-btn secondary">↺ Reset All</div>
+          </div>
+          
+          <div class="budget-to-assign">
+            <div>
+              <div class="assign-label">Ready to Assign</div>
+            </div>
+            <div class="assign-amount">$2,020.00</div>
+          </div>
+          
+          <div class="content" style="padding-bottom: 80px;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Monthly Bills</div>
+                <div class="group-total">$1,630 budgeted</div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">🏠 Rent</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$1,400</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$1,400">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">⚡ Electric</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$145</div>
+                    </div>
+                    <input class="amount-input" value="$180">
+                  </div>
+                </div>
+                <div class="last-month-hint">↑ $35 from last month</div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">📱 Phone</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$85</div>
+                    </div>
+                    <input class="amount-input unchanged" value="$85">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$600 budgeted</div>
+              </div>
+              
+              <div class="category-edit-item">
+                <div class="category-edit-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="category-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Last Mo</div>
+                      <div class="amount-value">$400</div>
+                    </div>
+                    <input class="amount-input" value="$450">
+                  </div>
+                </div>
+                <div class="last-month-hint">↑ $50 from last month</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toast">
+            <span class="toast-icon">✓</span>
+            Copied January budget • Tap any amount to adjust
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Toast confirms the copy</li>
+          <li>Green border = edited from last month</li>
+          <li>Hint shows difference from last month</li>
+          <li>"Ready to Assign" updates live</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Projection Mode -->
+    <div class="screen-container">
+      <div class="screen-label">6D. Projection Mode</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Exit Mode</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="projection-sticky-header">
+            <div class="projection-banner">
+              <div class="projection-badge">Projection Mode</div>
+            </div>
+
+            <div class="projection-income-card">
+              <div class="income-row">
+                <div class="income-label">Expected Income</div>
+                <input class="income-input" value="$4,500.00">
+              </div>
+              <div class="income-hint">Default: $4,500 · Last month: $4,450</div>
+            </div>
+
+            <div class="projection-summary">
+              <div class="projection-stat">
+                <div class="projection-stat-value">$3,650</div>
+                <div class="projection-stat-label">Total Projected</div>
+              </div>
+              <div class="projection-stat available">
+                <div class="projection-stat-value">$850</div>
+                <div class="projection-stat-label">Left to Allocate</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="content" style="padding-bottom: 120px;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Monthly Bills</div>
+                <div class="group-total">$1,630 projected</div>
+              </div>
+              
+              <div class="projection-item">
+                <div class="projection-row">
+                  <div class="category-name">🏠 Rent</div>
+                  <div class="projection-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Default</div>
+                      <div class="amount-value">$1,400</div>
+                    </div>
+                    <input class="amount-input" value="$1,400">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="projection-item">
+                <div class="projection-row">
+                  <div class="category-name">⚡ Electric</div>
+                  <div class="projection-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Default</div>
+                      <div class="amount-value">$145</div>
+                    </div>
+                    <input class="amount-input" value="$180">
+                  </div>
+                </div>
+                <div class="projection-diff">↑ $35 from default</div>
+              </div>
+            </div>
+
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$550 projected</div>
+              </div>
+              
+              <div class="projection-item">
+                <div class="projection-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="projection-amounts">
+                    <div class="amount-col">
+                      <div class="amount-label">Default</div>
+                      <div class="amount-value">$400</div>
+                    </div>
+                    <input class="amount-input" value="$400">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="projection-footer">
+            <div class="clear-projections-btn">Clear All Projections</div>
+            <div class="apply-projections-btn">Apply Projections</div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Projection Mode:</strong>
+        <ul>
+          <li>Income + summary = sticky on scroll</li>
+          <li>"Left to Allocate" updates live</li>
+          <li>Edit projected amounts freely</li>
+          <li>"Apply" makes projections the budget</li>
+          <li>If multiple projections: picker appears</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Move Money Between Categories -->
+    <div class="screen-container">
+      <div class="screen-label">6E. Move Money</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Done</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="budget-summary">
+            <div class="budget-stat">
+              <div class="stat-value">$1,247</div>
+              <div class="stat-label">To Budget</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value">$2,180</div>
+              <div class="stat-label">Budgeted</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value warning">$1,842</div>
+              <div class="stat-label">Spent</div>
+            </div>
+          </div>
+          
+          <div class="content" style="opacity: 0.3;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$600 budgeted</div>
+              </div>
+              
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="category-available overspent">-$50.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-overlay">
+            <div class="modal">
+              <div class="modal-header">
+                <div class="modal-title">Cover Overspent</div>
+                <div class="modal-subtitle">🛒 Groceries is over by $50</div>
+              </div>
+              
+              <div class="move-table-header">
+                <div class="move-col-left">Category</div>
+                <div class="move-col-right">Available</div>
+              </div>
+
+              <div class="move-options">
+                <div class="move-option">
+                  <div class="move-category">🍽️ Dining Out</div>
+                  <div class="move-available">$180</div>
+                </div>
+                <div class="move-option">
+                  <div class="move-category">🎬 Entertainment</div>
+                  <div class="move-available">$95</div>
+                </div>
+                <div class="move-option">
+                  <div class="move-category">⛽ Gas</div>
+                  <div class="move-available">$28</div>
+                </div>
+                <div class="move-option">
+                  <div class="move-category">🏖️ Vacation Fund</div>
+                  <div class="move-available">$15</div>
+                </div>
+              </div>
+
+              <div class="modal-actions">
+                <div class="modal-btn cancel">Cancel</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Move money flow:</strong>
+        <ul>
+          <li>Tap red overspent amount</li>
+          <li>Shows ALL categories with surplus</li>
+          <li>Sorted highest to lowest</li>
+          <li>Tap one → moves available (or full amount if enough)</li>
+          <li>If partial, modal stays open with remaining</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Move Money - Partial Coverage -->
+    <div class="screen-container">
+      <div class="screen-label">6F. Partial Move</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Budget</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">Done</div>
+          </div>
+          
+          <div class="month-selector">
+            <div class="month-arrow">‹</div>
+            <div class="month-name">February 2026</div>
+            <div class="month-arrow">›</div>
+          </div>
+
+          <div class="budget-summary">
+            <div class="budget-stat">
+              <div class="stat-value">$1,247</div>
+              <div class="stat-label">To Budget</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value">$2,180</div>
+              <div class="stat-label">Budgeted</div>
+            </div>
+            <div class="budget-stat">
+              <div class="stat-value warning">$1,842</div>
+              <div class="stat-label">Spent</div>
+            </div>
+          </div>
+          
+          <div class="content" style="opacity: 0.3;">
+            <div class="category-group">
+              <div class="group-header">
+                <div class="group-name">Everyday</div>
+                <div class="group-total">$600 budgeted</div>
+              </div>
+              
+              <div class="category-item">
+                <div class="category-row">
+                  <div class="category-name">🛒 Groceries</div>
+                  <div class="category-available overspent">-$22.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-overlay">
+            <div class="modal">
+              <div class="modal-header">
+                <div class="modal-title">Cover Overspent</div>
+                <div class="modal-subtitle">🛒 Groceries still needs $22</div>
+              </div>
+
+              <div class="move-progress">
+                <div class="move-progress-text">Moved $28 from Gas</div>
+              </div>
+              
+              <div class="move-options">
+                <div class="move-option">
+                  <div class="move-category">🍽️ Dining Out</div>
+                  <div class="move-available">$180</div>
+                </div>
+                <div class="move-option">
+                  <div class="move-category">🎬 Entertainment</div>
+                  <div class="move-available">$95</div>
+                </div>
+                <div class="move-option">
+                  <div class="move-category">🏖️ Vacation Fund</div>
+                  <div class="move-available">$15</div>
+                </div>
+              </div>
+
+              <div class="modal-actions">
+                <div class="modal-btn cancel">Done</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Partial coverage:</strong>
+        <ul>
+          <li>Gas only had $28, needed $50</li>
+          <li>Shows "Moved $28 from Gas"</li>
+          <li>Updates to "still needs $22"</li>
+          <li>Gas no longer in list (now $0)</li>
+          <li>Tap another or tap Done</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TRANSACTIONS ==================== -->
+  <div class="section-header">Transactions</div>
+
+  <div class="wireframes">
+    
+    <!-- Transactions List Screen -->
+    <div class="screen-container">
+      <div class="screen-label">7. All Transactions</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="filter-chip active">All Accounts</div>
+            <div class="filter-chip">Checking</div>
+            <div class="filter-chip">Visa</div>
+            <div class="filter-chip">Savings</div>
+          </div>
+          
+          <div class="content">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-meta">Checking · Groceries</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$120.00</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Shell Gas Station</div>
+                  <div class="transaction-meta">Visa · Gas</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$45.50</div>
+                  <div class="cleared-indicator cleared"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-date-header">January 14</div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Paycheck - Acme Corp</div>
+                  <div class="transaction-meta">Checking · Income</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount income">+$2,450.00</div>
+                  <div class="cleared-indicator cleared"></div>
+                </div>
+              </div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Netflix <span class="recurring-badge">↻</span></div>
+                  <div class="transaction-meta">Visa · Entertainment</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$15.99</div>
+                  <div class="cleared-indicator cleared"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-date-header">January 12</div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Transfer to Savings</div>
+                  <div class="transaction-meta">Checking → Savings</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount transfer">-$500.00</div>
+                  <div class="cleared-indicator cleared"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fab">+</div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Toggle: All / Recurring views</li>
+          <li>Filter by account below toggle</li>
+          <li>Tap transaction → edit</li>
+          <li>Tap ○/● dot → toggle cleared</li>
+          <li>↻ badge shows recurring source</li>
+          <li>Swipe left → delete</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Clearing Transactions -->
+    <div class="screen-container">
+      <div class="screen-label">7A. Clearing</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="filter-chip active">All Accounts</div>
+            <div class="filter-chip">Checking</div>
+            <div class="filter-chip">Visa</div>
+            <div class="filter-chip">Savings</div>
+          </div>
+          
+          <div class="content">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              
+              <div class="transaction-row just-cleared">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-meta">Checking · Groceries</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$120.00</div>
+                  <div class="cleared-indicator cleared animated"></div>
+                </div>
+              </div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Shell Gas Station</div>
+                  <div class="transaction-meta">Visa · Gas</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$45.50</div>
+                  <div class="cleared-indicator cleared"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-date-header">January 14</div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Target</div>
+                  <div class="transaction-meta">Visa · Household</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$67.23</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Netflix <span class="recurring-badge">↻</span></div>
+                  <div class="transaction-meta">Visa · Entertainment</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$15.99</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="clear-toast">
+            <span class="toast-icon">✓</span>
+            Costco cleared
+            <span class="toast-undo">Undo</span>
+          </div>
+
+          <div class="fab">+</div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Clearing flow:</strong>
+        <ul>
+          <li>Tap ○ → fills to ● (green)</li>
+          <li>Toast confirms with Undo option</li>
+          <li>Tap ● → back to ○ (unclear)</li>
+          <li>Also available in edit screen</li>
+          <li>Account balance updates instantly</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recurring List -->
+    <div class="screen-container">
+      <div class="screen-label">7B. Recurring List</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle">
+            <div class="tab-btn">All</div>
+            <div class="tab-btn active">Recurring</div>
+          </div>
+          
+          <div class="content">
+            <div class="recurring-list">
+              <div class="recurring-section-header">Monthly</div>
+              
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">🏠 Rent</div>
+                  <div class="recurring-meta">Checking · Rent/Mortgage</div>
+                </div>
+                <div class="recurring-right">
+                  <div class="recurring-amount">$1,400.00</div>
+                  <div class="recurring-next">1st</div>
+                </div>
+              </div>
+
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">⚡ Electric Company</div>
+                  <div class="recurring-meta">Checking · Utilities</div>
+                </div>
+                <div class="recurring-right">
+                  <div class="recurring-amount">~$145.00</div>
+                  <div class="recurring-next">15th</div>
+                </div>
+              </div>
+
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">🎬 Netflix</div>
+                  <div class="recurring-meta">Visa · Entertainment</div>
+                </div>
+                <div class="recurring-right">
+                  <div class="recurring-amount">$15.99</div>
+                  <div class="recurring-next">14th</div>
+                </div>
+              </div>
+
+              <div class="recurring-section-header">Bi-Weekly</div>
+
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">💰 Paycheck</div>
+                  <div class="recurring-meta">Checking · Income</div>
+                </div>
+                <div class="recurring-right">
+                  <div class="recurring-amount income">+$2,450.00</div>
+                  <div class="recurring-next">Fri</div>
+                </div>
+              </div>
+
+              <div class="recurring-section-header">Yearly</div>
+
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">📦 Amazon Prime</div>
+                  <div class="recurring-meta">Visa · Subscriptions</div>
+                </div>
+                <div class="recurring-right">
+                  <div class="recurring-amount">$139.00</div>
+                  <div class="recurring-next">Mar 15</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fab">+</div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Grouped by frequency</li>
+          <li>"Next" shows upcoming date</li>
+          <li>Tap → edit recurring details</li>
+          <li>+ button → add new recurring</li>
+          <li>Swipe left → delete recurring</li>
+          <li>~ means amount varies</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Add/Edit Recurring Bottom Sheet -->
+    <div class="screen-container">
+      <div class="screen-label">7C. Add Recurring</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle" style="opacity: 0.3;">
+            <div class="tab-btn">All</div>
+            <div class="tab-btn active">Recurring</div>
+          </div>
+          
+          <div class="content" style="opacity: 0.3;">
+            <div class="recurring-list">
+              <div class="recurring-section-header">Monthly</div>
+              <div class="recurring-row">
+                <div class="recurring-left">
+                  <div class="recurring-payee">🏠 Rent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title">New Recurring</div>
+            </div>
+
+            <div class="sheet-fields">
+              <div class="sheet-field">
+                <div class="sheet-field-label">Payee</div>
+                <div class="sheet-field-value">Gym Membership ▾</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">Amount</div>
+                <div class="sheet-field-value">$49.99</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">Account</div>
+                <div class="sheet-field-value">Checking ▾</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">Category</div>
+                <div class="sheet-field-value">Health & Fitness ▾</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">Frequency</div>
+                <div class="sheet-field-value">Monthly ▾</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">Next Date</div>
+                <div class="sheet-field-value">February 1, 2026</div>
+              </div>
+              <div class="sheet-field">
+                <div class="sheet-field-label">End</div>
+                <div class="sheet-field-value">Never ▾</div>
+              </div>
+            </div>
+
+            <div class="sheet-actions">
+              <div class="sheet-btn cancel">Cancel</div>
+              <div class="sheet-btn confirm">Save</div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Same form for add & edit</li>
+          <li>All transaction fields + schedule</li>
+          <li>Swipe down to dismiss</li>
+          <li>Edit mode shows "Delete" option</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== SETTINGS & SETUP ==================== -->
+  <div class="section-header">Settings & Setup</div>
+
+  <div class="wireframes">
+    
+    <!-- Settings Screen -->
+    <div class="screen-container">
+      <div class="screen-label">8. Settings</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Settings</div>
+          </div>
+          
+          <div class="content">
+            <div class="settings-section">
+              <div class="settings-section-title">Budget</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="settings-label">Accounts</div>
+                  <div class="settings-value">3 accounts ›</div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-label">Categories</div>
+                  <div class="settings-value">12 categories ›</div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-label">Payees</div>
+                  <div class="settings-value">24 payees ›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Sharing</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="settings-label">Shared With</div>
+                  <div class="settings-value">2 people ›</div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-label">Invite Someone</div>
+                  <div class="settings-value">›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Tools</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="settings-label">AI Assistant</div>
+                  <div class="settings-value">›</div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-label">Export Data</div>
+                  <div class="settings-value">›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Account</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="settings-label">Profile</div>
+                  <div class="settings-value">bert@email.com ›</div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-label">Sign Out</div>
+                  <div class="settings-value"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Accessed via ⚙ on Dashboard</li>
+          <li>Tap any row → drill into setting</li>
+          <li>Budget section manages core data</li>
+          <li>Sharing for multi-user access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Account List -->
+    <div class="screen-container">
+      <div class="screen-label">8A. Accounts List</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Settings</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Accounts</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">+ Add</div>
+            </div>
+          </div>
+          
+          <div class="content">
+            <div class="settings-section">
+              <div class="settings-section-title">Cash Accounts</div>
+              <div class="settings-card">
+                <div class="settings-row draggable">
+                  <div class="drag-handle">≡</div>
+                  <div class="settings-label">Checking</div>
+                  <div class="settings-value">$3,421.18 ›</div>
+                </div>
+                <div class="settings-row draggable">
+                  <div class="drag-handle">≡</div>
+                  <div class="settings-label">Savings</div>
+                  <div class="settings-value">$8,500.00 ›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Credit Cards</div>
+              <div class="settings-card">
+                <div class="settings-row draggable">
+                  <div class="drag-handle">≡</div>
+                  <div class="settings-label">Visa</div>
+                  <div class="settings-value" style="color: #c0392b;">-$842.33 ›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Closed</div>
+              <div class="settings-card">
+                <div class="settings-row" style="opacity: 0.5;">
+                  <div class="settings-label">Old Checking</div>
+                  <div class="settings-value">$0.00 ›</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Drag ≡ handle to reorder</li>
+          <li>Tap account → edit details</li>
+          <li>+ Add → new account form</li>
+          <li>Closed accounts hidden from main views</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Add/Edit Account -->
+    <div class="screen-container">
+      <div class="screen-label">8B. Add Account</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">New Account</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">Save</div>
+            </div>
+          </div>
+          
+          <div class="content" style="background: #f5f5f5;">
+            <div class="settings-section" style="padding-top: 12px;">
+              <div class="settings-section-title">Account Type</div>
+              <div class="type-picker">
+                <div class="type-option active">
+                  <div class="type-icon">🏦</div>
+                  <div class="type-name">Checking</div>
+                </div>
+                <div class="type-option">
+                  <div class="type-icon">💰</div>
+                  <div class="type-name">Savings</div>
+                </div>
+                <div class="type-option">
+                  <div class="type-icon">💳</div>
+                  <div class="type-name">Credit Card</div>
+                </div>
+                <div class="type-option">
+                  <div class="type-icon">💵</div>
+                  <div class="type-name">Cash</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="entry-fields" style="margin-top: 0;">
+              <div class="entry-field">
+                <div class="field-label">Account Name</div>
+                <div class="field-value">Chase Checking</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Current Balance</div>
+                <div class="field-value">$1,500.00</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Notes</div>
+                <div class="field-value placeholder">Optional...</div>
+              </div>
+            </div>
+
+            <div class="helper-text">
+              Enter today's balance. This becomes your starting point — past transactions aren't needed.
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Pick account type first</li>
+          <li>Name and starting balance required</li>
+          <li>Edit mode shows "Close Account" option</li>
+          <li>Closed ≠ deleted (keeps history)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== CATEGORY MANAGEMENT ==================== -->
+  <div class="section-header">Category Management</div>
+
+  <div class="wireframes">
+    
+    <!-- Categories List -->
+    <div class="screen-container">
+      <div class="screen-label">9. Categories</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Settings</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Categories</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">+ Add</div>
+            </div>
+          </div>
+          
+          <div class="content">
+            <div class="category-manage-group">
+              <div class="category-group-header">
+                <div class="drag-handle">≡</div>
+                <div class="group-name-editable">Monthly Bills</div>
+                <div class="group-actions">⋯</div>
+              </div>
+              
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🏠</div>
+                <div class="category-name-text">Rent</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">⚡</div>
+                <div class="category-name-text">Electric</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">📱</div>
+                <div class="category-name-text">Phone</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🌐</div>
+                <div class="category-name-text">Internet</div>
+                <div class="category-chevron">›</div>
+              </div>
+            </div>
+
+            <div class="category-manage-group">
+              <div class="category-group-header">
+                <div class="drag-handle">≡</div>
+                <div class="group-name-editable">Everyday</div>
+                <div class="group-actions">⋯</div>
+              </div>
+              
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🛒</div>
+                <div class="category-name-text">Groceries</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">⛽</div>
+                <div class="category-name-text">Gas</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🍽️</div>
+                <div class="category-name-text">Dining Out</div>
+                <div class="category-chevron">›</div>
+              </div>
+            </div>
+
+            <div class="category-manage-group">
+              <div class="category-group-header">
+                <div class="drag-handle">≡</div>
+                <div class="group-name-editable">Fun</div>
+                <div class="group-actions">⋯</div>
+              </div>
+              
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🎬</div>
+                <div class="category-name-text">Entertainment</div>
+                <div class="category-chevron">›</div>
+              </div>
+              <div class="category-manage-item">
+                <div class="drag-handle">≡</div>
+                <div class="category-icon">🎮</div>
+                <div class="category-name-text">Gaming</div>
+                <div class="category-chevron">›</div>
+              </div>
+            </div>
+
+            <div class="add-group-btn">+ Add Category Group</div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Drag ≡ to reorder categories or groups</li>
+          <li>Drag category to different group</li>
+          <li>Tap ⋯ on group → rename/delete group</li>
+          <li>Tap category → edit name/icon</li>
+          <li>+ Add creates category in last group</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Add/Edit Category -->
+    <div class="screen-container">
+      <div class="screen-label">9A. Edit Category</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">Cancel</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Edit Category</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">Save</div>
+            </div>
+          </div>
+          
+          <div class="content" style="background: #f5f5f5;">
+            <div class="entry-fields" style="margin-top: 12px;">
+              <div class="entry-field">
+                <div class="field-label">Name</div>
+                <div class="field-value">Groceries</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Icon</div>
+                <div class="field-value">🛒 ›</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Group</div>
+                <div class="field-value">Everyday ›</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Default Amount</div>
+                <div class="field-value">$400.00</div>
+              </div>
+            </div>
+
+            <div class="helper-text">
+              Default amount is used as reference when budgeting and as starting point for projections.
+            </div>
+
+            <div class="icon-picker">
+              <div class="icon-picker-title">Choose Icon</div>
+              <div class="icon-grid">
+                <div class="icon-option active">🛒</div>
+                <div class="icon-option">🍎</div>
+                <div class="icon-option">🥗</div>
+                <div class="icon-option">🛍️</div>
+                <div class="icon-option">🏠</div>
+                <div class="icon-option">⚡</div>
+                <div class="icon-option">💧</div>
+                <div class="icon-option">📱</div>
+                <div class="icon-option">🌐</div>
+                <div class="icon-option">🚗</div>
+                <div class="icon-option">⛽</div>
+                <div class="icon-option">🍽️</div>
+                <div class="icon-option">☕</div>
+                <div class="icon-option">🎬</div>
+                <div class="icon-option">🎮</div>
+                <div class="icon-option">🎵</div>
+                <div class="icon-option">💪</div>
+                <div class="icon-option">💊</div>
+                <div class="icon-option">👕</div>
+                <div class="icon-option">✂️</div>
+                <div class="icon-option">🎁</div>
+                <div class="icon-option">✈️</div>
+                <div class="icon-option">🏖️</div>
+                <div class="icon-option">📚</div>
+              </div>
+            </div>
+
+            <div class="delete-zone">
+              <div class="delete-btn">Delete Category</div>
+              <div class="delete-hint">Transactions will become uncategorized</div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Tap icon field → shows picker</li>
+          <li>Change group → moves category</li>
+          <li>Default amount for projections</li>
+          <li>Delete warns about uncategorized txns</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Group Actions -->
+    <div class="screen-container">
+      <div class="screen-label">9B. Group Menu</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Settings</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Categories</div>
+              <div class="field-label" style="color: #76cd26; font-weight: 600;">+ Add</div>
+            </div>
+          </div>
+          
+          <div class="content" style="opacity: 0.3;">
+            <div class="category-manage-group">
+              <div class="category-group-header">
+                <div class="drag-handle">≡</div>
+                <div class="group-name-editable">Monthly Bills</div>
+                <div class="group-actions">⋯</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-sheet" style="padding-bottom: 40px;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title">Monthly Bills</div>
+            </div>
+
+            <div class="action-list">
+              <div class="action-item">
+                <div class="action-icon">✏️</div>
+                <div class="action-label">Rename Group</div>
+              </div>
+              <div class="action-item">
+                <div class="action-icon">➕</div>
+                <div class="action-label">Add Category to Group</div>
+              </div>
+              <div class="action-item danger">
+                <div class="action-icon">🗑️</div>
+                <div class="action-label">Delete Group</div>
+              </div>
+            </div>
+
+            <div class="sheet-note">
+              Deleting a group moves its categories to "Uncategorized"
+            </div>
+          </div>
+          
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Key interactions:</strong>
+        <ul>
+          <li>Tap ⋯ on group header → shows menu</li>
+          <li>Rename inline or in modal</li>
+          <li>Add Category pre-selects this group</li>
+          <li>Delete requires confirmation</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== VOICE INPUT ==================== -->
+  <div class="section-header">Voice Input</div>
+
+  <div class="wireframes">
+    
+    <!-- Voice: Listening -->
+    <div class="screen-container">
+      <div class="screen-label">10A. Listening</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle" style="opacity: 0.3;">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="content" style="opacity: 0.3;">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-meta">Checking · Groceries</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="voice-overlay">
+            <div class="voice-modal">
+              <div class="voice-indicator listening">
+                <div class="pulse-ring"></div>
+                <div class="mic-circle">🎤</div>
+              </div>
+              <div class="voice-status">Listening...</div>
+              <div class="voice-transcript">"I spent $45 at Shell on gas and $30 at..."</div>
+              <div class="voice-hint">Tap anywhere to cancel</div>
+            </div>
+          </div>
+
+          <div class="fab" style="opacity: 0.3;">+</div>
+          
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Listening state:</strong>
+        <ul>
+          <li>Pulsing mic indicator</li>
+          <li>Live transcript as you speak</li>
+          <li>Tap anywhere to cancel</li>
+          <li>Auto-stops after pause</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Voice: Processing -->
+    <div class="screen-container">
+      <div class="screen-label">10B. Processing</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle" style="opacity: 0.3;">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="content" style="opacity: 0.3;">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-meta">Checking · Groceries</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="voice-overlay">
+            <div class="voice-modal">
+              <div class="voice-indicator processing">
+                <div class="spinner"></div>
+              </div>
+              <div class="voice-status">Creating transactions...</div>
+              <div class="voice-transcript">"$45 at Shell on gas and $30 at Starbucks on dining"</div>
+            </div>
+          </div>
+
+          <div class="fab" style="opacity: 0.3;">+</div>
+          
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Processing state:</strong>
+        <ul>
+          <li>Spinner replaces mic</li>
+          <li>Shows what was heard</li>
+          <li>Typically < 1 second</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Voice: Success -->
+    <div class="screen-container">
+      <div class="screen-label">10C. Success</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="filter-chip active">All Accounts</div>
+            <div class="filter-chip">Checking</div>
+            <div class="filter-chip">Visa</div>
+          </div>
+          
+          <div class="content">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              
+              <div class="transaction-row just-created">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Shell</div>
+                  <div class="transaction-meta">Checking · Gas</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$45.00</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+
+              <div class="transaction-row just-created">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Starbucks</div>
+                  <div class="transaction-meta">Checking · Dining Out</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$30.00</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+              
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                  <div class="transaction-meta">Checking · Groceries</div>
+                </div>
+                <div class="transaction-right">
+                  <div class="transaction-amount expense">-$120.00</div>
+                  <div class="cleared-indicator uncleared"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="success-toast">
+            <span class="toast-icon">✓</span>
+            Created 2 transactions
+            <span class="toast-undo">Undo</span>
+          </div>
+
+          <div class="fab">+</div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Success state:</strong>
+        <ul>
+          <li>New items appear highlighted</li>
+          <li>Toast confirms count + Undo</li>
+          <li>Tap transaction to edit if wrong</li>
+          <li>Highlight fades after 2 seconds</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Voice: Clarification Needed -->
+    <div class="screen-container">
+      <div class="screen-label">10D. Clarification</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="header">
+            <div class="header-title">Transactions</div>
+            <div style="font-size: 0.9rem;">🔍</div>
+          </div>
+
+          <div class="tab-toggle" style="opacity: 0.3;">
+            <div class="tab-btn active">All</div>
+            <div class="tab-btn">Recurring</div>
+          </div>
+
+          <div class="content" style="opacity: 0.3;">
+            <div class="transaction-list">
+              <div class="transaction-date-header">Today, January 15</div>
+              <div class="transaction-row">
+                <div class="transaction-left">
+                  <div class="transaction-payee">Costco</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="voice-overlay">
+            <div class="voice-modal clarification">
+              <div class="clarify-question">Which account?</div>
+              <div class="clarify-context">"$200 at Best Buy on electronics"</div>
+              <div class="clarify-options">
+                <div class="clarify-option">Checking</div>
+                <div class="clarify-option">Visa</div>
+                <div class="clarify-option">Savings</div>
+              </div>
+              <div class="clarify-cancel">Cancel</div>
+            </div>
+          </div>
+
+          <div class="fab" style="opacity: 0.3;">+</div>
+          
+          <div class="bottom-nav" style="opacity: 0.3;">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item active">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>When AI needs help:</strong>
+        <ul>
+          <li>Simple tap-to-select options</li>
+          <li>Shows what it understood</li>
+          <li>Only asks when truly ambiguous</li>
+          <li>Learns from your choice</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== ONBOARDING ==================== -->
+  <div class="section-header">Onboarding</div>
+
+  <div class="wireframes">
+    
+    <!-- Welcome Screen -->
+    <div class="screen-container">
+      <div class="screen-label">11A. Welcome</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="onboarding-content">
+            <div class="onboarding-logo">💰</div>
+            <div class="onboarding-title">Budget App</div>
+            <div class="onboarding-subtitle">Every dollar has a job</div>
+            
+            <div class="onboarding-buttons">
+              <div class="onboarding-btn primary">Create Account</div>
+              <div class="onboarding-btn secondary">Sign In</div>
+            </div>
+            
+            <div class="onboarding-divider">
+              <span>or continue with</span>
+            </div>
+            
+            <div class="social-buttons">
+              <div class="social-btn">Apple</div>
+              <div class="social-btn">Google</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Welcome screen:</strong>
+        <ul>
+          <li>First thing new users see</li>
+          <li>Apple/Google for quick signup</li>
+          <li>Sign In for returning users</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Sign Up -->
+    <div class="screen-container">
+      <div class="screen-label">11B. Sign Up</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Back</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Create Account</div>
+              <div class="field-label"></div>
+            </div>
+          </div>
+          
+          <div class="content" style="background: #f5f5f5;">
+            <div class="entry-fields" style="margin-top: 24px;">
+              <div class="entry-field">
+                <div class="field-label">Email</div>
+                <div class="field-value">bert@email.com</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Password</div>
+                <div class="field-value">••••••••</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Confirm Password</div>
+                <div class="field-value">••••••••</div>
+              </div>
+            </div>
+            
+            <div class="save-btn" style="margin-top: 24px;">Create Account</div>
+            
+            <div class="helper-text">
+              By creating an account, you agree to our Terms of Service and Privacy Policy
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Sign up flow:</strong>
+        <ul>
+          <li>Email + password only</li>
+          <li>Could add name later in profile</li>
+          <li>After signup → goes to setup</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Quick Setup -->
+    <div class="screen-container">
+      <div class="screen-label">11C. Quick Setup</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="onboarding-content" style="justify-content: flex-start; padding-top: 40px;">
+            <div class="setup-title">Let's get started</div>
+            <div class="setup-subtitle">We'll set up the basics. You can always change these later.</div>
+            
+            <div class="setup-steps">
+              <div class="setup-step completed">
+                <div class="step-check">✓</div>
+                <div class="step-text">Create account</div>
+              </div>
+              <div class="setup-step active">
+                <div class="step-number">2</div>
+                <div class="step-text">Add your first account</div>
+              </div>
+              <div class="setup-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Set up categories</div>
+              </div>
+            </div>
+
+            <div class="entry-fields" style="margin: 24px 0;">
+              <div class="entry-field">
+                <div class="field-label">Account Name</div>
+                <div class="field-value placeholder">e.g., Checking</div>
+              </div>
+              <div class="entry-field">
+                <div class="field-label">Current Balance</div>
+                <div class="field-value placeholder">$0.00</div>
+              </div>
+            </div>
+
+            <div class="save-btn">Continue</div>
+            
+            <div class="skip-link">Skip setup, I'll do this later</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Quick setup:</strong>
+        <ul>
+          <li>Guided but skippable</li>
+          <li>Just the essentials to start</li>
+          <li>Step 3 could offer templates</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== MULTI-USER ==================== -->
+  <div class="section-header">Multi-User Sharing</div>
+
+  <div class="wireframes">
+    
+    <!-- Sharing Settings -->
+    <div class="screen-container">
+      <div class="screen-label">12A. Sharing Settings</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Settings</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Sharing</div>
+              <div class="field-label"></div>
+            </div>
+          </div>
+          
+          <div class="content">
+            <div class="settings-section">
+              <div class="settings-section-title">People with Access</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="user-avatar">B</div>
+                  <div class="user-info">
+                    <div class="user-name">You</div>
+                    <div class="user-email">bert@email.com</div>
+                  </div>
+                  <div class="user-badge owner">Owner</div>
+                </div>
+                <div class="settings-row">
+                  <div class="user-avatar" style="background: #e91e63;">S</div>
+                  <div class="user-info">
+                    <div class="user-name">Sarah</div>
+                    <div class="user-email">sarah@email.com</div>
+                  </div>
+                  <div class="user-remove">Remove</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Invite Someone</div>
+              <div class="settings-card">
+                <div class="entry-field" style="border: none;">
+                  <div class="field-label">Email Address</div>
+                  <div class="field-value placeholder">Enter email...</div>
+                </div>
+              </div>
+              <div class="save-btn" style="margin-top: 12px;">Send Invite</div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Pending Invites</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="user-avatar pending">?</div>
+                  <div class="user-info">
+                    <div class="user-name">mike@email.com</div>
+                    <div class="user-email">Sent 2 days ago</div>
+                  </div>
+                  <div class="user-remove">Cancel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Sharing screen:</strong>
+        <ul>
+          <li>See who has access</li>
+          <li>Owner badge (who created it)</li>
+          <li>Remove anyone except yourself</li>
+          <li>Invite by email</li>
+          <li>See pending invites</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Invite Sent -->
+    <div class="screen-container">
+      <div class="screen-label">12B. Invite Sent</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="entry-header">
+            <div class="account-row">
+              <div class="field-label">‹ Settings</div>
+              <div class="header-title" style="font-size: 0.9rem; color: #333;">Sharing</div>
+              <div class="field-label"></div>
+            </div>
+          </div>
+          
+          <div class="content">
+            <div class="settings-section">
+              <div class="settings-section-title">People with Access</div>
+              <div class="settings-card">
+                <div class="settings-row">
+                  <div class="user-avatar">B</div>
+                  <div class="user-info">
+                    <div class="user-name">You</div>
+                    <div class="user-email">bert@email.com</div>
+                  </div>
+                  <div class="user-badge owner">Owner</div>
+                </div>
+                <div class="settings-row">
+                  <div class="user-avatar" style="background: #e91e63;">S</div>
+                  <div class="user-info">
+                    <div class="user-name">Sarah</div>
+                    <div class="user-email">sarah@email.com</div>
+                  </div>
+                  <div class="user-remove">Remove</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="success-toast" style="bottom: 100px;">
+            <span class="toast-icon">✓</span>
+            Invite sent to sarah@email.com
+          </div>
+          
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">◉</div>
+              Accounts
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">☰</div>
+              Budget
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">≡</div>
+              Transactions
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>After sending:</strong>
+        <ul>
+          <li>Toast confirms email sent</li>
+          <li>Appears in Pending until accepted</li>
+          <li>Can cancel pending invites</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- Recipient View: Invite Email -->
+    <div class="screen-container">
+      <div class="screen-label">12C. Email Received</div>
+      <div class="phone">
+        <div class="phone-screen" style="background: #f5f5f5;">
+          <div class="status-bar">9:41</div>
+          
+          <div class="email-preview">
+            <div class="email-app-header">
+              <div class="email-back">‹ Inbox</div>
+              <div class="email-actions">⋯</div>
+            </div>
+            
+            <div class="email-content">
+              <div class="email-from">Budget App</div>
+              <div class="email-subject">Bert invited you to share a budget</div>
+              <div class="email-date">Today, 2:34 PM</div>
+              
+              <div class="email-body">
+                <p><strong>Bert</strong> (bert@email.com) has invited you to collaborate on their budget in Budget App.</p>
+                
+                <p>You'll both be able to add transactions, manage categories, and track spending together.</p>
+                
+                <div class="email-cta">Accept Invite</div>
+                
+                <p class="email-footer">If you don't have an account yet, you'll create one when you accept.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Invite email:</strong>
+        <ul>
+          <li>Clear who invited them</li>
+          <li>One button to accept</li>
+          <li>Works for new or existing users</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recipient View: Accept -->
+    <div class="screen-container">
+      <div class="screen-label">12D. Accept Invite</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          
+          <div class="onboarding-content">
+            <div class="invite-icon">🎉</div>
+            <div class="onboarding-title">You're Invited!</div>
+            <div class="onboarding-subtitle"><strong>Bert</strong> wants to share their budget with you</div>
+            
+            <div class="invite-details">
+              <div class="invite-detail-row">
+                <div class="invite-label">Budget</div>
+                <div class="invite-value">Bert's Budget</div>
+              </div>
+              <div class="invite-detail-row">
+                <div class="invite-label">Owner</div>
+                <div class="invite-value">bert@email.com</div>
+              </div>
+            </div>
+            
+            <div class="onboarding-buttons">
+              <div class="onboarding-btn primary">Accept & Sign Up</div>
+              <div class="onboarding-btn secondary">I Have an Account</div>
+            </div>
+            
+            <div class="decline-link">Decline Invite</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-notes">
+        <strong>Accept flow:</strong>
+        <ul>
+          <li>Shows who invited them</li>
+          <li>New user → creates account</li>
+          <li>Existing user → signs in</li>
+          <li>After accept → lands in shared budget</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

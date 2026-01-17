@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom form input styling */
+input[type="date"],
+input[type="number"],
+select {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Ensure touch-friendly sizing */
+button, input, select, textarea {
+    min-height: 44px;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Mobile-first responsive max-width */
+@media (min-width: 768px) {
+    .max-w-app {
+        max-width: 428px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
