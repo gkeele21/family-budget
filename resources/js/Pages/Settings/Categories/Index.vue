@@ -234,21 +234,20 @@ const isGroupCollapsed = (groupId) => {
                             <span class="text-subtle">›</span>
                         </button>
 
-                        <div v-if="group.categories.length === 0" class="p-4 text-center text-subtle">
-                            No categories yet
-                        </div>
                     </div>
                 </Transition>
-            </div>
 
-            <!-- Add Category Button -->
-            <Button
-                variant="outline"
-                full-width
-                @click="openAddCategory(categoryGroups[0]?.id || null)"
-            >
-                + Add Category
-            </Button>
+                <!-- Add Category button for this group -->
+                <div v-show="!isGroupCollapsed(group.id)" class="mt-2">
+                    <Button
+                        variant="outline"
+                        full-width
+                        @click="openAddCategory(group.id)"
+                    >
+                        + Add Category
+                    </Button>
+                </div>
+            </div>
         </div>
 
         <!-- Add Group Modal -->

@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Base/Button.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { ref, computed, reactive, nextTick } from 'vue';
+import { ref, computed, reactive, nextTick, watch } from 'vue';
 
 const props = defineProps({
     month: String,
@@ -17,11 +17,13 @@ const budgetAmounts = reactive({});
 // Move money modal state
 const showMoveMoneyModal = ref(false);
 const moveMoneyTarget = ref(null); // The overspent category
-const moveMoneyAmount = ref(0);
-const selectedSourceCategory = ref(null);
+const moveMoneyAmount = ref(0); // Total amount needed
+const selectedSources = ref([]); // Array of { id, name, amount } for selected categories
 
 // Toast state
 const toast = ref({ show: false, message: '', type: 'success' });
+const moveToast = ref({ show: false, amount: '', from: '', to: '', remaining: null });
+let moveToastTimeout = null;
 
 // Copy last month confirmation modal
 const showCopyConfirm = ref(false);
@@ -31,6 +33,7 @@ const editedAmounts = reactive({});
 
 // Track which field is being edited (to show input vs formatted)
 const editingField = ref(null);
+const editingValue = ref('');
 
 // Global toggle for showing category details (default/avg)
 const showDetails = ref(false);
@@ -53,13 +56,21 @@ const getGroupTotals = (group) => {
 };
 
 // Initialize budget amounts from props
-props.categoryGroups.forEach(group => {
-    // Handle both array and object (Laravel Collection) formats
-    const categories = Array.isArray(group.categories) ? group.categories : Object.values(group.categories);
-    categories.forEach(category => {
-        budgetAmounts[category.id] = category.budgeted;
+const syncBudgetAmounts = () => {
+    props.categoryGroups.forEach(group => {
+        // Handle both array and object (Laravel Collection) formats
+        const categories = Array.isArray(group.categories) ? group.categories : Object.values(group.categories);
+        categories.forEach(category => {
+            budgetAmounts[category.id] = category.budgeted;
+        });
     });
-});
+};
+
+// Initial sync
+syncBudgetAmounts();
+
+// Re-sync when props change (e.g., after move money)
+watch(() => props.categoryGroups, syncBudgetAmounts, { deep: true });
 
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -100,9 +111,26 @@ const navigateMonth = (month) => {
     router.get(route('budget.index', { month }));
 };
 
+const onBudgetInput = (e) => {
+    let value = e.target.value;
+    // Strip $ and any non-numeric chars except decimal
+    value = value.replace(/[^\d.]/g, '');
+    // Ensure only one decimal point
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    // Limit decimal places to 2
+    if (parts.length === 2 && parts[1].length > 2) {
+        value = parts[0] + '.' + parts[1].slice(0, 2);
+    }
+    editingValue.value = value;
+};
+
 const saveAmount = (categoryId) => {
     editingField.value = null;
-    const amount = budgetAmounts[categoryId] || 0;
+    const amount = parseFloat(editingValue.value) || 0;
+    budgetAmounts[categoryId] = amount;
     router.put(route('budget.update', { month: props.month }), {
         budgets: [{ category_id: categoryId, amount: amount }],
     }, {
@@ -119,8 +147,9 @@ const saveAmount = (categoryId) => {
 
 const startEditing = (categoryId) => {
     editingField.value = categoryId;
+    editingValue.value = (budgetAmounts[categoryId] || 0).toString();
     nextTick(() => {
-        const input = document.querySelector(`input[type="number"]`);
+        const input = document.querySelector(`input[type="text"][inputmode="decimal"]`);
         if (input) {
             input.focus();
             input.select();
@@ -194,32 +223,85 @@ const openMoveMoneyModal = (category) => {
         overspentBy: Math.abs(available),
     };
     moveMoneyAmount.value = Math.abs(available);
-    selectedSourceCategory.value = null;
+    selectedSources.value = [];
     showMoveMoneyModal.value = true;
 };
 
-// Execute the move money action
-const executeMoveMoneyFromCategory = (sourceCategory) => {
-    const amountToMove = Math.min(moveMoneyAmount.value, sourceCategory.available);
+// Calculate total selected amount
+const totalSelectedAmount = computed(() => {
+    return selectedSources.value.reduce((sum, s) => sum + s.amount, 0);
+});
 
-    router.post(route('budget.move-money', { month: props.month }), {
-        from_category_id: sourceCategory.id,
-        to_category_id: moveMoneyTarget.value.id,
-        amount: amountToMove,
-    }, {
-        preserveScroll: true,
-        onSuccess: () => {
-            // Update local state
-            const remaining = moveMoneyAmount.value - amountToMove;
-            if (remaining <= 0) {
-                showMoveMoneyModal.value = false;
-                showToast(`Moved ${formatCurrency(amountToMove)} to ${moveMoneyTarget.value.name}`, 'success');
-            } else {
-                moveMoneyAmount.value = remaining;
-                showToast(`Moved ${formatCurrency(amountToMove)}, still need ${formatCurrency(remaining)}`, 'info');
-            }
-        },
-    });
+// Calculate remaining amount needed
+const remainingNeeded = computed(() => {
+    return Math.max(0, moveMoneyAmount.value - totalSelectedAmount.value);
+});
+
+// Toggle selection of a source category
+const toggleSourceCategory = (sourceCategory) => {
+    const existingIndex = selectedSources.value.findIndex(s => s.id === sourceCategory.id);
+
+    if (existingIndex >= 0) {
+        // Deselect - remove from list
+        selectedSources.value.splice(existingIndex, 1);
+    } else {
+        // Select - add with amount (min of available or remaining needed)
+        const amountToUse = Math.min(sourceCategory.available, remainingNeeded.value || moveMoneyAmount.value);
+        if (amountToUse > 0) {
+            selectedSources.value.push({
+                id: sourceCategory.id,
+                name: sourceCategory.name,
+                amount: amountToUse,
+            });
+        }
+    }
+};
+
+// Check if a category is selected
+const isSourceSelected = (categoryId) => {
+    return selectedSources.value.some(s => s.id === categoryId);
+};
+
+// Get selected amount for a category
+const getSelectedAmount = (categoryId) => {
+    const source = selectedSources.value.find(s => s.id === categoryId);
+    return source ? source.amount : 0;
+};
+
+// Execute all selected move money actions
+const executeMoveMoney = async () => {
+    if (selectedSources.value.length === 0) return;
+
+    const sourcesToMove = [...selectedSources.value];
+    const targetName = moveMoneyTarget.value.name;
+    const targetId = moveMoneyTarget.value.id;
+    let completedCount = 0;
+
+    // Execute moves sequentially
+    for (const source of sourcesToMove) {
+        await new Promise((resolve) => {
+            router.post(route('budget.move-money', { month: props.month }), {
+                from_category_id: source.id,
+                to_category_id: targetId,
+                amount: source.amount,
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    completedCount++;
+                    resolve();
+                },
+                onError: () => resolve(),
+            });
+        });
+    }
+
+    // Close modal and show toast
+    showMoveMoneyModal.value = false;
+
+    // Build toast message
+    const totalMoved = sourcesToMove.reduce((sum, s) => sum + s.amount, 0);
+    const sourceNames = sourcesToMove.map(s => s.name).join(', ');
+    showMoveToast(formatCurrency(totalMoved), sourceNames, targetName);
 };
 
 // Projection picker modal state
@@ -290,6 +372,23 @@ const showToast = (message, type = 'success') => {
         toast.value.show = false;
     }, 3000);
 };
+
+// Move money toast helper
+const showMoveToast = (amount, from, to, remaining = null) => {
+    if (moveToastTimeout) clearTimeout(moveToastTimeout);
+
+    moveToast.value = {
+        show: true,
+        amount,
+        from,
+        to,
+        remaining,
+    };
+
+    moveToastTimeout = setTimeout(() => {
+        moveToast.value.show = false;
+    }, 4000);
+};
 </script>
 
 <template>
@@ -320,6 +419,31 @@ const showToast = (message, type = 'success') => {
                     {{ toast.message }}
                 </div>
             </Transition>
+
+            <!-- Move Money Toast Notification -->
+            <Teleport to="body">
+                <Transition
+                    enter-active-class="transition ease-out duration-300"
+                    enter-from-class="transform translate-y-full opacity-0"
+                    enter-to-class="transform translate-y-0 opacity-100"
+                    leave-active-class="transition ease-in duration-200"
+                    leave-from-class="transform translate-y-0 opacity-100"
+                    leave-to-class="transform translate-y-full opacity-0"
+                >
+                    <div
+                        v-if="moveToast.show"
+                        class="fixed bottom-24 left-4 right-4 z-50 bg-body text-inverse rounded-card px-4 py-3 shadow-lg"
+                    >
+                        <div class="flex items-center gap-2">
+                            <span class="text-income">✓</span>
+                            <span>Moved {{ moveToast.amount }} from {{ moveToast.from }} to {{ moveToast.to }}</span>
+                        </div>
+                        <div v-if="moveToast.remaining" class="text-subtle text-sm mt-1 ml-6">
+                            Still need {{ moveToast.remaining }}
+                        </div>
+                    </div>
+                </Transition>
+            </Teleport>
 
             <!-- Month Selector -->
             <div class="flex items-center justify-between bg-surface rounded-card p-3">
@@ -436,11 +560,11 @@ const showToast = (message, type = 'success') => {
                             <div class="col-span-3">
                                 <input
                                     v-if="editingField === category.id"
-                                    v-model.number="budgetAmounts[category.id]"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
+                                    :value="editingValue ? '$' + editingValue : '$'"
+                                    type="text"
+                                    inputmode="decimal"
                                     class="w-full px-1 py-1 text-right text-sm bg-surface rounded border border-primary outline-none"
+                                    @input="onBudgetInput($event)"
                                     @blur="saveAmount(category.id)"
                                     @keyup.enter="$event.target.blur()"
                                 />
@@ -454,13 +578,13 @@ const showToast = (message, type = 'success') => {
                                             : 'border border-transparent hover:bg-surface-secondary'
                                     ]"
                                 >
-                                    {{ formatNumber(budgetAmounts[category.id]) }}
+                                    ${{ formatNumber(budgetAmounts[category.id]) }}
                                 </div>
                             </div>
 
                             <!-- Spent -->
                             <div class="col-span-2 text-right text-sm text-subtle">
-                                {{ formatNumber(category.spent) }}
+                                ${{ formatNumber(category.spent) }}
                             </div>
 
                             <!-- Balance/Available (Clickable if overspent) -->
@@ -570,8 +694,16 @@ const showToast = (message, type = 'success') => {
                                 <p class="text-sm text-expense mt-1">
                                     Over by {{ formatCurrency(moveMoneyTarget?.overspentBy || 0) }}
                                 </p>
-                                <p class="text-xs text-subtle mt-2">
-                                    Tap a category below to move funds
+                                <!-- Progress indicator -->
+                                <div v-if="selectedSources.length > 0" class="mt-2 p-2 bg-primary-bg rounded-lg">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-body">Selected: {{ formatCurrency(totalSelectedAmount) }}</span>
+                                        <span v-if="remainingNeeded > 0" class="text-subtle">Need: {{ formatCurrency(remainingNeeded) }}</span>
+                                        <span v-else class="text-income font-medium">✓ Covered</span>
+                                    </div>
+                                </div>
+                                <p v-else class="text-xs text-subtle mt-2">
+                                    Tap categories to select funds to move
                                 </p>
                             </div>
 
@@ -580,8 +712,13 @@ const showToast = (message, type = 'success') => {
                                 <div
                                     v-for="category in categoriesWithSurplus"
                                     :key="category.id"
-                                    @click="executeMoveMoneyFromCategory(category)"
-                                    class="flex items-center justify-between p-3 bg-surface-secondary rounded-lg cursor-pointer hover:bg-surface-secondary transition-colors"
+                                    @click="toggleSourceCategory(category)"
+                                    :class="[
+                                        'flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors',
+                                        isSourceSelected(category.id)
+                                            ? 'bg-primary-bg border-2 border-primary'
+                                            : 'bg-surface-secondary hover:bg-border'
+                                    ]"
                                 >
                                     <div class="flex items-center gap-2">
                                         <span v-if="category.icon">{{ category.icon }}</span>
@@ -590,8 +727,13 @@ const showToast = (message, type = 'success') => {
                                             <div class="text-xs text-subtle">{{ category.groupName }}</div>
                                         </div>
                                     </div>
-                                    <div class="font-mono text-sm font-semibold text-income">
-                                        {{ formatCurrency(category.available) }}
+                                    <div class="text-right">
+                                        <div class="font-mono text-sm font-semibold text-income">
+                                            {{ formatCurrency(category.available) }}
+                                        </div>
+                                        <div v-if="isSourceSelected(category.id)" class="text-xs text-primary font-medium">
+                                            Using {{ formatCurrency(getSelectedAmount(category.id)) }}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -604,12 +746,19 @@ const showToast = (message, type = 'success') => {
                             </div>
 
                             <!-- Modal Footer -->
-                            <div class="p-4 border-t border-border">
+                            <div class="p-4 border-t border-border space-y-2">
+                                <button
+                                    v-if="selectedSources.length > 0"
+                                    @click="executeMoveMoney"
+                                    class="w-full py-3 bg-primary text-body rounded-card font-medium hover:bg-primary-hover transition-colors"
+                                >
+                                    Move {{ formatCurrency(totalSelectedAmount) }}
+                                </button>
                                 <button
                                     @click="showMoveMoneyModal = false"
                                     class="w-full py-3 bg-surface-secondary text-body rounded-card font-medium hover:bg-border transition-colors"
                                 >
-                                    Done
+                                    Cancel
                                 </button>
                             </div>
                         </div>
