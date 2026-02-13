@@ -4,9 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Budget Guy">
+        <meta name="theme-color" content="#0f172a">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
+
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="/manifest.json">
 
         <!-- Icons -->
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
