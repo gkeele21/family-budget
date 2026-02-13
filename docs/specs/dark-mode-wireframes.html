@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Guy - Dark Mode Wireframes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========== DESIGN TOKENS ========== */
+    :root {
+      /* Surface hierarchy (Slate dark mode) */
+      --bg: #404040;
+      --surface: #1f1f1f;
+      --surface-elevated: #262626;
+      --surface-overlay: #333333;
+      --surface-inset: #0f0f0f;
+      --surface-header: #171717;
+
+      /* Text */
+      --text-body: #f5f5f5;
+      --text-muted: #a3a3a3;
+      --text-subtle: #737373;
+
+      /* Borders */
+      --border: #404040;
+      --border-strong: #525252;
+
+      /* Accent (Green default) */
+      --primary: #57d025;
+      --primary-hover: #4db820;
+
+      /* Semantic / Financial */
+      --success: #57d025;
+      --danger: #ef4444;
+      --warning: #f47612;
+      --info: #3b82f6;
+
+      /* Aliases */
+      --income: var(--success);
+      --expense: var(--danger);
+      --transfer: var(--info);
+    }
+
+    /* ========== PAGE LAYOUT ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Figtree', sans-serif;
+      background: #1a1a2e;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.875rem;
+      color: #888;
+      margin-bottom: 16px;
+    }
+
+    /* Color palette legend */
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .palette-swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: #aaa;
+    }
+
+    .palette-swatch .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .section-header {
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 60px 0 30px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .wireframes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .screen-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .screen-note {
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 12px;
+      max-width: 280px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* ========== PHONE FRAME ========== */
+    .phone {
+      width: 280px;
+      height: 580px;
+      background: #0f0f0f;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow:
+        0 0 0 2px #333,
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 0 20px rgba(87, 208, 37, 0.03);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ========== STATUS BAR ========== */
+    .status-bar {
+      height: 36px;
+      background: var(--surface-header);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    /* ========== APP HEADER ========== */
+    .header {
+      background: var(--surface-header);
+      color: var(--text-body);
+      padding: 10px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--surface);
+    }
+
+    .header-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .header-icon {
+      width: 24px;
+      height: 24px;
+      border: 1.5px solid var(--text-subtle);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    /* ========== CONTENT AREA ========== */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    /* ========== BOTTOM NAV ========== */
+    .bottom-nav {
+      background: var(--surface-header);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.5rem;
+      font-weight: 500;
+      color: var(--text-subtle);
+      gap: 3px;
+    }
+
+    .nav-item.active { color: var(--primary); }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid currentColor;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+    }
+
+    /* ========== FAB ========== */
+    .fab {
+      position: absolute;
+      bottom: 70px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--primary), #4db820);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--surface);
+      font-size: 1.4rem;
+      font-weight: 300;
+      box-shadow: 0 8px 16px -4px rgba(87, 208, 37, 0.4);
+      z-index: 10;
+    }
+
+    /* ========== CARDS ========== */
+    .card {
+      background: var(--surface);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--surface-header);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* ========== ACCOUNT CARD ========== */
+    .account-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid var(--info);
+    }
+
+    .account-card.type-cash { border-left-color: var(--primary); }
+    .account-card.type-checking { border-left-color: var(--info); }
+    .account-card.type-savings { border-left-color: var(--success); }
+    .account-card.type-credit { border-left-color: var(--danger); }
+
+    .account-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .account-sub {
+      font-size: 0.6rem;
+      color: var(--text-subtle);
+      margin-top: 2px;
+    }
+
+    .account-balance {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .account-balance.negative { color: var(--danger); }
+
+    /* ========== SUMMARY / ATB CARD ========== */
+    .summary-card {
+      background: linear-gradient(135deg, var(--primary), #4db820);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px;
+    }
+
+    .summary-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(0,0,0,0.5);
+      font-weight: 600;
+    }
+
+    .summary-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 4px;
+      color: var(--surface);
+    }
+
+    /* ========== FORM FIELDS ========== */
+    .form-card {
+      background: var(--surface);
+      margin: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row:last-child { border-bottom: none; }
+
+    .form-label {
+      font-size: 0.7rem;
+      color: var(--text-subtle);
+    }
+
+    .form-value {
+      font-size: 0.75rem;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    .form-value.placeholder { color: var(--text-subtle); }
+    .form-value.expense-color { color: var(--danger); }
+    .form-value.income-color { color: var(--success); }
+    .form-value.transfer-color { color: var(--info); }
+    .form-value.info-color { color: var(--info); }
+
+    /* ========== INPUT FIELD ========== */
+    .input-field {
+      background: var(--surface-inset);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      color: var(--text-body);
+      font-family: 'Figtree', sans-serif;
+    }
+
+    .input-field.focused {
+      border-color: transparent;
+      box-shadow:
+        0 0 0 2px var(--surface),
+        0 0 0 4px rgba(87, 208, 37, 0.5),
+        0 0 12px rgba(87, 208, 37, 0.25);
+    }
+
+    .input-field::placeholder { color: var(--text-subtle); }
+
+    /* ========== SEGMENTED CONTROL ========== */
+    .segmented {
+      display: flex;
+      background: var(--surface-inset);
+      border-radius: 8px;
+      padding: 3px;
+      margin: 12px;
+    }
+
+    .segmented-btn {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 6px;
+      color: var(--text-subtle);
+    }
+
+    .segmented-btn.active-expense {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .segmented-btn.active-income {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .segmented-btn.active-transfer {
+      background: var(--info);
+      color: #fff;
+    }
+
+    /* ========== FILTER CHIPS ========== */
+    .chips {
+      display: flex;
+      gap: 6px;
+      padding: 0 12px;
+      overflow-x: auto;
+    }
+
+    .chip {
+      padding: 5px 10px;
+      border-radius: 99px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      white-space: nowrap;
+      background: var(--surface-overlay);
+      color: var(--text-subtle);
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: var(--surface);
+    }
+
+    /* ========== TRANSACTION ROW ========== */
+    .tx-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tx-row:last-child { border-bottom: none; }
+
+    .tx-payee {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .tx-category {
+      font-size: 0.6rem;
+      color: var(--text-subtle);
+      margin-top: 2px;
+    }
+
+    .tx-amount {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tx-amount.expense { color: var(--danger); }
+    .tx-amount.income { color: var(--success); }
+    .tx-amount.transfer { color: var(--info); }
+
+    /* ========== DATE HEADER ========== */
+    .date-header {
+      padding: 8px 14px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface-header);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== BUDGET ROW ========== */
+    .budget-group-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--surface-header);
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .budget-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .budget-category {
+      font-size: 0.7rem;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    .budget-amounts {
+      display: flex;
+      gap: 16px;
+      font-size: 0.65rem;
+      text-align: right;
+    }
+
+    .budget-col {
+      min-width: 45px;
+    }
+
+    .budget-col .label {
+      font-size: 0.5rem;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+    }
+
+    .budget-col .value {
+      font-weight: 600;
+      color: var(--text-body);
+      margin-top: 1px;
+    }
+
+    .budget-col .value.overspent { color: var(--danger); }
+    .budget-col .value.available { color: var(--success); }
+
+    /* ========== SEARCH BAR ========== */
+    .search-bar {
+      margin: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.7rem;
+      color: var(--text-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-icon {
+      font-size: 0.7rem;
+      opacity: 0.5;
+    }
+
+    /* ========== SETTINGS ROW ========== */
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .settings-row:last-child { border-bottom: none; }
+
+    .settings-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .settings-value {
+      font-size: 0.7rem;
+      color: var(--text-subtle);
+    }
+
+    .settings-chevron {
+      font-size: 0.65rem;
+      color: var(--text-subtle);
+    }
+
+    .settings-section-title {
+      padding: 16px 14px 8px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ========== COLOR SWATCHES (Settings) ========== */
+    .swatch-row {
+      display: flex;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: #fff;
+    }
+
+    .color-swatch.selected {
+      border-color: var(--text-body);
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px currentColor;
+    }
+
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      border-radius: 28px;
+    }
+
+    .modal-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 85%;
+      max-height: 80%;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: var(--surface-header);
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .modal-close {
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      cursor: pointer;
+    }
+
+    .modal-body { padding: 14px; }
+
+    .modal-footer {
+      padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      border: 2px solid transparent;
+      font-family: 'Figtree', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--surface);
+    }
+
+    .btn-primary-hover {
+      background: #fff;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: var(--surface-overlay);
+      color: var(--text-body);
+      border-color: var(--border);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--info);
+      border-color: var(--info);
+    }
+
+    .btn-full { width: 100%; }
+
+    /* ========== TOGGLE ========== */
+    .toggle-track {
+      width: 32px;
+      height: 18px;
+      border-radius: 9px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .toggle-track.on { background: var(--primary); }
+    .toggle-track.off { background: var(--surface-overlay); }
+
+    .toggle-thumb {
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      transition: left 0.2s;
+    }
+
+    .toggle-track.on .toggle-thumb { left: 16px; }
+    .toggle-track.off .toggle-thumb { left: 2px; }
+
+    /* ========== MONTH NAV ========== */
+    .month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .month-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .month-arrow {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .month-arrow:hover { background: var(--surface-overlay); }
+
+    /* ========== BUDGET SUMMARY STATS ========== */
+    .budget-stats {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .budget-stat {
+      flex: 1;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .budget-stat .stat-label {
+      font-size: 0.5rem;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .budget-stat .stat-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-body);
+      margin-top: 2px;
+    }
+
+    /* ========== GUEST LAYOUT (LOGIN) ========== */
+    .guest-header {
+      background: var(--bg);
+      padding: 30px 20px 40px;
+      text-align: center;
+    }
+
+    .guest-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--surface);
+      margin: 0 auto 10px;
+    }
+
+    .guest-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-body);
+    }
+
+    .guest-form {
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px;
+      flex: 1;
+      margin-top: -16px;
+    }
+
+    .guest-form .form-group {
+      margin-bottom: 16px;
+    }
+
+    .guest-form .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-body);
+      margin-bottom: 6px;
+    }
+
+    .guest-form .input-field {
+      width: 100%;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), #4db820);
+      color: var(--surface);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      border: none;
+      box-shadow: 0 8px 16px -4px rgba(87, 208, 37, 0.4);
+      font-family: 'Figtree', sans-serif;
+    }
+
+    .login-link {
+      font-size: 0.7rem;
+      color: var(--info);
+      text-align: center;
+      display: block;
+      margin-top: 12px;
+    }
+
+    /* ========== PROJECTION ROW ========== */
+    .projection-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .projection-name {
+      font-size: 0.7rem;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    .projection-default {
+      font-size: 0.55rem;
+      color: var(--text-subtle);
+      margin-top: 1px;
+    }
+
+    .projection-amount {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--info);
+    }
+
+    /* ========== MOVE MONEY ITEM ========== */
+    .move-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      border: 2px solid transparent;
+    }
+
+    .move-item.available {
+      background: var(--surface-elevated);
+    }
+
+    .move-item.selected {
+      background: rgba(87, 208, 37, 0.1);
+      border-color: var(--primary);
+    }
+
+    .move-item.overspent {
+      background: var(--surface-elevated);
+    }
+
+    .move-item .name {
+      font-size: 0.7rem;
+      color: var(--text-body);
+    }
+
+    .move-item .amount {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .move-item .amount.positive { color: var(--success); }
+    .move-item .amount.negative { color: var(--danger); }
+
+    /* ========== THEME PREVIEW ========== */
+    .theme-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .theme-preview {
+      text-align: center;
+    }
+
+    .theme-preview-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .mini-phone {
+      width: 180px;
+      height: 320px;
+      border-radius: 24px;
+      padding: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .mini-phone .mini-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mini-header {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .mini-logo {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      font-weight: 700;
+    }
+
+    .mini-card {
+      margin: 6px 8px;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.5rem;
+    }
+
+    .mini-row {
+      padding: 6px 10px;
+      font-size: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .mini-nav {
+      margin-top: auto;
+      padding: 6px 0 12px;
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Budget Guy - Dark Mode Wireframes</h1>
+  <p class="subtitle">PropOff-inspired dark theme with CSS variable system, glow effects, and theme switching</p>
+
+  <!-- Color Palette Legend -->
+  <div class="palette">
+    <div class="palette-swatch"><div class="swatch" style="background: var(--bg)"></div> bg #404040</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--surface)"></div> surface #1f1f1f</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--surface-elevated)"></div> elevated #262626</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--surface-overlay)"></div> overlay #333</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--surface-inset)"></div> inset #0f0f0f</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--surface-header)"></div> header #171717</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--primary)"></div> primary #57d025</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--danger)"></div> expense #ef4444</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--info)"></div> transfer #3b82f6</div>
+    <div class="palette-swatch"><div class="swatch" style="background: var(--warning)"></div> warning #f47612</div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SECTION 1: CORE SCREENS                        -->
+  <!-- ============================================== -->
+
+  <div class="section-header">Core Screens</div>
+
+  <div class="wireframes">
+
+    <!-- ==================== 1. DASHBOARD ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">1. Dashboard</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <div class="header-logo">B</div>
+              <span class="header-title">Budget Guy</span>
+            </div>
+            <div class="header-icon">&#9881;</div>
+          </div>
+          <div class="content">
+            <div style="padding: 12px;">
+              <div style="font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-subtle); margin-bottom: 8px; padding-left: 4px;">Cash</div>
+              <div class="account-card type-cash">
+                <div>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size: 1.1rem">&#128181;</span>
+                    <span class="account-name">Wallet</span>
+                  </div>
+                </div>
+                <div class="account-balance">$245.00</div>
+              </div>
+
+              <div style="font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-subtle); margin: 16px 0 8px; padding-left: 4px;">Checking</div>
+              <div class="account-card type-checking">
+                <div>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size: 1.1rem">&#127974;</span>
+                    <div>
+                      <div class="account-name">Main Checking</div>
+                      <div class="account-sub">$42.50 pending</div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="account-balance">$3,847.22</div>
+                  <div class="account-sub" style="text-align:right">$3,804.72</div>
+                </div>
+              </div>
+
+              <div style="font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-subtle); margin: 16px 0 8px; padding-left: 4px;">Savings</div>
+              <div class="account-card type-savings">
+                <div>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size: 1.1rem">&#128176;</span>
+                    <span class="account-name">Emergency Fund</span>
+                  </div>
+                </div>
+                <div class="account-balance">$12,500.00</div>
+              </div>
+
+              <div style="font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-subtle); margin: 16px 0 8px; padding-left: 4px;">Credit Cards</div>
+              <div class="account-card type-credit">
+                <div>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size: 1.1rem">&#128179;</span>
+                    <span class="account-name">Visa</span>
+                  </div>
+                </div>
+                <div class="account-balance negative">-$1,247.83</div>
+              </div>
+            </div>
+          </div>
+          <div class="fab">+</div>
+          <div class="bottom-nav">
+            <div class="nav-item"><div class="nav-icon">&#9638;</div>Budget</div>
+            <div class="nav-item"><div class="nav-icon">&#9776;</div>Trans</div>
+            <div class="nav-item active"><div class="nav-icon">&#9744;</div>Accts</div>
+            <div class="nav-item"><div class="nav-icon">&#9636;</div>Plan</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Account cards on dark surfaces with colored left borders. Green FAB with glow shadow.</div>
+    </div>
+
+    <!-- ==================== 2. BUDGET VIEW ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">2. Budget View</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <div class="header-logo">B</div>
+              <span class="header-title">Budget Guy</span>
+            </div>
+            <div class="header-icon">&#9881;</div>
+          </div>
+          <div class="content">
+            <!-- Available to Budget -->
+            <div class="summary-card">
+              <div class="summary-label">Available to Budget</div>
+              <div class="summary-amount">$1,245.00</div>
+            </div>
+
+            <!-- Month Nav -->
+            <div class="month-nav">
+              <span class="month-arrow">&lsaquo;</span>
+              <span class="month-label">February 2026</span>
+              <span class="month-arrow">&rsaquo;</span>
+            </div>
+
+            <!-- Budget Stats -->
+            <div class="budget-stats">
+              <div class="budget-stat">
+                <div class="stat-label">Budgeted</div>
+                <div class="stat-value">$4,200</div>
+              </div>
+              <div class="budget-stat">
+                <div class="stat-label">Spent</div>
+                <div class="stat-value">$2,955</div>
+              </div>
+              <div class="budget-stat">
+                <div class="stat-label">Ready</div>
+                <div class="stat-value" style="color: var(--success)">$1,245</div>
+              </div>
+            </div>
+
+            <!-- Budget Groups -->
+            <div>
+              <div class="budget-group-header">
+                <span>&#127968; Housing</span>
+                <span>$1,850</span>
+              </div>
+              <div class="budget-row">
+                <span class="budget-category">Rent</span>
+                <div class="budget-amounts">
+                  <div class="budget-col"><div class="label">Budget</div><div class="value">$1,500</div></div>
+                  <div class="budget-col"><div class="label">Spent</div><div class="value">$1,500</div></div>
+                  <div class="budget-col"><div class="label">Left</div><div class="value available">$0.00</div></div>
+                </div>
+              </div>
+              <div class="budget-row">
+                <span class="budget-category">Utilities</span>
+                <div class="budget-amounts">
+                  <div class="budget-col"><div class="label">Budget</div><div class="value">$200</div></div>
+                  <div class="budget-col"><div class="label">Spent</div><div class="value">$187</div></div>
+                  <div class="budget-col"><div class="label">Left</div><div class="value available">$13.00</div></div>
+                </div>
+              </div>
+              <div class="budget-row">
+                <span class="budget-category">Internet</span>
+                <div class="budget-amounts">
+                  <div class="budget-col"><div class="label">Budget</div><div class="value">$150</div></div>
+                  <div class="budget-col"><div class="label">Spent</div><div class="value">$150</div></div>
+                  <div class="budget-col"><div class="label">Left</div><div class="value available">$0.00</div></div>
+                </div>
+              </div>
+
+              <div class="budget-group-header">
+                <span>&#127869; Food</span>
+                <span style="color: var(--danger)">-$47</span>
+              </div>
+              <div class="budget-row">
+                <span class="budget-category">Groceries</span>
+                <div class="budget-amounts">
+                  <div class="budget-col"><div class="label">Budget</div><div class="value">$400</div></div>
+                  <div class="budget-col"><div class="label">Spent</div><div class="value">$447</div></div>
+                  <div class="budget-col"><div class="label">Left</div><div class="value overspent">-$47</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active"><div class="nav-icon">&#9638;</div>Budget</div>
+            <div class="nav-item"><div class="nav-icon">&#9776;</div>Trans</div>
+            <div class="nav-item"><div class="nav-icon">&#9744;</div>Accts</div>
+            <div class="nav-item"><div class="nav-icon">&#9636;</div>Plan</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Green gradient ATB card. Surface-header for group headers. Overspent amounts in red.</div>
+    </div>
+
+    <!-- ==================== 3. ADD TRANSACTION ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">3. Add Transaction</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <span class="header-title" style="font-size: 0.85rem;">New Transaction</span>
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-subtle);">&times;</div>
+          </div>
+          <div class="content">
+            <!-- Segmented Control -->
+            <div class="segmented">
+              <div class="segmented-btn active-expense">Expense</div>
+              <div class="segmented-btn">Income</div>
+              <div class="segmented-btn">Transfer</div>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="form-card">
+              <div class="form-row">
+                <span class="form-label">Payee</span>
+                <span class="form-value info-color">Trader Joe's</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Amount</span>
+                <span class="form-value expense-color">$67.43</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Category</span>
+                <span class="form-value info-color">&#127869; Groceries &#9662;</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Account</span>
+                <span class="form-value info-color">Main Checking &#9662;</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Date</span>
+                <span class="form-value info-color">Today, Feb 12 &#9662;</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Cleared</span>
+                <span class="form-value" style="color: var(--success);">&#9679; Yes</span>
+              </div>
+              <div class="form-row">
+                <span class="form-label">Memo</span>
+                <span class="form-value placeholder">Optional note...</span>
+              </div>
+            </div>
+
+            <!-- Save Button -->
+            <div style="padding: 12px;">
+              <div class="btn btn-primary btn-full">Save Transaction</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Segmented control with surface-inset track. Form rows on dark surface. Expense amount in red.</div>
+    </div>
+
+    <!-- ==================== 4. TRANSACTION LIST ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">4. Transaction List</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <div class="header-logo">B</div>
+              <span class="header-title">Budget Guy</span>
+            </div>
+            <div class="header-icon">&#9881;</div>
+          </div>
+          <div class="content">
+            <!-- Search -->
+            <div class="search-bar">
+              <span class="search-icon">&#128269;</span>
+              Search transactions...
+            </div>
+
+            <!-- Filter Chips -->
+            <div class="chips" style="margin-bottom: 10px;">
+              <div class="chip active">All</div>
+              <div class="chip">Checking</div>
+              <div class="chip">Visa</div>
+              <div class="chip">Savings</div>
+            </div>
+
+            <!-- Transactions -->
+            <div class="card" style="margin: 0 12px;">
+              <div class="date-header">Today, Feb 12</div>
+              <div class="tx-row">
+                <div>
+                  <div class="tx-payee">Trader Joe's</div>
+                  <div class="tx-category">Groceries</div>
+                </div>
+                <div class="tx-amount expense">-$67.43</div>
+              </div>
+              <div class="tx-row">
+                <div>
+                  <div class="tx-payee">Shell Gas</div>
+                  <div class="tx-category">Transportation</div>
+                </div>
+                <div class="tx-amount expense">-$48.20</div>
+              </div>
+
+              <div class="date-header">Yesterday, Feb 11</div>
+              <div class="tx-row">
+                <div>
+                  <div class="tx-payee">Paycheck</div>
+                  <div class="tx-category">Income</div>
+                </div>
+                <div class="tx-amount income">+$2,450.00</div>
+              </div>
+              <div class="tx-row">
+                <div>
+                  <div class="tx-payee">Transfer to Savings</div>
+                  <div class="tx-category">Savings Transfer</div>
+                </div>
+                <div class="tx-amount transfer">$500.00</div>
+              </div>
+              <div class="tx-row">
+                <div>
+                  <div class="tx-payee">Netflix</div>
+                  <div class="tx-category">Entertainment</div>
+                </div>
+                <div class="tx-amount expense">-$15.99</div>
+              </div>
+            </div>
+          </div>
+          <div class="fab">+</div>
+          <div class="bottom-nav">
+            <div class="nav-item"><div class="nav-icon">&#9638;</div>Budget</div>
+            <div class="nav-item active"><div class="nav-icon">&#9776;</div>Trans</div>
+            <div class="nav-item"><div class="nav-icon">&#9744;</div>Accts</div>
+            <div class="nav-item"><div class="nav-icon">&#9636;</div>Plan</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Search bar on surface. Active filter chip in primary green. Date headers on surface-header.</div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SECTION 2: SETTINGS & AUTH                     -->
+  <!-- ============================================== -->
+
+  <div class="section-header">Settings & Auth</div>
+
+  <div class="wireframes">
+
+    <!-- ==================== 5. SETTINGS ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">5. Settings</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <span class="header-title" style="font-size: 0.85rem;">Settings</span>
+            </div>
+          </div>
+          <div class="content">
+            <!-- Appearance Section -->
+            <div class="settings-section-title">Appearance</div>
+            <div class="card" style="margin: 0 12px 12px; overflow: hidden;">
+              <div class="settings-row">
+                <span class="settings-label">Accent Color</span>
+              </div>
+              <div class="swatch-row">
+                <div class="color-swatch selected" style="background: #57d025; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px #57d025;">&#10003;</div>
+                <div class="color-swatch" style="background: #3b82f6;"></div>
+                <div class="color-swatch" style="background: #f47612;"></div>
+              </div>
+              <div class="settings-row">
+                <span class="settings-label">Background</span>
+              </div>
+              <div class="swatch-row">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <div class="color-swatch selected" style="background: #404040; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px #404040;"><span style="font-size: 0.5rem">&#10003;</span></div>
+                  <span style="font-size: 0.65rem; color: var(--text-body);">Slate</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-left: 20px;">
+                  <div class="color-swatch" style="background: #f5f1e8;"></div>
+                  <span style="font-size: 0.65rem; color: var(--text-muted);">Cream</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Budget Section -->
+            <div class="settings-section-title">Budget</div>
+            <div class="card" style="margin: 0 12px 12px; overflow: hidden;">
+              <div class="settings-row">
+                <span class="settings-label">Accounts</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="settings-value">4</span>
+                  <span class="settings-chevron">&#9002;</span>
+                </div>
+              </div>
+              <div class="settings-row">
+                <span class="settings-label">Categories</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="settings-value">18</span>
+                  <span class="settings-chevron">&#9002;</span>
+                </div>
+              </div>
+              <div class="settings-row">
+                <span class="settings-label">Recurring</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="settings-value">6</span>
+                  <span class="settings-chevron">&#9002;</span>
+                </div>
+              </div>
+              <div class="settings-row">
+                <span class="settings-label">Payees</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="settings-value">23</span>
+                  <span class="settings-chevron">&#9002;</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Section -->
+            <div class="settings-section-title">Account</div>
+            <div class="card" style="margin: 0 12px; overflow: hidden;">
+              <div class="settings-row">
+                <span class="settings-label">Profile</span>
+                <span class="settings-chevron">&#9002;</span>
+              </div>
+              <div class="settings-row">
+                <span class="settings-label" style="color: var(--danger);">Sign Out</span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">New Appearance section with accent color swatches and background mode picker.</div>
+    </div>
+
+    <!-- ==================== 6. LOGIN ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">6. Login</div>
+      <div class="phone">
+        <div class="phone-screen" style="background: var(--bg);">
+          <div class="status-bar" style="background: var(--bg);"></div>
+          <div class="guest-header">
+            <div class="guest-logo">B</div>
+            <div class="guest-title">Welcome back</div>
+          </div>
+          <div class="guest-form">
+            <div class="form-group">
+              <label>Email</label>
+              <div class="input-field" style="color: var(--text-subtle);">you@example.com</div>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <div class="input-field focused" style="color: var(--text-body);">&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</div>
+            </div>
+            <div style="margin-top: 20px;">
+              <div class="login-btn">Sign In</div>
+            </div>
+            <div class="login-link">Forgot your password?</div>
+            <div class="login-link" style="margin-top: 16px;">Don't have an account? <strong style="color: var(--primary)">Sign up</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Dark guest layout. Surface card for form. Focused input shows green glow. Gradient button with shadow.</div>
+    </div>
+
+    <!-- ==================== 7. PLAN / PROJECTIONS ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">7. Plan / Projections</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <div class="header-logo">B</div>
+              <span class="header-title">Budget Guy</span>
+            </div>
+            <div class="header-icon">&#9881;</div>
+          </div>
+          <div class="content">
+            <!-- Expected Income -->
+            <div style="padding: 12px;">
+              <div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 10px; padding: 12px;">
+                <div style="font-size: 0.65rem; color: var(--info); font-weight: 600; margin-bottom: 6px;">Expected Income</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">Monthly take-home</span>
+                  <span style="font-size: 0.9rem; font-weight: 700; color: var(--info);">$4,900.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Allocation Summary -->
+            <div style="display: flex; justify-content: space-between; padding: 8px 14px; font-size: 0.65rem;">
+              <span style="color: var(--text-subtle);">Total Projected: <strong style="color: var(--text-body);">$4,350.00</strong></span>
+              <span style="color: var(--success);">Left to allocate: <strong>$550.00</strong></span>
+            </div>
+
+            <!-- Projection Rows -->
+            <div>
+              <div class="budget-group-header">
+                <span>&#127968; Housing</span>
+              </div>
+              <div class="projection-row">
+                <div>
+                  <div class="projection-name">Rent</div>
+                  <div class="projection-default">Default: $1,500</div>
+                </div>
+                <div class="projection-amount">$1,500.00</div>
+              </div>
+              <div class="projection-row">
+                <div>
+                  <div class="projection-name">Utilities</div>
+                  <div class="projection-default">Default: $200</div>
+                </div>
+                <div class="projection-amount">$200.00</div>
+              </div>
+              <div class="projection-row">
+                <div>
+                  <div class="projection-name">Internet</div>
+                  <div class="projection-default">Default: $150</div>
+                </div>
+                <div class="projection-amount">$150.00</div>
+              </div>
+
+              <div class="budget-group-header">
+                <span>&#127869; Food</span>
+              </div>
+              <div class="projection-row">
+                <div>
+                  <div class="projection-name">Groceries</div>
+                  <div class="projection-default">Default: $400</div>
+                </div>
+                <div class="projection-amount">$450.00</div>
+              </div>
+              <div class="projection-row">
+                <div>
+                  <div class="projection-name">Dining Out</div>
+                  <div class="projection-default">Default: $150</div>
+                </div>
+                <div class="projection-amount">$150.00</div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><div class="nav-icon">&#9638;</div>Budget</div>
+            <div class="nav-item"><div class="nav-icon">&#9776;</div>Trans</div>
+            <div class="nav-item"><div class="nav-icon">&#9744;</div>Accts</div>
+            <div class="nav-item active"><div class="nav-icon">&#9636;</div>Plan</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Blue income card with subtle border. Projection amounts in info blue. Default amounts shown as subtle text.</div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SECTION 3: MODALS                              -->
+  <!-- ============================================== -->
+
+  <div class="section-header">Modals &amp; Overlays</div>
+
+  <div class="wireframes">
+
+    <!-- ==================== 8. MOVE MONEY MODAL ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">8. Move Money</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <div class="header-logo">B</div>
+              <span class="header-title">Budget Guy</span>
+            </div>
+            <div class="header-icon">&#9881;</div>
+          </div>
+          <div class="content" style="filter: brightness(0.5);">
+            <div class="summary-card" style="opacity: 0.3;">
+              <div class="summary-label">Available to Budget</div>
+              <div class="summary-amount">$1,245.00</div>
+            </div>
+          </div>
+          <!-- Modal Overlay -->
+          <div class="modal-overlay">
+            <div class="modal-panel">
+              <div class="modal-header">
+                <span class="modal-title">Move Money</span>
+                <span class="modal-close">&times;</span>
+              </div>
+              <div class="modal-body">
+                <div style="font-size: 0.65rem; color: var(--text-subtle); margin-bottom: 8px; font-weight: 600;">FROM (has surplus)</div>
+                <div class="move-item selected">
+                  <span class="name">&#127968; Utilities</span>
+                  <span class="amount positive">$13.00</span>
+                </div>
+                <div class="move-item available">
+                  <span class="name">&#128663; Gas</span>
+                  <span class="amount positive">$35.00</span>
+                </div>
+
+                <div style="font-size: 0.65rem; color: var(--text-subtle); margin: 12px 0 8px; font-weight: 600;">TO (overspent)</div>
+                <div class="move-item overspent" style="border-left: 3px solid var(--danger);">
+                  <span class="name">&#127869; Groceries</span>
+                  <span class="amount negative">-$47.00</span>
+                </div>
+              </div>
+              <div class="modal-footer" style="display: flex; gap: 8px;">
+                <div class="btn btn-ghost" style="flex: 1; text-align: center;">Cancel</div>
+                <div class="btn btn-primary" style="flex: 1; text-align: center;">Move $13.00</div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav" style="filter: brightness(0.5);">
+            <div class="nav-item active"><div class="nav-icon">&#9638;</div>Budget</div>
+            <div class="nav-item"><div class="nav-icon">&#9776;</div>Trans</div>
+            <div class="nav-item"><div class="nav-icon">&#9744;</div>Accts</div>
+            <div class="nav-item"><div class="nav-icon">&#9636;</div>Plan</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">Dark modal with surface-header header. Selected source with green border + primary/10 bg. Overspent with red left border.</div>
+    </div>
+
+    <!-- ==================== 8B. BUTTON HOVER STATES ==================== -->
+    <div class="screen-container">
+      <div class="screen-label">8B. Button States</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">9:41</div>
+          <div class="header">
+            <div class="header-left">
+              <span class="header-title" style="font-size: 0.85rem;">Button Variants</span>
+            </div>
+          </div>
+          <div class="content" style="padding: 16px;">
+            <div style="font-size: 0.6rem; color: var(--text-subtle); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Default State</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+              <div class="btn btn-primary" style="text-align: center;">Primary</div>
+              <div class="btn btn-danger" style="text-align: center;">Danger</div>
+              <div class="btn btn-outline" style="text-align: center;">Outline</div>
+              <div class="btn btn-ghost" style="text-align: center;">Ghost</div>
+            </div>
+
+            <div style="font-size: 0.6rem; color: var(--text-subtle); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Hover State (inverted)</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="btn btn-primary-hover" style="text-align: center;">Primary Hover</div>
+              <div class="btn" style="text-align: center; background: #fff; color: var(--danger); border: 2px solid var(--danger);">Danger Hover</div>
+              <div class="btn" style="text-align: center; background: rgba(59,130,246,0.1); color: var(--info); border: 2px solid var(--info);">Outline Hover</div>
+              <div class="btn" style="text-align: center; background: var(--surface-overlay); color: var(--info); border: 2px solid transparent;">Ghost Hover</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note">PropOff button pattern: hover inverts bg to white with colored text/border. Ghost uses surface-overlay.</div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SECTION 4: THEME SWITCHING PREVIEW             -->
+  <!-- ============================================== -->
+
+  <div class="section-header">Theme Switching Preview</div>
+
+  <div class="wireframes">
+
+    <!-- ==================== ACCENT COLORS ==================== -->
+    <div class="screen-container" style="max-width: 100%;">
+      <div class="screen-label">9A. Accent Colors</div>
+      <div class="theme-row">
+        <!-- Green -->
+        <div class="theme-preview">
+          <div class="theme-preview-label">Green (Default)</div>
+          <div class="mini-phone" style="background: #0f0f0f;">
+            <div class="mini-screen" style="background: #404040;">
+              <div class="mini-header" style="background: #171717; color: #f5f5f5;">
+                <div class="mini-logo" style="background: #57d025; color: #1f1f1f;">B</div>
+                Budget Guy
+              </div>
+              <div class="mini-card" style="background: linear-gradient(135deg, #57d025, #4db820); color: #1f1f1f;">
+                <div style="opacity: 0.6; font-size: 0.4rem;">AVAILABLE</div>
+                <div style="font-weight: 700; font-size: 0.7rem;">$1,245.00</div>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Rent</span><span style="color: #57d025;">$0.00</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Groceries</span><span style="color: #ef4444;">-$47</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5;">
+                <span>Gas</span><span style="color: #57d025;">$35.00</span>
+              </div>
+              <div class="mini-nav" style="background: #171717; color: #737373; border-top: 1px solid #404040;">
+                <span style="color: #57d025;">Budget</span>
+                <span>Trans</span>
+                <span>Accts</span>
+                <span>Plan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blue -->
+        <div class="theme-preview">
+          <div class="theme-preview-label">Blue</div>
+          <div class="mini-phone" style="background: #0f0f0f;">
+            <div class="mini-screen" style="background: #404040;">
+              <div class="mini-header" style="background: #171717; color: #f5f5f5;">
+                <div class="mini-logo" style="background: #3b82f6; color: #fff;">B</div>
+                Budget Guy
+              </div>
+              <div class="mini-card" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;">
+                <div style="opacity: 0.6; font-size: 0.4rem;">AVAILABLE</div>
+                <div style="font-weight: 700; font-size: 0.7rem;">$1,245.00</div>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Rent</span><span style="color: #57d025;">$0.00</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Groceries</span><span style="color: #ef4444;">-$47</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5;">
+                <span>Gas</span><span style="color: #57d025;">$35.00</span>
+              </div>
+              <div class="mini-nav" style="background: #171717; color: #737373; border-top: 1px solid #404040;">
+                <span style="color: #3b82f6;">Budget</span>
+                <span>Trans</span>
+                <span>Accts</span>
+                <span>Plan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orange -->
+        <div class="theme-preview">
+          <div class="theme-preview-label">Orange</div>
+          <div class="mini-phone" style="background: #0f0f0f;">
+            <div class="mini-screen" style="background: #404040;">
+              <div class="mini-header" style="background: #171717; color: #f5f5f5;">
+                <div class="mini-logo" style="background: #f47612; color: #fff;">B</div>
+                Budget Guy
+              </div>
+              <div class="mini-card" style="background: linear-gradient(135deg, #f47612, #ea580c); color: #fff;">
+                <div style="opacity: 0.6; font-size: 0.4rem;">AVAILABLE</div>
+                <div style="font-weight: 700; font-size: 0.7rem;">$1,245.00</div>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Rent</span><span style="color: #57d025;">$0.00</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Groceries</span><span style="color: #ef4444;">-$47</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5;">
+                <span>Gas</span><span style="color: #57d025;">$35.00</span>
+              </div>
+              <div class="mini-nav" style="background: #171717; color: #737373; border-top: 1px solid #404040;">
+                <span style="color: #f47612;">Budget</span>
+                <span>Trans</span>
+                <span>Accts</span>
+                <span>Plan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note" style="max-width: 600px; margin: 12px auto 0;">Accent color changes: logo, ATB gradient, active nav, primary buttons, focus glows. Financial semantic colors (income green, expense red) stay fixed.</div>
+    </div>
+  </div>
+
+  <!-- Background Modes -->
+  <div class="wireframes" style="margin-top: 40px;">
+    <div class="screen-container" style="max-width: 100%;">
+      <div class="screen-label">9B. Background Modes</div>
+      <div class="theme-row">
+        <!-- Slate -->
+        <div class="theme-preview">
+          <div class="theme-preview-label">Slate (Dark)</div>
+          <div class="mini-phone" style="background: #0f0f0f;">
+            <div class="mini-screen" style="background: #404040;">
+              <div class="mini-header" style="background: #171717; color: #f5f5f5;">
+                <div class="mini-logo" style="background: #57d025; color: #1f1f1f;">B</div>
+                Budget Guy
+              </div>
+              <div class="mini-card" style="background: linear-gradient(135deg, #57d025, #4db820); color: #1f1f1f;">
+                <div style="opacity: 0.6; font-size: 0.4rem;">AVAILABLE</div>
+                <div style="font-weight: 700; font-size: 0.7rem;">$1,245.00</div>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Rent</span><span>$1,500</span>
+              </div>
+              <div class="mini-row" style="background: #1f1f1f; color: #f5f5f5; border-bottom: 1px solid #404040;">
+                <span>Groceries</span><span>$400</span>
+              </div>
+              <div class="mini-nav" style="background: #171717; color: #737373; border-top: 1px solid #404040;">
+                <span style="color: #57d025;">Budget</span>
+                <span>Trans</span>
+                <span>Accts</span>
+                <span>Plan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cream -->
+        <div class="theme-preview">
+          <div class="theme-preview-label">Cream (Light)</div>
+          <div class="mini-phone" style="background: #d4cfc5;">
+            <div class="mini-screen" style="background: #f5f1e8;">
+              <div class="mini-header" style="background: #f5f1e8; color: #1f1f1f;">
+                <div class="mini-logo" style="background: #57d025; color: #1f1f1f;">B</div>
+                Budget Guy
+              </div>
+              <div class="mini-card" style="background: linear-gradient(135deg, #57d025, #4db820); color: #1f1f1f;">
+                <div style="opacity: 0.6; font-size: 0.4rem;">AVAILABLE</div>
+                <div style="font-weight: 700; font-size: 0.7rem;">$1,245.00</div>
+              </div>
+              <div class="mini-row" style="background: #fff; color: #1f1f1f; border-bottom: 1px solid #e0dcd4;">
+                <span>Rent</span><span>$1,500</span>
+              </div>
+              <div class="mini-row" style="background: #fff; color: #1f1f1f; border-bottom: 1px solid #e0dcd4;">
+                <span>Groceries</span><span>$400</span>
+              </div>
+              <div class="mini-nav" style="background: #f5f1e8; color: #a3a3a3; border-top: 1px solid #e0dcd4;">
+                <span style="color: #57d025;">Budget</span>
+                <span>Trans</span>
+                <span>Accts</span>
+                <span>Plan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-note" style="max-width: 600px; margin: 12px auto 0;">Slate: dark surfaces (#404040 bg, #1f1f1f cards). Cream: warm light surfaces (#f5f1e8 bg, #fff cards). All via CSS variables.</div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- DESIGN SYSTEM REFERENCE                        -->
+  <!-- ============================================== -->
+
+  <div class="section-header">Design System Reference</div>
+
+  <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+    <!-- Surface Hierarchy -->
+    <div style="margin-bottom: 30px;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-bottom: 12px;">Surface Hierarchy (5 layers)</div>
+      <div style="display: flex; gap: 4px; height: 80px; border-radius: 12px; overflow: hidden;">
+        <div style="flex: 1; background: var(--surface-inset); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Inset</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#0f0f0f</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">inputs, stats</span>
+        </div>
+        <div style="flex: 1; background: var(--surface-header); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Header</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#171717</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">app chrome</span>
+        </div>
+        <div style="flex: 1; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Surface</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#1f1f1f</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">cards</span>
+        </div>
+        <div style="flex: 1; background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Elevated</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#262626</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">raised items</span>
+        </div>
+        <div style="flex: 1; background: var(--surface-overlay); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Overlay</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#333333</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">hovers</span>
+        </div>
+        <div style="flex: 1; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 600;">Bg</span>
+          <span style="font-size: 0.5rem; color: var(--text-subtle);">#404040</span>
+          <span style="font-size: 0.45rem; color: var(--text-subtle);">page bg</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semantic Colors -->
+    <div style="margin-bottom: 30px;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-bottom: 12px;">Semantic / Financial Colors</div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 30px; height: 30px; background: var(--success); border-radius: 6px;"></div>
+          <div>
+            <div style="font-size: 0.7rem; color: var(--text-body); font-weight: 600;">Income / Success</div>
+            <div style="font-size: 0.55rem; color: var(--text-subtle);">#57d025</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 30px; height: 30px; background: var(--danger); border-radius: 6px;"></div>
+          <div>
+            <div style="font-size: 0.7rem; color: var(--text-body); font-weight: 600;">Expense / Danger</div>
+            <div style="font-size: 0.55rem; color: var(--text-subtle);">#ef4444</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 30px; height: 30px; background: var(--info); border-radius: 6px;"></div>
+          <div>
+            <div style="font-size: 0.7rem; color: var(--text-body); font-weight: 600;">Transfer / Info</div>
+            <div style="font-size: 0.55rem; color: var(--text-subtle);">#3b82f6</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 30px; height: 30px; background: var(--warning); border-radius: 6px;"></div>
+          <div>
+            <div style="font-size: 0.7rem; color: var(--text-body); font-weight: 600;">Warning</div>
+            <div style="font-size: 0.55rem; color: var(--text-subtle);">#f47612</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Focus Glow -->
+    <div style="margin-bottom: 30px;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-bottom: 12px;">Focus Glow Effect</div>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div style="background: var(--surface-inset); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 0.75rem; color: var(--text-subtle); width: 200px;">Unfocused input</div>
+        <div style="background: var(--surface-inset); border-radius: 8px; padding: 10px 16px; font-size: 0.75rem; color: var(--text-body); width: 200px; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px rgba(87, 208, 37, 0.5), 0 0 12px rgba(87, 208, 37, 0.25);">Focused input</div>
+      </div>
+    </div>
+
+    <!-- Font -->
+    <div style="margin-bottom: 40px;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-bottom: 12px;">Typography: Figtree</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-body);">Bold 700 - Headings</div>
+      <div style="font-size: 1rem; font-weight: 600; color: var(--text-body);">Semibold 600 - Subheadings</div>
+      <div style="font-size: 0.875rem; font-weight: 500; color: var(--text-muted);">Medium 500 - Labels</div>
+      <div style="font-size: 0.875rem; font-weight: 400; color: var(--text-subtle);">Regular 400 - Body text</div>
+    </div>
+  </div>
+
+</body>
+</html>

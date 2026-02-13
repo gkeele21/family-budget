@@ -29,12 +29,19 @@ class TransactionController extends Controller
         $recurringFilter = $request->get('recurring'); // 'all', 'recurring'
 
         $query = $budget->transactions()
-            ->with(['account', 'category', 'payee', 'splits.category'])
+            ->with(['account', 'category', 'payee', 'splits.category', 'transferPair.account'])
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc');
 
         if ($accountFilter) {
             $query->where('account_id', $accountFilter);
+        } else {
+            // When viewing all accounts, consolidate transfers into one row
+            // Keep only the outflow side (negative amount) of each transfer pair
+            $query->where(function ($q) {
+                $q->where('type', '!=', 'transfer')
+                  ->orWhere('amount', '<', 0);
+            });
         }
 
         // Date range filter
@@ -78,7 +85,11 @@ class TransactionController extends Controller
         $transactions = $query->get()->map(fn($t) => [
             'id' => $t->id,
             'date' => $t->date->format('Y-m-d'),
-            'payee' => $t->payee?->name ?? ($t->type === 'transfer' ? 'Transfer' : 'Unknown'),
+            'payee' => $t->type === 'transfer'
+                ? ($t->amount < 0
+                    ? $t->account->name . ' → ' . ($t->transferPair?->account?->name ?? 'Unknown')
+                    : ($t->transferPair?->account?->name ?? 'Unknown') . ' → ' . $t->account->name)
+                : ($t->payee?->name ?? 'Unknown'),
             'account' => $t->account->name,
             'account_id' => $t->account_id,
             'category' => $t->isSplit()
@@ -106,6 +117,23 @@ class TransactionController extends Controller
             ->orderBy('sort_order')
             ->get(['id', 'name', 'type']);
 
+        // Load recurring transactions for the "Recurring" tab
+        $recurringTransactions = $budget->recurringTransactions()
+            ->with(['account', 'category', 'payee'])
+            ->orderBy('next_date')
+            ->get()
+            ->map(fn($r) => [
+                'id' => $r->id,
+                'payee' => $r->payee?->name ?? 'Unknown',
+                'account' => $r->account->name,
+                'category' => $r->category?->name,
+                'amount' => (float) $r->amount,
+                'type' => $r->type,
+                'frequency' => $r->frequency,
+                'next_date' => $r->next_date->format('Y-m-d'),
+                'is_active' => $r->is_active,
+            ]);
+
         return Inertia::render('Transactions/Index', [
             'transactions' => $groupedTransactions,
             'accounts' => $accounts,
@@ -115,6 +143,7 @@ class TransactionController extends Controller
             'endDate' => $endDate,
             'clearedFilter' => $clearedFilter ?? 'all',
             'recurringFilter' => $recurringFilter ?? 'all',
+            'recurring' => $recurringTransactions,
         ]);
     }
 
@@ -205,7 +234,15 @@ class TransactionController extends Controller
             $amount = -abs($amount);
         }
 
+        // Auto-clear cash account transactions
+        $account = Account::find($validated['account_id']);
+        $cleared = $account->type === 'cash' ? true : ($validated['cleared'] ?? false);
+
         if ($validated['type'] === 'transfer') {
+            $toAccount = Account::find($validated['to_account_id']);
+            $fromCleared = $account->type === 'cash' ? true : ($validated['cleared'] ?? false);
+            $toCleared = $toAccount->type === 'cash' ? true : ($validated['cleared'] ?? false);
+
             // Create two linked transactions
             $fromTransaction = Transaction::create([
                 'budget_id' => $budget->id,
@@ -215,7 +252,7 @@ class TransactionController extends Controller
                 'amount' => -abs($validated['amount']),
                 'type' => 'transfer',
                 'date' => $validated['date'],
-                'cleared' => $validated['cleared'] ?? false,
+                'cleared' => $fromCleared,
                 'memo' => $validated['memo'],
                 'created_by' => $user->id,
             ]);
@@ -228,7 +265,7 @@ class TransactionController extends Controller
                 'amount' => abs($validated['amount']),
                 'type' => 'transfer',
                 'date' => $validated['date'],
-                'cleared' => $validated['cleared'] ?? false,
+                'cleared' => $toCleared,
                 'memo' => $validated['memo'],
                 'transfer_pair_id' => $fromTransaction->id,
                 'created_by' => $user->id,
@@ -236,7 +273,7 @@ class TransactionController extends Controller
 
             $fromTransaction->update(['transfer_pair_id' => $toTransaction->id]);
         } else {
-            DB::transaction(function () use ($validated, $budget, $payeeId, $amount, $user) {
+            DB::transaction(function () use ($validated, $budget, $payeeId, $amount, $user, $cleared) {
                 // Create the main transaction
                 $transaction = Transaction::create([
                     'budget_id' => $budget->id,
@@ -246,7 +283,7 @@ class TransactionController extends Controller
                     'amount' => $amount,
                     'type' => $validated['type'],
                     'date' => $validated['date'],
-                    'cleared' => $validated['cleared'] ?? false,
+                    'cleared' => $cleared,
                     'memo' => $validated['memo'],
                     'created_by' => $user->id,
                 ]);

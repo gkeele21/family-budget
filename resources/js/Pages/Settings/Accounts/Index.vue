@@ -1,17 +1,31 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 import TextField from '@/Components/Form/TextField.vue';
 import AmountField from '@/Components/Form/AmountField.vue';
 import Button from '@/Components/Base/Button.vue';
 import Modal from '@/Components/Base/Modal.vue';
+import draggable from 'vuedraggable';
 
 const props = defineProps({
     accounts: Array,
 });
 
 const showAddModal = ref(false);
+const orderedAccounts = ref([...props.accounts]);
+
+watch(() => props.accounts, (newAccounts) => {
+    orderedAccounts.value = [...newAccounts];
+});
+
+const saveOrder = () => {
+    const ids = orderedAccounts.value.map(a => a.id);
+    router.post(route('accounts.reorder'), { ids }, {
+        preserveScroll: true,
+        preserveState: true,
+    });
+};
 
 const form = useForm({
     name: '',
@@ -70,35 +84,54 @@ const closeModal = () => {
                 </svg>
             </Link>
         </template>
-
         <div class="p-4 space-y-4">
             <!-- Account List -->
             <div class="bg-surface rounded-card divide-y divide-border">
-                <Link
-                    v-for="account in accounts"
-                    :key="account.id"
-                    :href="route('accounts.edit', account.id)"
-                    class="flex items-center justify-between p-4 hover:bg-surface-secondary"
-                    :class="{ 'opacity-50': account.is_closed }"
+                <draggable
+                    v-model="orderedAccounts"
+                    item-key="id"
+                    handle=".drag-handle"
+                    ghost-class="opacity-30"
+                    :animation="200"
+                    tag="div"
+                    class="divide-y divide-border"
+                    @end="saveOrder"
                 >
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">{{ getAccountIcon(account.type) }}</span>
-                        <div>
-                            <div class="font-medium text-body">
-                                {{ account.name }}
-                                <span v-if="account.is_closed" class="text-xs text-subtle">(Closed)</span>
+                    <template #item="{ element: account }">
+                        <div
+                            class="flex items-center"
+                            :class="{ 'opacity-50': account.is_closed }"
+                        >
+                            <div class="drag-handle cursor-grab active:cursor-grabbing p-4 pr-2 text-subtle">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                </svg>
                             </div>
-                            <div class="text-sm text-subtle capitalize">
-                                {{ account.type.replace('_', ' ') }}
-                            </div>
+                            <Link
+                                :href="route('accounts.edit', account.id)"
+                                class="flex items-center justify-between flex-1 py-4 pr-4 hover:bg-surface-secondary"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">{{ getAccountIcon(account.type) }}</span>
+                                    <div>
+                                        <div class="font-medium text-body">
+                                            {{ account.name }}
+                                            <span v-if="account.is_closed" class="text-xs text-subtle">(Closed)</span>
+                                        </div>
+                                        <div class="text-sm text-subtle capitalize">
+                                            {{ account.type.replace('_', ' ') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-body">
+                                        {{ formatCurrency(account.balance) }}
+                                    </div>
+                                </div>
+                            </Link>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-semibold text-body">
-                            {{ formatCurrency(account.balance) }}
-                        </div>
-                    </div>
-                </Link>
+                    </template>
+                </draggable>
             </div>
 
             <!-- Add Account Button -->

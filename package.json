@@ -29,6 +29,7 @@
         "@capacitor/splash-screen": "^8.0.0",
         "@capacitor/status-bar": "^8.0.0",
         "@headlessui/vue": "^1.7.23",
-        "@heroicons/vue": "^2.2.0"
+        "@heroicons/vue": "^2.2.0",
+        "vuedraggable": "^4.1.0"
     }
 }

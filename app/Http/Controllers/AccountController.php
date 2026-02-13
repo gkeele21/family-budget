@@ -105,4 +105,31 @@ class AccountController extends Controller
 
         return redirect()->route('settings.accounts');
     }
+
+    public function reorder(Request $request)
+    {
+        $budget = Auth::user()->currentBudget;
+
+        if (!$budget) {
+            return redirect()->route('budgets.create');
+        }
+
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:accounts,id',
+        ]);
+
+        $accountIds = $budget->accounts()->pluck('id')->toArray();
+        foreach ($validated['ids'] as $id) {
+            if (!in_array($id, $accountIds)) {
+                abort(403);
+            }
+        }
+
+        foreach ($validated['ids'] as $index => $id) {
+            Account::where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return back();
+    }
 }

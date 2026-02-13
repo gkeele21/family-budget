@@ -249,7 +249,8 @@ class RecurringTransactionController extends Controller
         $count = 0;
         $today = now()->startOfDay();
 
-        $dueRecurring = RecurringTransaction::where('is_active', true)
+        $dueRecurring = RecurringTransaction::with(['account', 'budget'])
+            ->where('is_active', true)
             ->where('next_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -263,6 +264,9 @@ class RecurringTransactionController extends Controller
                 ? -abs($recurring->amount)
                 : abs($recurring->amount);
 
+            // Auto-clear cash account transactions
+            $cleared = $recurring->account->type === 'cash';
+
             Transaction::create([
                 'budget_id' => $recurring->budget_id,
                 'account_id' => $recurring->account_id,
@@ -271,7 +275,7 @@ class RecurringTransactionController extends Controller
                 'amount' => $amount,
                 'type' => $recurring->type,
                 'date' => $recurring->next_date,
-                'cleared' => false,
+                'cleared' => $cleared,
                 'recurring_id' => $recurring->id,
                 'created_by' => $recurring->budget->owner_id,
             ]);

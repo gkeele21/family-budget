@@ -1,12 +1,13 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import TextField from '@/Components/Form/TextField.vue';
 import AmountField from '@/Components/Form/AmountField.vue';
 import PickerField from '@/Components/Form/PickerField.vue';
 import Button from '@/Components/Base/Button.vue';
 import Modal from '@/Components/Base/Modal.vue';
+import draggable from 'vuedraggable';
 
 const props = defineProps({
     categoryGroups: Array,
@@ -14,7 +15,7 @@ const props = defineProps({
 
 // Transform category groups for PickerField
 const groupOptions = computed(() => {
-    return props.categoryGroups.map(g => ({ id: g.id, name: g.name }));
+    return orderedGroups.value.map(g => ({ id: g.id, name: g.name }));
 });
 
 const showAddGroupModal = ref(false);
@@ -25,6 +26,39 @@ const selectedGroupId = ref(null);
 const editingCategory = ref(null);
 const editingGroup = ref(null);
 const showIconPicker = ref(false);
+
+const orderedGroups = ref(props.categoryGroups.map(g => ({
+    ...g,
+    categories: [...g.categories],
+})));
+
+watch(() => props.categoryGroups, (newGroups) => {
+    orderedGroups.value = newGroups.map(g => ({
+        ...g,
+        categories: [...g.categories],
+    }));
+});
+
+const saveGroupOrder = () => {
+    const groupIds = orderedGroups.value.map(g => g.id);
+    router.post(route('category-groups.reorder'), { ids: groupIds }, {
+        preserveScroll: true,
+        preserveState: true,
+    });
+};
+
+const saveCategoryOrder = (group) => {
+    const categoryIds = group.categories.map(c => c.id);
+    if (categoryIds.length > 0) {
+        router.post(route('categories.reorder'), {
+            group_id: group.id,
+            ids: categoryIds,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+};
 
 // Track collapsed state for each group (all expanded by default)
 const collapsedGroups = ref({});
@@ -163,7 +197,6 @@ const isGroupCollapsed = (groupId) => {
                 </svg>
             </Link>
         </template>
-
         <div class="p-4 space-y-4">
             <!-- Add Group Button -->
             <Button
@@ -173,81 +206,114 @@ const isGroupCollapsed = (groupId) => {
             >
                 + Add Group
             </Button>
-            <!-- Category Groups -->
-            <div v-for="group in categoryGroups" :key="group.id" class="space-y-2">
-                <!-- Group Header -->
-                <div class="flex items-center justify-between px-1">
-                    <div class="flex items-center gap-2">
-                        <!-- Expand/Collapse chevron -->
-                        <button
-                            @click="toggleGroup(group.id)"
-                            class="p-1 -m-1"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4 text-subtle transition-transform"
-                                :class="{ '-rotate-90': isGroupCollapsed(group.id) }"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <!-- Group name - clickable to edit -->
-                        <button
-                            @click="openEditGroup(group)"
-                            class="text-sm font-semibold text-subtle uppercase tracking-wide hover:text-body"
-                        >
-                            {{ group.name }}
-                        </button>
-                        <span class="text-xs text-subtle font-normal">({{ group.categories.length }})</span>
-                    </div>
-                </div>
 
-                <!-- Collapsible categories list -->
-                <Transition
-                    enter-active-class="transition-all duration-200 ease-out"
-                    enter-from-class="opacity-0 max-h-0"
-                    enter-to-class="opacity-100 max-h-[2000px]"
-                    leave-active-class="transition-all duration-200 ease-in"
-                    leave-from-class="opacity-100 max-h-[2000px]"
-                    leave-to-class="opacity-0 max-h-0"
-                >
-                    <div v-show="!isGroupCollapsed(group.id)" class="bg-surface rounded-card divide-y divide-border overflow-hidden">
-                        <button
-                            v-for="category in group.categories"
-                            :key="category.id"
-                            @click="openEditCategory(category, group.id)"
-                            class="w-full flex items-center justify-between p-4 hover:bg-surface-secondary text-left"
-                            :class="{ 'opacity-50': category.is_hidden }"
+            <draggable
+                v-model="orderedGroups"
+                item-key="id"
+                handle=".group-drag-handle"
+                ghost-class="opacity-30"
+                :animation="200"
+                @end="saveGroupOrder"
+            >
+                <template #item="{ element: group }">
+                    <div class="space-y-2 mb-4">
+                        <!-- Group Header -->
+                        <div class="flex items-center gap-1 px-1">
+                            <div class="group-drag-handle cursor-grab active:cursor-grabbing p-1 -ml-1 text-subtle">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                </svg>
+                            </div>
+                            <!-- Expand/Collapse chevron -->
+                            <button
+                                @click="toggleGroup(group.id)"
+                                class="p-1 -m-1"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-4 w-4 text-subtle transition-transform"
+                                    :class="{ '-rotate-90': isGroupCollapsed(group.id) }"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <!-- Group name - clickable to edit -->
+                            <button
+                                @click="openEditGroup(group)"
+                                class="text-sm font-semibold text-subtle uppercase tracking-wide hover:text-body"
+                            >
+                                {{ group.name }}
+                            </button>
+                            <span class="text-xs text-subtle font-normal">({{ group.categories.length }})</span>
+                        </div>
+
+                        <!-- Collapsible categories list -->
+                        <Transition
+                            enter-active-class="transition-all duration-200 ease-out"
+                            enter-from-class="opacity-0 max-h-0"
+                            enter-to-class="opacity-100 max-h-[2000px]"
+                            leave-active-class="transition-all duration-200 ease-in"
+                            leave-from-class="opacity-100 max-h-[2000px]"
+                            leave-to-class="opacity-0 max-h-0"
                         >
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">{{ category.icon || '📁' }}</span>
-                                <div>
-                                    <div class="font-medium text-body">{{ category.name }}</div>
-                                    <div v-if="category.default_amount" class="text-sm text-subtle">
-                                        Default: {{ formatCurrency(category.default_amount) }}
-                                    </div>
+                            <div v-show="!isGroupCollapsed(group.id)">
+                                <div class="bg-surface rounded-card divide-y divide-border overflow-hidden">
+                                    <draggable
+                                        v-model="group.categories"
+                                        item-key="id"
+                                        handle=".category-drag-handle"
+                                        ghost-class="opacity-30"
+                                        :animation="200"
+                                        @end="saveCategoryOrder(group)"
+                                    >
+                                        <template #item="{ element: category }">
+                                            <div
+                                                class="flex items-center"
+                                                :class="{ 'opacity-50': category.is_hidden }"
+                                            >
+                                                <div class="category-drag-handle cursor-grab active:cursor-grabbing pl-4 pr-2 py-4 text-subtle">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                                    </svg>
+                                                </div>
+                                                <button
+                                                    @click="openEditCategory(category, group.id)"
+                                                    class="flex-1 flex items-center justify-between py-4 pr-4 hover:bg-surface-secondary text-left"
+                                                >
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="text-xl">{{ category.icon || '📁' }}</span>
+                                                        <div>
+                                                            <div class="font-medium text-body">{{ category.name }}</div>
+                                                            <div v-if="category.default_amount" class="text-sm text-subtle">
+                                                                Default: {{ formatCurrency(category.default_amount) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-subtle">›</span>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </draggable>
+                                </div>
+
+                                <!-- Add Category button for this group -->
+                                <div class="mt-2">
+                                    <Button
+                                        variant="outline"
+                                        full-width
+                                        @click="openAddCategory(group.id)"
+                                    >
+                                        + Add Category
+                                    </Button>
                                 </div>
                             </div>
-                            <span class="text-subtle">›</span>
-                        </button>
-
+                        </Transition>
                     </div>
-                </Transition>
-
-                <!-- Add Category button for this group -->
-                <div v-show="!isGroupCollapsed(group.id)" class="mt-2">
-                    <Button
-                        variant="outline"
-                        full-width
-                        @click="openAddCategory(group.id)"
-                    >
-                        + Add Category
-                    </Button>
-                </div>
-            </div>
+                </template>
+            </draggable>
         </div>
 
         <!-- Add Group Modal -->

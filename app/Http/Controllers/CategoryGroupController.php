@@ -53,4 +53,31 @@ class CategoryGroupController extends Controller
 
         return back();
     }
+
+    public function reorder(Request $request)
+    {
+        $budget = Auth::user()->currentBudget;
+
+        if (!$budget) {
+            return redirect()->route('budgets.create');
+        }
+
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:category_groups,id',
+        ]);
+
+        $groupIds = $budget->categoryGroups()->pluck('id')->toArray();
+        foreach ($validated['ids'] as $id) {
+            if (!in_array($id, $groupIds)) {
+                abort(403);
+            }
+        }
+
+        foreach ($validated['ids'] as $index => $id) {
+            CategoryGroup::where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return back();
+    }
 }

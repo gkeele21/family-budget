@@ -48,6 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/budget/projections/clear', [BudgetController::class, 'clearProjections'])->name('budget.clear-projections');
     Route::get('/budget/{month}/category/{category}', [BudgetController::class, 'categoryDetail'])->name('budget.category-detail');
 
+    // Reorder endpoints (must be before resource routes)
+    Route::post('/accounts/reorder', [AccountController::class, 'reorder'])->name('accounts.reorder');
+    Route::post('/category-groups/reorder', [CategoryGroupController::class, 'reorder'])->name('category-groups.reorder');
+    Route::post('/categories/reorder', [CategoryController::class, 'reorder'])->name('categories.reorder');
+
     // Accounts
     Route::resource('accounts', AccountController::class)->except(['show']);
 
