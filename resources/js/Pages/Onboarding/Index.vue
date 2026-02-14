@@ -9,7 +9,7 @@ import Button from '@/Components/Base/Button.vue';
 
     <div class="min-h-screen bg-surface-header flex flex-col">
         <!-- Dark Top Section with Logo + Glow -->
-        <div class="relative px-6 pt-10 pb-10 text-center flex flex-col items-center">
+        <div class="relative px-6 pt-10 pb-10 text-center flex flex-col items-center" style="padding-top: max(2.5rem, env(safe-area-inset-top) + 1rem);">
             <!-- Green radial glow behind logo -->
             <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 60%, rgb(var(--color-primary) / 0.1) 0%, transparent 60%);"></div>
 

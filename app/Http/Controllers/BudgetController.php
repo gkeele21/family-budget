@@ -61,7 +61,7 @@ class BudgetController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         return Inertia::render('Budgets/Edit', [
@@ -79,7 +79,7 @@ class BudgetController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([
@@ -91,38 +91,6 @@ class BudgetController extends Controller
         $budget->update($validated);
 
         return redirect()->route('settings.index');
-    }
-
-    public function create()
-    {
-        return Inertia::render('Budgets/Create');
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'default_monthly_income' => 'nullable|numeric|min:0',
-        ]);
-
-        $user = Auth::user();
-
-        $budget = Budget::create([
-            'name' => $validated['name'],
-            'owner_id' => $user->id,
-            'default_monthly_income' => $validated['default_monthly_income'] ?? null,
-        ]);
-
-        // Add user to budget_users as owner
-        $budget->users()->attach($user->id, [
-            'role' => 'owner',
-            'accepted_at' => now(),
-        ]);
-
-        // Set as current budget
-        $user->update(['current_budget_id' => $budget->id]);
-
-        return redirect()->route('dashboard');
     }
 
     public function select(Budget $budget)
@@ -145,7 +113,7 @@ class BudgetController extends Controller
         $budget = $user->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $month = $month ?? now()->format('Y-m');

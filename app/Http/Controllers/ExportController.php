@@ -15,7 +15,7 @@ class ExportController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         // Get date range from transactions
@@ -36,7 +36,7 @@ class ExportController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([

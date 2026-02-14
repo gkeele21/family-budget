@@ -13,7 +13,7 @@ defineProps({
 <template>
     <div class="min-h-screen bg-surface-header flex flex-col">
         <!-- Dark Header with Logo Glow -->
-        <div class="relative px-6 pt-10 pb-20 text-center flex flex-col items-center">
+        <div class="relative px-6 pt-10 pb-20 text-center flex flex-col items-center" style="padding-top: max(2.5rem, env(safe-area-inset-top) + 1rem);">
             <!-- Green radial glow behind logo -->
             <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 50%, rgb(var(--color-primary) / 0.08) 0%, transparent 60%);"></div>
 

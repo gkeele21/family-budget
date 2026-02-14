@@ -86,7 +86,7 @@ const templates = [
 
     <div class="min-h-screen bg-surface-header flex flex-col">
         <!-- Progress Bar -->
-        <div class="bg-surface border-b border-border px-6 py-4">
+        <div class="bg-surface border-b border-border px-6 py-4" style="padding-top: max(1rem, env(safe-area-inset-top) + 0.5rem);">
             <div class="max-w-md mx-auto">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-body">Step {{ currentStep }} of {{ totalSteps }}</span>

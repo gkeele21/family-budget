@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $budget = $user->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         // Get accounts grouped by type

@@ -15,7 +15,7 @@ class PlanController extends Controller
         $budget = $user->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         // Get all category groups with categories and their projections

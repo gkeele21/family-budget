@@ -14,7 +14,7 @@ class CategoryController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([
@@ -69,7 +69,7 @@ class CategoryController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([

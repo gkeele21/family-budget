@@ -33,6 +33,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // If user has no budget, send to onboarding setup
+        if (!$request->user()->current_budget_id) {
+            return redirect()->route('onboarding.setup');
+        }
+
         return redirect()->intended(route('budget.index', absolute: false));
     }
 

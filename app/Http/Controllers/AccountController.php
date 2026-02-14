@@ -14,7 +14,7 @@ class AccountController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $accounts = $budget->accounts()
@@ -44,7 +44,7 @@ class AccountController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([
@@ -111,7 +111,7 @@ class AccountController extends Controller
         $budget = Auth::user()->currentBudget;
 
         if (!$budget) {
-            return redirect()->route('budgets.create');
+            return redirect()->route('onboarding.setup');
         }
 
         $validated = $request->validate([
