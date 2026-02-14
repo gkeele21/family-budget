@@ -75,7 +75,11 @@ const declineInvite = (token) => {
 
             <!-- Empty State -->
             <div v-else class="text-center py-12">
-                <div class="text-4xl mb-4">!</div>
+                <div class="mb-4 flex justify-center">
+                    <svg class="w-10 h-10 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
                 <h3 class="text-lg font-medium text-body mb-2">No pending invites</h3>
                 <p class="text-subtle">
                     You don't have any budget invites at the moment.

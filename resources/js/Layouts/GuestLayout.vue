@@ -11,10 +11,13 @@ defineProps({
 </script>
 
 <template>
-    <div class="min-h-screen bg-bg flex flex-col">
-        <!-- Dark Header -->
-        <div class="bg-bg px-6 pt-10 pb-20 text-center">
-            <Link href="/">
+    <div class="min-h-screen bg-surface-header flex flex-col">
+        <!-- Dark Header with Logo Glow -->
+        <div class="relative px-6 pt-10 pb-20 text-center flex flex-col items-center">
+            <!-- Green radial glow behind logo -->
+            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 50%, rgb(var(--color-primary) / 0.08) 0%, transparent 60%);"></div>
+
+            <Link href="/" class="relative" style="filter: drop-shadow(0 0 24px rgb(var(--color-primary) / 0.2));">
                 <ApplicationLogo size="lg" />
             </Link>
             <h1 class="text-2xl font-bold text-body mt-3">{{ title }}</h1>

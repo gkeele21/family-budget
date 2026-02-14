@@ -45,7 +45,7 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="username"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="you@example.com"
                     />
                 </div>
@@ -59,7 +59,7 @@ const submit = () => {
                         v-model="form.password"
                         required
                         autocomplete="current-password"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="••••••••"
                     />
                 </div>

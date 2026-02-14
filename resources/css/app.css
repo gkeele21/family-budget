@@ -25,7 +25,7 @@
         --color-surface-elevated: 38 38 38; /* #262626 - elevated content */
         --color-surface-overlay: 51 51 51;  /* #333333 - hover states on surfaces */
         --color-surface-inset: 15 15 15;   /* #0f0f0f - inputs, recessed areas */
-        --color-surface-header: 23 23 23;  /* #171717 - headers, nav bars */
+        --color-surface-header: 15 15 15;  /* #0f0f0f - headers, nav bars (matches logo bg) */
 
         /* Text */
         --color-text: 245 245 245;         /* #f5f5f5 - primary text */

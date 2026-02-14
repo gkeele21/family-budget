@@ -176,7 +176,11 @@ const isOverspent = props.category.available < 0;
                 v-else
                 class="bg-surface rounded-card p-8 text-center"
             >
-                <div class="text-4xl mb-4">{{ category.icon || '📊' }}</div>
+                <div class="mb-4 flex justify-center">
+                    <svg class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
                 <h3 class="text-lg font-medium text-body mb-2">No transactions yet</h3>
                 <p class="text-subtle mb-4">
                     No spending in this category for {{ formatMonth(month) }}.

@@ -33,7 +33,7 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="name"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="Jane Smith"
                     />
                 </div>
@@ -47,7 +47,7 @@ const submit = () => {
                         v-model="form.email"
                         required
                         autocomplete="username"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="you@example.com"
                     />
                 </div>
@@ -61,7 +61,7 @@ const submit = () => {
                         v-model="form.password"
                         required
                         autocomplete="new-password"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="••••••••"
                     />
                 </div>
@@ -75,7 +75,7 @@ const submit = () => {
                         v-model="form.password_confirmation"
                         required
                         autocomplete="new-password"
-                        class="text-sm text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
+                        class="text-base text-body text-right bg-transparent border-none focus:ring-0 focus:outline-none p-0 w-2/3"
                         placeholder="••••••••"
                     />
                 </div>

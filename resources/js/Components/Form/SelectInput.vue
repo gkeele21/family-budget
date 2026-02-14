@@ -56,7 +56,7 @@ const selectClasses = computed(() => {
     if (props.variant === 'minimal') {
         return [
             base,
-            'bg-transparent text-sm font-medium truncate',
+            'bg-transparent text-base font-medium truncate',
             hasValue.value ? 'text-primary' : 'text-subtle',
         ];
     }

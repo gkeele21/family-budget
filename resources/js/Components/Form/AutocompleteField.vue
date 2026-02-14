@@ -92,7 +92,7 @@ const selectItem = (item) => {
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :class="[
-                    'flex-1 bg-transparent focus:outline-none text-sm font-medium text-right min-w-0',
+                    'flex-1 bg-transparent focus:outline-none text-base font-medium text-right min-w-0',
                     modelValue ? 'text-body' : 'text-subtle',
                     disabled ? 'opacity-50' : '',
                 ]"

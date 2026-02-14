@@ -16,7 +16,7 @@ const form = useForm({
     account_name: '',
     account_type: 'checking',
     account_balance: '',
-    use_template: 'basic',
+    use_template: 'starter',
 });
 
 const formatMonthLabel = (monthStr) => {
@@ -51,6 +51,15 @@ const submit = () => {
     form.post(route('onboarding.store'));
 };
 
+const stepConfig = computed(() => {
+    const configs = {
+        1: { colorVar: '--color-primary', colorClass: 'primary' },
+        2: { colorVar: '--color-info', colorClass: 'info' },
+        3: { colorVar: '--color-warning', colorClass: 'warning' },
+    };
+    return configs[currentStep.value];
+});
+
 const accountTypes = [
     { value: 'checking', label: 'Checking', icon: '🏦' },
     { value: 'savings', label: 'Savings', icon: '💰' },
@@ -60,19 +69,14 @@ const accountTypes = [
 
 const templates = [
     {
-        value: 'basic',
-        label: 'Basic',
-        description: 'Perfect for getting started. Includes common categories for bills, everyday spending, and savings.',
+        value: 'starter',
+        label: 'Starter Template',
+        description: 'Common categories for bills, everyday spending, savings, and debt. About 15 categories to get you going.',
     },
     {
-        value: 'detailed',
-        label: 'Detailed',
-        description: 'More granular categories for tracking housing, utilities, food, transportation, and more.',
-    },
-    {
-        value: 'minimal',
-        label: 'Minimal',
-        description: 'Just the essentials. Three groups with basic categories you can customize later.',
+        value: 'none',
+        label: 'Start Fresh',
+        description: 'No categories — build your budget from scratch. Best if you know exactly what you want.',
     },
 ];
 </script>
@@ -80,7 +84,7 @@ const templates = [
 <template>
     <Head title="Setup" />
 
-    <div class="min-h-screen bg-bg flex flex-col">
+    <div class="min-h-screen bg-surface-header flex flex-col">
         <!-- Progress Bar -->
         <div class="bg-surface border-b border-border px-6 py-4">
             <div class="max-w-md mx-auto">
@@ -103,20 +107,30 @@ const templates = [
                 </div>
             </div>
         </div>
+        <!-- Colored accent bar -->
+        <div
+            class="h-1 transition-all duration-300"
+            :style="{ background: `linear-gradient(90deg, rgb(var(${stepConfig.colorVar})), transparent)` }"
+        ></div>
 
         <!-- Step Content -->
-        <div class="flex-1 flex flex-col items-center justify-center px-6 py-8">
+        <div class="flex-1 flex flex-col items-center px-6 py-8">
             <div class="w-full max-w-md">
                 <!-- Step 1: Budget Name -->
                 <div v-if="currentStep === 1" class="space-y-6">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl">💰</span>
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+                            :style="{ border: `2px solid rgb(var(${stepConfig.colorVar}))` }"
+                        >
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" :style="{ stroke: `rgb(var(${stepConfig.colorVar}))` }" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-body mb-2">Name your budget</h2>
-                        <p class="text-subtle">
-                            Choose a name for your budget. You can change this later.
-                        </p>
+                        <div>
+                            <h2 class="text-xl font-bold text-body mb-0.5">Name your budget</h2>
+                            <p class="text-sm text-subtle">Choose a name. You can change this later.</p>
+                        </div>
                     </div>
 
                     <div class="bg-surface rounded-card overflow-hidden">
@@ -154,14 +168,19 @@ const templates = [
 
                 <!-- Step 2: First Account -->
                 <div v-if="currentStep === 2" class="space-y-6">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl">🏦</span>
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+                            :style="{ border: `2px solid rgb(var(${stepConfig.colorVar}))` }"
+                        >
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" :style="{ stroke: `rgb(var(${stepConfig.colorVar}))` }" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-body mb-2">Add your first account</h2>
-                        <p class="text-subtle">
-                            Add a checking, savings, or credit card account. You can add more later.
-                        </p>
+                        <div>
+                            <h2 class="text-xl font-bold text-body mb-0.5">Add your first account</h2>
+                            <p class="text-sm text-subtle">Add a checking, savings, or credit card.</p>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -217,14 +236,19 @@ const templates = [
 
                 <!-- Step 3: Category Template -->
                 <div v-if="currentStep === 3" class="space-y-6">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl">📋</span>
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+                            :style="{ border: `2px solid rgb(var(${stepConfig.colorVar}))` }"
+                        >
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" :style="{ stroke: `rgb(var(${stepConfig.colorVar}))` }" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-body mb-2">Choose your categories</h2>
-                        <p class="text-subtle">
-                            Start with a template. You can customize these anytime.
-                        </p>
+                        <div>
+                            <h2 class="text-xl font-bold text-body mb-0.5">Choose your categories</h2>
+                            <p class="text-sm text-subtle">Start with a template. Customize anytime.</p>
+                        </div>
                     </div>
 
                     <div class="space-y-3">
@@ -235,14 +259,14 @@ const templates = [
                             @click="form.use_template = template.value"
                             class="w-full text-left p-4 border-2 rounded-card transition-colors bg-surface"
                             :class="form.use_template === template.value
-                                ? 'border-primary bg-primary/5'
+                                ? 'border-warning bg-warning/5'
                                 : 'border-border hover:border-border-strong'"
                         >
                             <div class="flex items-center justify-between mb-1">
                                 <span class="font-semibold text-body">{{ template.label }}</span>
                                 <div
                                     v-if="form.use_template === template.value"
-                                    class="w-5 h-5 bg-primary rounded-full flex items-center justify-center"
+                                    class="w-5 h-5 bg-warning rounded-full flex items-center justify-center"
                                 >
                                     <svg class="w-3 h-3 text-inverse" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />

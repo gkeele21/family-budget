@@ -29,7 +29,7 @@ function formatInitialValue() {
 }
 
 const colorClass = computed(() => {
-    // If colorByType is false, use secondary blue like other fields
+    // If colorByType is false, use a neutral non-transaction color
     if (!props.colorByType) {
         return 'text-secondary';
     }
@@ -103,7 +103,7 @@ watch(() => props.modelValue, (newVal) => {
                 :required="required"
                 :disabled="disabled"
                 :class="[
-                    'bg-transparent focus:outline-none text-sm font-medium text-right w-28',
+                    'bg-transparent focus:outline-none text-base font-medium text-right w-28',
                     colorClass,
                     disabled ? 'opacity-50' : '',
                 ]"

@@ -55,15 +55,19 @@ const accountTypeOrder = ['cash', 'checking', 'savings', 'credit_card'];
                 v-if="Object.keys(accounts).length === 0"
                 class="text-center py-12"
             >
-                <div class="text-4xl mb-4">🏦</div>
+                <div class="mb-4 flex justify-center">
+                    <svg class="w-10 h-10 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                </div>
                 <h3 class="text-lg font-medium text-body mb-2">No accounts yet</h3>
                 <p class="text-subtle">
-                    Tap the settings icon above to add your accounts.
+                    Tap the + button to add your first account.
                 </p>
             </div>
         </div>
 
-        <template v-if="Object.keys(accounts).length > 0" #fab>
+        <template #fab>
             <FAB :href="route('settings.accounts', { add: 1 })" />
         </template>
     </AppLayout>

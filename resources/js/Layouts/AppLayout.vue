@@ -11,12 +11,12 @@ const isActive = (path) => {
 </script>
 
 <template>
-    <div class="h-screen bg-bg flex flex-col overflow-hidden">
+    <div class="h-dvh bg-bg flex flex-col overflow-hidden">
         <!-- Header -->
-        <header class="bg-surface-header text-body px-4 py-3 flex items-center justify-between flex-shrink-0" style="padding-top: max(0.75rem, var(--safe-area-inset-top))">
-            <div class="flex items-center gap-3">
+        <header class="bg-surface-header text-body px-4 py-0 flex items-center justify-between flex-shrink-0" style="padding-top: var(--safe-area-inset-top, 0px)">
+            <div class="flex items-center gap-3 py-1.5">
                 <slot name="header-left" />
-                <img src="/images/logo.png" alt="Budget Guy" class="h-8 w-8 rounded" />
+                <img src="/images/logo.png" alt="Budget Guy" class="h-11 w-11" />
                 <h1 class="text-lg font-semibold">
                     <slot name="title">Budget Guy</slot>
                 </h1>
@@ -33,7 +33,7 @@ const isActive = (path) => {
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-auto relative">
+        <main class="flex-1 min-h-0 overflow-auto relative">
             <slot />
             <!-- FAB (Floating Action Button) -->
             <slot name="fab" />

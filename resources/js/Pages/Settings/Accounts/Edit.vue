@@ -49,7 +49,7 @@ const deleteAccount = () => {
             </Link>
         </template>
 
-        <form @submit.prevent="submit" class="p-4 space-y-4">
+        <form @submit.prevent="submit" class="p-4 pb-8 space-y-4">
             <!-- Account Name -->
             <div class="bg-surface rounded-card overflow-hidden">
                 <TextField

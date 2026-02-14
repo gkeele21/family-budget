@@ -568,7 +568,14 @@ const formatNextDate = (dateStr, frequency) => {
                     v-if="Object.keys(transactions).length === 0"
                     class="text-center py-12"
                 >
-                    <div class="text-4xl mb-4">{{ searchQuery || hasActiveFilters ? '🔍' : '📝' }}</div>
+                    <div class="mb-4 flex justify-center">
+                        <svg v-if="searchQuery || hasActiveFilters" class="w-10 h-10 text-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <svg v-else class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
                     <h3 class="text-lg font-medium text-body mb-2">
                         {{ searchQuery || hasActiveFilters ? 'No results found' : 'No transactions yet' }}
                     </h3>
@@ -628,7 +635,11 @@ const formatNextDate = (dateStr, frequency) => {
                     </div>
                 </template>
                 <div v-else class="text-center py-12">
-                    <div class="text-4xl mb-4">🔄</div>
+                    <div class="mb-4 flex justify-center">
+                        <svg class="w-10 h-10 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </div>
                     <h3 class="text-lg font-medium text-body mb-2">No recurring transactions</h3>
                     <p class="text-subtle">Set up recurring bills and income to auto-create transactions.</p>
                 </div>

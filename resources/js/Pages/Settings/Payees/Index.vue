@@ -154,7 +154,11 @@ const getCategoryName = (categoryId) => {
 
             <!-- Empty State -->
             <div v-else class="bg-surface rounded-card p-8 text-center">
-                <div class="text-4xl mb-4">👤</div>
+                <div class="mb-4 flex justify-center">
+                    <svg class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
                 <h3 class="text-lg font-medium text-body mb-2">
                     {{ searchQuery ? 'No matches found' : 'No payees yet' }}
                 </h3>

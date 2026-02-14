@@ -656,7 +656,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                                     :value="editingValue ? '$' + editingValue : '$'"
                                     type="text"
                                     inputmode="decimal"
-                                    class="w-full px-1 py-1 text-right text-sm bg-surface rounded border border-primary outline-none"
+                                    class="w-full px-1 py-1 text-right text-base bg-surface rounded border border-primary outline-none"
                                     @input="onBudgetInput($event)"
                                     @blur="saveAmount(category.id)"
                                     @keyup.enter="$event.target.blur()"
@@ -734,7 +734,11 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                 v-if="categoryGroups.length === 0"
                 class="text-center py-12"
             >
-                <div class="text-4xl mb-4">📊</div>
+                <div class="mb-4 flex justify-center">
+                    <svg class="w-10 h-10 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
                 <h3 class="text-lg font-medium text-body mb-2">No categories yet</h3>
                 <p class="text-subtle">
                     Go to Settings to add categories and start budgeting.

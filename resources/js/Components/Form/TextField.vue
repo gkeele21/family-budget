@@ -34,7 +34,7 @@ const onInput = (e) => {
             :required="required"
             :disabled="disabled"
             :class="[
-                'flex-1 bg-transparent focus:outline-none text-sm font-medium min-w-0',
+                'flex-1 bg-transparent focus:outline-none text-base font-medium min-w-0',
                 textAlign === 'right' ? 'text-right' : 'text-left',
                 modelValue ? 'text-body' : 'text-subtle',
                 disabled ? 'opacity-50' : '',
