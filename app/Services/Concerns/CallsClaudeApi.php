@@ -7,13 +7,18 @@ use Illuminate\Support\Facades\Log;
 
 trait CallsClaudeApi
 {
+    private ?string $lastApiError = null;
+
     private function callClaudeApi(string $systemPrompt, string $userMessage): ?string
     {
+        $this->lastApiError = null;
+
         $apiKey = config('services.anthropic.api_key');
         $model = config('services.anthropic.model');
 
         if (!$apiKey) {
             Log::error('Voice: ANTHROPIC_API_KEY not configured');
+            $this->lastApiError = 'not_configured';
             return null;
         }
 
@@ -32,10 +37,16 @@ trait CallsClaudeApi
             ]);
 
             if (!$response->successful()) {
+                $body = $response->body();
                 Log::error('Voice: Claude API error', [
                     'status' => $response->status(),
-                    'body' => $response->body(),
+                    'body' => $body,
                 ]);
+
+                if (str_contains($body, 'credit balance')) {
+                    $this->lastApiError = 'billing';
+                }
+
                 return null;
             }
 
@@ -44,6 +55,15 @@ trait CallsClaudeApi
             Log::error('Voice: Claude API exception', ['error' => $e->getMessage()]);
             return null;
         }
+    }
+
+    private function getApiErrorMessage(): string
+    {
+        return match ($this->lastApiError) {
+            'billing' => 'AI service credits have run out. Please add credits to your Anthropic account.',
+            'not_configured' => 'AI service is not configured. Please set the API key.',
+            default => 'Could not connect to AI service. Please try again.',
+        };
     }
 
     private function parseClaudeResponse(?string $responseText): ?array

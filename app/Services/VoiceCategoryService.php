@@ -22,7 +22,7 @@ class VoiceCategoryService
         if ($claudeResponse === null) {
             return [
                 'status' => 'error',
-                'message' => 'Could not connect to AI service. Please try again.',
+                'message' => $this->getApiErrorMessage(),
             ];
         }
 

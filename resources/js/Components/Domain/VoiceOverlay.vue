@@ -191,6 +191,8 @@ function tryAgain() {
 
 const currentClarification = () => clarifications.value[currentClarificationIndex.value];
 
+const isServiceError = () => errorMessage.value.includes('AI service') || errorMessage.value.includes('credits');
+
 // Display text: show interim while listening, final when done
 const displayTranscript = () => {
     if (interimTranscript.value) {
@@ -317,10 +319,10 @@ const displayTranscript = () => {
                 <!-- ERROR STATE -->
                 <div v-else-if="state === 'error'" class="relative w-full max-w-sm bg-surface rounded-2xl p-8 text-center">
                     <div class="text-4xl mb-4">
-                        {{ speechError === 'not-allowed' ? '🔇' : '😕' }}
+                        {{ speechError === 'not-allowed' ? '🔇' : isServiceError() ? '⚠️' : '😕' }}
                     </div>
                     <p class="text-body font-semibold mb-2">
-                        {{ speechError === 'not-allowed' ? 'Microphone access denied' : "Couldn't understand that" }}
+                        {{ speechError === 'not-allowed' ? 'Microphone access denied' : isServiceError() ? 'Something went wrong' : "Couldn't understand that" }}
                     </p>
                     <p class="text-muted text-sm mb-5">
                         {{ speechError === 'not-allowed'
