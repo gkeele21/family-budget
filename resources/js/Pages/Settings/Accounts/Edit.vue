@@ -121,7 +121,7 @@ const deleteAccount = () => {
                 full-width
                 size="lg"
             >
-                Save Changes
+                Save
             </Button>
 
             <!-- Delete Button -->

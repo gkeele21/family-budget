@@ -50,7 +50,7 @@ class AccountController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:checking,savings,credit_card,cash',
-            'starting_balance' => 'required|numeric',
+            'starting_balance' => 'nullable|numeric',
         ]);
 
         $maxOrder = $budget->accounts()->max('sort_order') ?? 0;
@@ -59,7 +59,7 @@ class AccountController extends Controller
             'budget_id' => $budget->id,
             'name' => $validated['name'],
             'type' => $validated['type'],
-            'starting_balance' => $validated['starting_balance'],
+            'starting_balance' => $validated['starting_balance'] ?? 0,
             'sort_order' => $maxOrder + 1,
         ]);
 
@@ -88,9 +88,11 @@ class AccountController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:checking,savings,credit_card,cash',
-            'starting_balance' => 'required|numeric',
+            'starting_balance' => 'nullable|numeric',
             'is_closed' => 'boolean',
         ]);
+
+        $validated['starting_balance'] = $validated['starting_balance'] ?? 0;
 
         $account->update($validated);
 

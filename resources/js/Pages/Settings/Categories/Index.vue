@@ -363,7 +363,7 @@ const isGroupCollapsed = (groupId) => {
                         Cancel
                     </Button>
                     <Button @click="submitGroup" :loading="groupForm.processing" class="flex-1">
-                        Add Group
+                        Save
                     </Button>
                 </div>
             </template>
@@ -423,7 +423,7 @@ const isGroupCollapsed = (groupId) => {
                         Cancel
                     </Button>
                     <Button @click="submitCategory" :loading="categoryForm.processing" class="flex-1">
-                        Add Category
+                        Save
                     </Button>
                 </div>
             </template>
@@ -499,7 +499,7 @@ const isGroupCollapsed = (groupId) => {
                     :loading="editForm.processing"
                     full-width
                 >
-                    Save Changes
+                    Save
                 </Button>
             </template>
         </Modal>
@@ -532,7 +532,7 @@ const isGroupCollapsed = (groupId) => {
                     :loading="editGroupForm.processing"
                     full-width
                 >
-                    Save Changes
+                    Save
                 </Button>
             </template>
         </Modal>

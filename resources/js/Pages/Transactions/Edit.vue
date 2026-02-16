@@ -288,7 +288,7 @@ const getSaveButtonVariant = () => {
                     full-width
                     size="lg"
                 >
-                    Save Changes
+                    Save
                 </Button>
             </div>
         </form>

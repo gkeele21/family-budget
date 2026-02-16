@@ -197,7 +197,7 @@ const getCategoryName = (categoryId) => {
                     :loading="editForm.processing"
                     full-width
                 >
-                    Save Changes
+                    Save
                 </Button>
             </template>
         </Modal>

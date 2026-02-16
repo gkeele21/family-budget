@@ -90,7 +90,7 @@ const submit = () => {
                     full-width
                     size="lg"
                 >
-                    Save Changes
+                    Save
                 </Button>
             </form>
         </div>

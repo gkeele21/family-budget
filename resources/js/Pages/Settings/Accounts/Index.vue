@@ -222,7 +222,7 @@ const closeModal = () => {
                         Cancel
                     </Button>
                     <Button @click="submit" :loading="form.processing" class="flex-1">
-                        Add Account
+                        Save
                     </Button>
                 </div>
             </template>
