@@ -12,7 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('budget_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->enum('type', ['checking', 'savings', 'credit_card', 'cash']);
+            $table->string('type', 20);
+            $table->string('icon', 10)->nullable();
+            $table->boolean('is_on_budget')->default(true);
             $table->decimal('starting_balance', 12, 2)->default(0);
             $table->integer('sort_order')->default(0);
             $table->boolean('is_closed')->default(false);

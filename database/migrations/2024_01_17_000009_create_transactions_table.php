@@ -22,10 +22,12 @@ return new class extends Migration
             $table->unsignedBigInteger('transfer_pair_id')->nullable(); // links two sides of a transfer
             $table->foreignId('recurring_id')->nullable()->constrained('recurring_transactions')->onDelete('set null');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->uuid('voice_batch_id')->nullable();
             $table->timestamps();
 
             $table->index(['budget_id', 'date']);
             $table->index(['account_id', 'date']);
+            $table->index('voice_batch_id');
         });
     }
 
