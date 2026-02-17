@@ -504,6 +504,39 @@ class BudgetController extends Controller
     }
 
     /**
+     * Overwrite category default amounts with current projection values.
+     */
+    public function applyProjectionsToDefaults(Request $request)
+    {
+        $user = Auth::user();
+        $budget = $user->currentBudget;
+
+        if (!$budget) {
+            abort(404);
+        }
+
+        $categories = $budget->categoryGroups()
+            ->with('categories')
+            ->get()
+            ->pluck('categories')
+            ->flatten();
+
+        $updated = 0;
+        foreach ($categories as $category) {
+            $projections = $category->projections ?? [];
+            $amount = $projections['1'] ?? null;
+
+            if ($amount !== null) {
+                $category->default_amount = (float) $amount;
+                $category->save();
+                $updated++;
+            }
+        }
+
+        return back()->with('success', "Updated defaults for {$updated} categories");
+    }
+
+    /**
      * Clear all budget amounts for a given month.
      */
     public function clearBudget(Request $request, string $month)

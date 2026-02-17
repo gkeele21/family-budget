@@ -133,6 +133,27 @@ const applyProjections = () => {
     );
 };
 
+const saveProjectionsAsDefaults = () => {
+    showConfirm(
+        'Save Projections as Defaults',
+        'This will overwrite all category default amounts with the projected amounts shown here. Default amounts are used when copying defaults to a new month\'s budget. This cannot be undone.',
+        () => {
+            router.post(route('budget.apply-projections-to-defaults'), {}, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Update local default_amount values to reflect the change
+                    props.categoryGroups.forEach(group => {
+                        group.categories.forEach(category => {
+                            category.default_amount = projectionAmounts[category.id] || 0;
+                        });
+                    });
+                    showToast('Default amounts updated from projections', 'success');
+                },
+            });
+        }
+    );
+};
+
 // Confirmation modal state
 const confirmModal = ref({ show: false, title: '', message: '', action: null });
 
@@ -200,6 +221,11 @@ const menuCopyDefaults = () => {
 const menuApplyProjections = () => {
     closeMenu();
     applyProjections();
+};
+
+const menuSaveAsDefaults = () => {
+    closeMenu();
+    saveProjectionsAsDefaults();
 };
 
 const menuClearProjections = () => {
@@ -309,6 +335,19 @@ const showToast = (message, type = 'success') => {
                                         <div>
                                             <div class="text-sm text-body">Apply Projections to {{ currentMonthLabel }} Budget</div>
                                             <div class="text-xs text-subtle mt-0.5">Apply these projections to your monthly budget</div>
+                                        </div>
+                                    </button>
+                                    <div class="border-t border-border"></div>
+                                    <button
+                                        @click="menuSaveAsDefaults"
+                                        class="w-full text-left px-4 py-3 hover:bg-surface-overlay transition-colors flex items-start gap-3"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <div>
+                                            <div class="text-sm text-body">Save Projections as Defaults</div>
+                                            <div class="text-xs text-subtle mt-0.5">Overwrite category defaults with these projected amounts</div>
                                         </div>
                                     </button>
                                     <div class="border-t border-border"></div>

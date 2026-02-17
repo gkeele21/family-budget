@@ -48,6 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/budget/{month}/clear', [BudgetController::class, 'clearBudget'])->name('budget.clear');
     Route::post('/budget/projections', [BudgetController::class, 'saveProjections'])->name('budget.save-projections');
     Route::post('/budget/projections/clear', [BudgetController::class, 'clearProjections'])->name('budget.clear-projections');
+    Route::post('/budget/projections/apply-to-defaults', [BudgetController::class, 'applyProjectionsToDefaults'])->name('budget.apply-projections-to-defaults');
     Route::get('/budget/{month}/category/{category}', [BudgetController::class, 'categoryDetail'])->name('budget.category-detail');
 
     // Reorder endpoints (must be before resource routes)
