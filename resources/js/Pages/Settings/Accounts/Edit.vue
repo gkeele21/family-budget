@@ -27,16 +27,37 @@ const accountTypes = [
     { value: 'credit', label: 'Credit', icon: '💳' },
 ];
 
+const typeDescriptions = {
+    bank: 'Checking, savings, and other bank accounts.',
+    cash: 'Auto-cleared transactions. e.g. Wallet, Venmo, PayPal, gift cards.',
+    credit: 'Credit cards and store credit. e.g. Visa, Target Card, Kohl\'s.',
+};
+
 const accountEmojiGrid = [
-    '🏦', '💰', '💳', '💵', '📲', '💸',
-    '🏧', '🪙', '⚡', '🔗', '🌐', '🎯',
-    '🛒', '🎁', '👗', '🏬', '🛍️', '📦',
-    '🍎', '☕', '🎮', '📱', '💎', '🏠',
+    { emoji: '🏦', label: 'Bank' },
+    { emoji: '💰', label: 'Savings' },
+    { emoji: '💳', label: 'Credit Card' },
+    { emoji: '💵', label: 'Cash' },
+    { emoji: '📲', label: 'Mobile Pay' },
+    { emoji: '🎓', label: 'Student Loan' },
+    { emoji: '🏠', label: 'Mortgage' },
+    { emoji: '🛍️', label: 'Store Card' },
+    { emoji: '🎁', label: 'Gift Card' },
+    { emoji: '💎', label: 'Investment' },
+    { emoji: '🔗', label: 'Linked' },
+    { emoji: '🌐', label: 'Online' },
 ];
+
+const selectAccountIcon = (item) => {
+    if (form.icon === item.emoji) {
+        form.name = item.label;
+        return;
+    }
+    form.icon = item.emoji;
+};
 
 const selectType = (type) => {
     form.type = type.value;
-    form.icon = type.icon;
 };
 
 const submit = () => {
@@ -84,21 +105,18 @@ const deleteAccount = () => {
                         type="button"
                         @click="selectType(type)"
                         :class="[
-                            'flex flex-col items-center p-3 rounded-xl border-2 transition-colors',
+                            'flex items-center justify-center p-3 rounded-xl border-2 transition-colors font-semibold text-sm',
                             form.type === type.value
-                                ? 'border-primary bg-primary/10'
-                                : 'border-border bg-surface'
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-border bg-surface text-subtle'
                         ]"
                     >
-                        <span class="text-2xl mb-1">{{ type.icon }}</span>
-                        <span
-                            :class="[
-                                'text-xs font-semibold',
-                                form.type === type.value ? 'text-primary' : 'text-subtle'
-                            ]"
-                        >{{ type.label }}</span>
+                        {{ type.label }}
                     </button>
                 </div>
+                <p class="text-xs text-subtle mt-2">
+                    {{ typeDescriptions[form.type] }}
+                </p>
             </div>
 
             <!-- Icon Picker -->
@@ -107,20 +125,21 @@ const deleteAccount = () => {
                     <label class="text-sm text-subtle">Icon</label>
                     <span class="text-2xl">{{ form.icon || '💳' }}</span>
                 </div>
-                <div class="grid grid-cols-6 gap-1.5">
+                <div class="grid grid-cols-4 gap-2">
                     <button
-                        v-for="emoji in accountEmojiGrid"
-                        :key="emoji"
+                        v-for="item in accountEmojiGrid"
+                        :key="item.emoji"
                         type="button"
-                        @click="form.icon = emoji"
+                        @click="selectAccountIcon(item)"
                         :class="[
-                            'w-10 h-10 flex items-center justify-center text-xl rounded-lg transition-colors',
-                            form.icon === emoji
+                            'flex flex-col items-center gap-0.5 py-1.5 rounded-lg transition-colors',
+                            form.icon === item.emoji
                                 ? 'bg-primary/20 ring-2 ring-primary'
                                 : 'bg-surface-overlay hover:bg-border-strong'
                         ]"
                     >
-                        {{ emoji }}
+                        <span class="text-xl">{{ item.emoji }}</span>
+                        <span class="text-[10px] text-muted leading-tight">{{ item.label }}</span>
                     </button>
                 </div>
             </div>

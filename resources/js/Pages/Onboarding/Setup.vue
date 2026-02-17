@@ -79,6 +79,12 @@ const accountTypes = [
     { value: 'credit', label: 'Credit', icon: '💳' },
 ];
 
+const typeDescriptions = {
+    bank: 'Checking, savings, and other bank accounts.',
+    cash: 'Auto-cleared transactions. e.g. Wallet, Venmo, PayPal, gift cards.',
+    credit: 'Credit cards and store credit. e.g. Visa, Target Card, Kohl\'s.',
+};
+
 const templates = [
     {
         value: 'starter',
@@ -226,20 +232,17 @@ const templates = [
                                     :key="type.value"
                                     type="button"
                                     @click="selectAccountType(type)"
-                                    class="flex flex-col items-center p-3 rounded-xl border-2 transition-colors bg-surface"
+                                    class="flex items-center justify-center p-3 rounded-xl border-2 transition-colors bg-surface font-semibold text-sm"
                                     :class="form.account_type === type.value
-                                        ? 'border-primary bg-primary/10'
-                                        : 'border-border'"
+                                        ? 'border-primary bg-primary/10 text-primary'
+                                        : 'border-border text-subtle'"
                                 >
-                                    <span class="text-2xl mb-1">{{ type.icon }}</span>
-                                    <span
-                                        :class="[
-                                            'text-xs font-semibold',
-                                            form.account_type === type.value ? 'text-primary' : 'text-subtle'
-                                        ]"
-                                    >{{ type.label }}</span>
+                                    {{ type.label }}
                                 </button>
                             </div>
+                            <p class="text-xs text-subtle mt-2 px-1">
+                                {{ typeDescriptions[form.account_type] }}
+                            </p>
                         </div>
 
                         <p class="text-sm text-subtle text-center">
