@@ -39,6 +39,16 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
+const getGroupTotals = (group) => {
+    let defaultTotal = 0;
+    let projectedTotal = 0;
+    group.categories.forEach(category => {
+        defaultTotal += parseFloat(category.default_amount) || 0;
+        projectedTotal += parseFloat(projectionAmounts[category.id]) || 0;
+    });
+    return { defaultTotal, projectedTotal };
+};
+
 const totalProjected = computed(() => {
     let total = 0;
     props.categoryGroups.forEach(group => {
@@ -392,6 +402,17 @@ const showToast = (message, type = 'success') => {
                             @blur="autoSave"
                             color="text-body"
                         />
+                    </div>
+
+                    <!-- Group Total Row -->
+                    <div class="grid grid-cols-[1fr_4.5rem_6rem] gap-px px-2 py-2 bg-info/30 text-sm font-semibold border-t-2 border-info/40">
+                        <div class="text-info uppercase">Total</div>
+                        <div class="text-right text-body">
+                            {{ formatCurrency(getGroupTotals(group).defaultTotal) }}
+                        </div>
+                        <div class="text-right text-body">
+                            {{ formatCurrency(getGroupTotals(group).projectedTotal) }}
+                        </div>
                     </div>
                 </div>
             </div>
