@@ -7,6 +7,7 @@ import AmountField from '@/Components/Form/AmountField.vue';
 import PickerField from '@/Components/Form/PickerField.vue';
 import Button from '@/Components/Base/Button.vue';
 import Modal from '@/Components/Base/Modal.vue';
+import ToggleField from '@/Components/Form/ToggleField.vue';
 import draggable from 'vuedraggable';
 import VoiceCategoryOverlay from '@/Components/Domain/VoiceCategoryOverlay.vue';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition.js';
@@ -99,6 +100,7 @@ const editForm = useForm({
     name: '',
     icon: '',
     default_amount: '',
+    is_hidden: false,
 });
 
 const submitGroup = () => {
@@ -162,6 +164,7 @@ const openEditCategory = (category, groupId) => {
     editForm.name = category.name;
     editForm.icon = category.icon || '';
     editForm.default_amount = category.default_amount || '';
+    editForm.is_hidden = category.is_hidden || false;
     showEditCategoryModal.value = true;
     showIconPicker.value = false;
 };
@@ -332,7 +335,7 @@ const isGroupCollapsed = (groupId) => {
                                                         <span class="text-xl">{{ category.icon || '📁' }}</span>
                                                         <div>
                                                             <div class="font-medium text-body">{{ category.name }}</div>
-                                                            <div v-if="category.default_amount" class="text-sm text-subtle">
+                                                            <div class="text-sm text-subtle">
                                                                 Default: {{ formatCurrency(category.default_amount) }}
                                                             </div>
                                                         </div>
@@ -502,6 +505,20 @@ const isGroupCollapsed = (groupId) => {
 
                 <p class="text-xs text-subtle text-center mt-3 px-4">
                     Default amount is used as reference when budgeting
+                </p>
+
+                <!-- Hidden Toggle -->
+                <div class="bg-surface mx-3 mt-3 rounded-xl overflow-hidden">
+                    <ToggleField
+                        v-model="editForm.is_hidden"
+                        label="Hide Category"
+                        on-label="Hidden"
+                        off-label="Visible"
+                        variant="switch"
+                    />
+                </div>
+                <p class="text-xs text-subtle text-center mt-1 px-4">
+                    Hidden categories won't appear on Budget or Plan pages
                 </p>
 
                 <!-- Delete Button -->

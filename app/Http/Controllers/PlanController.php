@@ -21,7 +21,7 @@ class PlanController extends Controller
         // Get all category groups with categories and their projections
         $categoryGroups = $budget->categoryGroups()
             ->with(['categories' => function ($query) {
-                $query->orderBy('sort_order');
+                $query->where('is_hidden', false)->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
             ->get()

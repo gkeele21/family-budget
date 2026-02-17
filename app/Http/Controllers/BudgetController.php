@@ -121,7 +121,8 @@ class BudgetController extends Controller
         // Get all category groups with categories and their monthly budget data
         $groups = $budget->categoryGroups()
             ->with(['categories' => function ($query) use ($month) {
-                $query->orderBy('sort_order')
+                $query->where('is_hidden', false)
+                    ->orderBy('sort_order')
                     ->with(['monthlyBudgets' => function ($q) use ($month) {
                         $q->where('month', $month);
                     }]);
@@ -387,17 +388,15 @@ class BudgetController extends Controller
             ->flatten();
 
         foreach ($categories as $category) {
-            if ($category->default_amount > 0) {
-                MonthlyBudget::updateOrCreate(
-                    [
-                        'category_id' => $category->id,
-                        'month' => $month,
-                    ],
-                    [
-                        'budgeted_amount' => $category->default_amount,
-                    ]
-                );
-            }
+            MonthlyBudget::updateOrCreate(
+                [
+                    'category_id' => $category->id,
+                    'month' => $month,
+                ],
+                [
+                    'budgeted_amount' => $category->default_amount ?? 0,
+                ]
+            );
         }
 
         return back()->with('success', 'Applied default amounts');
@@ -432,17 +431,15 @@ class BudgetController extends Controller
             $projections = $category->projections ?? [];
             $amount = $projections[$projectionIndex] ?? $category->default_amount ?? 0;
 
-            if ($amount > 0) {
-                MonthlyBudget::updateOrCreate(
-                    [
-                        'category_id' => $category->id,
-                        'month' => $month,
-                    ],
-                    [
-                        'budgeted_amount' => $amount,
-                    ]
-                );
-            }
+            MonthlyBudget::updateOrCreate(
+                [
+                    'category_id' => $category->id,
+                    'month' => $month,
+                ],
+                [
+                    'budgeted_amount' => $amount,
+                ]
+            );
         }
 
         return back()->with('success', 'Applied projection ' . $projectionIndex);
@@ -521,19 +518,13 @@ class BudgetController extends Controller
             ->pluck('categories')
             ->flatten();
 
-        $updated = 0;
         foreach ($categories as $category) {
             $projections = $category->projections ?? [];
-            $amount = $projections['1'] ?? null;
-
-            if ($amount !== null) {
-                $category->default_amount = (float) $amount;
-                $category->save();
-                $updated++;
-            }
+            $category->default_amount = (float) ($projections['1'] ?? 0);
+            $category->save();
         }
 
-        return back()->with('success', "Updated defaults for {$updated} categories");
+        return back()->with('success', 'Default amounts updated from projections');
     }
 
     /**

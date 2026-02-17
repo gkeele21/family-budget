@@ -73,12 +73,10 @@ const autoSave = () => {
         props.categoryGroups.forEach(group => {
             group.categories.forEach(category => {
                 const amount = projectionAmounts[category.id];
-                if (amount > 0) {
-                    projectionsData.push({
-                        category_id: category.id,
-                        values: { '1': amount },
-                    });
-                }
+                projectionsData.push({
+                    category_id: category.id,
+                    values: { '1': amount },
+                });
             });
         });
 
@@ -173,9 +171,7 @@ const cancelConfirm = () => {
 const doCopyDefaults = () => {
     props.categoryGroups.forEach(group => {
         group.categories.forEach(category => {
-            if (category.default_amount > 0) {
-                projectionAmounts[category.id] = parseFloat(category.default_amount);
-            }
+            projectionAmounts[category.id] = parseFloat(category.default_amount) || 0;
         });
     });
     autoSave();
@@ -432,7 +428,7 @@ const showToast = (message, type = 'success') => {
                         </div>
 
                         <div class="text-right text-sm text-subtle">
-                            {{ category.default_amount ? formatCurrency(category.default_amount) : '-' }}
+                            {{ formatCurrency(category.default_amount) }}
                         </div>
 
                         <AmountField
