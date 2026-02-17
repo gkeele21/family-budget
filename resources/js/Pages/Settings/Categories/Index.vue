@@ -187,7 +187,7 @@ const emojiGrid = [
     // Food & Everyday
     { emoji: '🛒', label: 'Groceries' },
     { emoji: '🍽️', label: 'Dining' },
-    { emoji: '🍺', label: 'Drinks' },
+    { emoji: '🥤', label: 'Drinks' },
     { emoji: '📦', label: 'General' },
     // Housing & Utilities
     { emoji: '🏠', label: 'Mortgage' },
@@ -198,6 +198,7 @@ const emojiGrid = [
     { emoji: '🌐', label: 'Internet' },
     { emoji: '📱', label: 'Phone' },
     { emoji: '📺', label: 'Subscriptions' },
+    { emoji: '🔗', label: 'Website' },
     { emoji: '🎫', label: 'Memberships' },
     // Transportation
     { emoji: '🚗', label: 'Vehicle' },
@@ -217,6 +218,7 @@ const emojiGrid = [
     // Entertainment & Hobbies
     { emoji: '🎬', label: 'Entertainment' },
     { emoji: '🎵', label: 'Music' },
+    { emoji: '🎹', label: 'Piano' },
     { emoji: '⛳', label: 'Golf' },
     { emoji: '🏅', label: 'Sports' },
     { emoji: '🏊', label: 'Pool & Spa' },
