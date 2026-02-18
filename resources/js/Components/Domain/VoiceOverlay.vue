@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition.js';
 import Button from '@/Components/Base/Button.vue';
 
@@ -13,11 +13,14 @@ const emit = defineEmits(['close', 'created']);
 
 const { isListening, transcript, interimTranscript, error: speechError, start, stop, abort, reset, onEnd } = useSpeechRecognition();
 
-// Overlay states: idle, listening, processing, clarification, error, success
+// Overlay states: idle, listening, processing, clarification, review, creating, error, success
 const state = ref('idle');
 const errorMessage = ref('');
 const createdTransactions = ref([]);
 const batchId = ref(null);
+
+// Accumulated review items: { data: {...}, display: {...}, id: string }
+const reviewItems = ref([]);
 
 // Silence timeout — auto-close if nothing heard for 5s, or auto-stop after 5s pause
 let silenceTimer = null;
@@ -70,6 +73,7 @@ watch(() => props.show, (isOpen) => {
         errorMessage.value = '';
         createdTransactions.value = [];
         batchId.value = null;
+        reviewItems.value = [];
         clarifications.value = [];
         sessionContext.value = '';
         currentClarificationIndex.value = 0;
@@ -78,9 +82,14 @@ watch(() => props.show, (isOpen) => {
     }
 });
 
-// Handle escape key
+// Handle escape key — don't close if user has accumulated data
 const closeOnEscape = (e) => {
     if (e.key === 'Escape' && props.show) {
+        if (state.value === 'review' || state.value === 'creating') return;
+        if (state.value === 'error' && reviewItems.value.length > 0) {
+            backToReview();
+            return;
+        }
         handleClose();
     }
 };
@@ -111,10 +120,16 @@ async function sendToBackend(text) {
     try {
         const { data } = await window.axios.post(route('transactions.voice.parse'), {
             transcript: text,
+            preview: true,
         });
 
-        if (data.status === 'created') {
-            handleSuccess(data);
+        if (data.status === 'previewed') {
+            const newItems = data.transactions.map(tx => ({
+                ...tx,
+                id: crypto.randomUUID(),
+            }));
+            reviewItems.value.push(...newItems);
+            state.value = 'review';
         } else if (data.status === 'clarification_needed') {
             state.value = 'clarification';
             clarifications.value = data.clarifications;
@@ -129,19 +144,6 @@ async function sendToBackend(text) {
         state.value = 'error';
         errorMessage.value = 'Something went wrong. Please try again.';
     }
-}
-
-function handleSuccess(data) {
-    createdTransactions.value = data.transactions;
-    batchId.value = data.batch_id;
-    state.value = 'success';
-
-    setTimeout(() => {
-        emit('created', {
-            transactions: data.transactions,
-            batchId: data.batch_id,
-        });
-    }, 1200);
 }
 
 async function selectClarification(option) {
@@ -159,17 +161,23 @@ async function selectClarification(option) {
         return;
     }
 
-    // All answered — send to backend
+    // All answered — send to backend in preview mode
     state.value = 'processing';
 
     try {
         const { data } = await window.axios.post(route('transactions.voice.clarify'), {
             session_context: sessionContext.value,
             answers: clarificationAnswers.value,
+            preview: true,
         });
 
-        if (data.status === 'created') {
-            handleSuccess(data);
+        if (data.status === 'previewed') {
+            const newItems = data.transactions.map(tx => ({
+                ...tx,
+                id: crypto.randomUUID(),
+            }));
+            reviewItems.value.push(...newItems);
+            state.value = 'review';
         } else {
             state.value = 'error';
             errorMessage.value = data.message || 'Something went wrong.';
@@ -178,6 +186,51 @@ async function selectClarification(option) {
         state.value = 'error';
         errorMessage.value = 'Something went wrong. Please try again.';
     }
+}
+
+async function createAll() {
+    state.value = 'creating';
+
+    try {
+        const { data } = await window.axios.post(route('transactions.voice.batch-create'), {
+            transactions: reviewItems.value.map(item => item.data),
+        });
+
+        if (data.status === 'created') {
+            createdTransactions.value = data.transactions;
+            batchId.value = data.batch_id;
+            state.value = 'success';
+
+            setTimeout(() => {
+                emit('created', {
+                    transactions: data.transactions,
+                    batchId: data.batch_id,
+                });
+            }, 1200);
+        } else {
+            state.value = 'error';
+            errorMessage.value = data.message || 'Failed to create transactions.';
+        }
+    } catch (e) {
+        state.value = 'error';
+        errorMessage.value = 'Something went wrong. Please try again.';
+    }
+}
+
+function removeReviewItem(itemId) {
+    reviewItems.value = reviewItems.value.filter(item => item.id !== itemId);
+    if (reviewItems.value.length === 0) {
+        handleClose();
+    }
+}
+
+function addMore() {
+    startListening();
+}
+
+function backToReview() {
+    state.value = 'review';
+    errorMessage.value = '';
 }
 
 function handleClose() {
@@ -197,6 +250,8 @@ function tryAgain() {
 
 const currentClarification = () => clarifications.value[currentClarificationIndex.value];
 
+const hasAccumulatedItems = () => reviewItems.value.length > 0;
+
 const isServiceError = () => errorMessage.value.includes('AI service') || errorMessage.value.includes('credits');
 
 // Display text: show interim while listening, final when done
@@ -208,6 +263,37 @@ const displayTranscript = () => {
     }
     return transcript.value;
 };
+
+// Format transcript with line breaks before dollar amounts for readability
+const formattedTranscript = () => {
+    if (!transcript.value) return '';
+    return transcript.value.replace(/\s+(?=\$\d)/g, '\n');
+};
+
+// Format date like the Transactions Index page
+const formatDate = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+};
+
+// Group review items by date, sorted newest first
+const groupedReviewItems = computed(() => {
+    const groups = {};
+    for (const item of reviewItems.value) {
+        const date = item.display.date;
+        if (!groups[date]) groups[date] = [];
+        groups[date].push(item);
+    }
+    return Object.entries(groups)
+        .sort(([a], [b]) => b.localeCompare(a))
+        .map(([date, items]) => ({ date, label: formatDate(date), items }));
+});
 </script>
 
 <template>
@@ -227,7 +313,7 @@ const displayTranscript = () => {
                 <!-- Backdrop -->
                 <div
                     class="absolute inset-0 bg-black/75"
-                    @click="(state === 'listening' || state === 'error') ? handleClose() : null"
+                    @click="(state === 'listening' || (state === 'error' && !hasAccumulatedItems())) ? handleClose() : null"
                 />
 
                 <!-- LISTENING STATE -->
@@ -284,6 +370,127 @@ const displayTranscript = () => {
                     <p v-if="transcript" class="text-muted text-sm italic">
                         "{{ transcript }}"
                     </p>
+                </div>
+
+                <!-- REVIEW STATE (accumulated transactions) -->
+                <div v-else-if="state === 'review'" class="relative w-full max-w-sm bg-surface rounded-2xl p-6">
+                    <!-- Header -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 shadow-[0_0_0_2px_rgb(var(--color-primary)/0.3)]">
+                            <img src="/images/Avatar.png" alt="Budget Guy" class="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <p class="text-body font-semibold text-sm">
+                                {{ reviewItems.length }} transaction{{ reviewItems.length !== 1 ? 's' : '' }} ready
+                            </p>
+                            <p class="text-muted text-xs">Add more or create them all</p>
+                        </div>
+                    </div>
+
+                    <!-- Transaction list grouped by date -->
+                    <div class="space-y-3 max-h-60 overflow-y-auto mb-4">
+                        <div v-for="group in groupedReviewItems" :key="group.date" class="space-y-1.5">
+                            <h3 class="text-sm font-semibold text-warning px-1">{{ group.label }}</h3>
+                            <div
+                                v-for="item in group.items"
+                                :key="item.id"
+                                class="bg-surface rounded-card p-3 shadow-sm border-l-4"
+                                :class="{
+                                    'border-danger': item.display.type === 'expense',
+                                    'border-success': item.display.type === 'income',
+                                    'border-info': item.display.type === 'transfer',
+                                }"
+                            >
+                                <div class="flex items-start justify-between">
+                                    <!-- Left: Payee + Category -->
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="font-medium text-body truncate">
+                                                <template v-if="item.display.type === 'transfer'">
+                                                    <span class="text-info">↔</span>
+                                                    Transfer to {{ item.display.to_account_name }}
+                                                </template>
+                                                <template v-else>{{ item.display.payee_name }}</template>
+                                            </span>
+                                        </div>
+                                        <!-- Split categories with amounts -->
+                                        <div v-if="item.display.splits" class="mt-0.5 grid grid-cols-[auto_auto] gap-x-1 gap-y-0.5 text-xs text-subtle w-fit">
+                                            <template v-for="(split, si) in item.display.splits" :key="si">
+                                                <span>{{ split.category }}:</span>
+                                                <span>${{ split.amount.toFixed(2) }}</span>
+                                            </template>
+                                        </div>
+                                        <!-- Single category -->
+                                        <div v-else-if="item.display.category_name" class="text-xs text-subtle mt-0.5 truncate">
+                                            {{ item.display.category_name }}
+                                        </div>
+                                        <!-- Unassigned -->
+                                        <div v-else-if="item.display.type !== 'transfer'" class="text-xs text-subtle mt-0.5 truncate italic">
+                                            Unassigned
+                                        </div>
+                                    </div>
+                                    <!-- Right: Amount + Account + Remove -->
+                                    <div class="flex items-start gap-2 flex-shrink-0 ml-3">
+                                        <div class="text-right">
+                                            <div :class="[
+                                                'font-medium',
+                                                item.display.type === 'expense' ? 'text-danger' : item.display.type === 'transfer' ? 'text-info' : 'text-success'
+                                            ]">
+                                                {{ item.display.type === 'expense' ? '-' : item.display.type === 'income' ? '+' : '' }}${{ item.display.amount.toFixed(2) }}
+                                            </div>
+                                            <div v-if="item.display.type !== 'transfer'" class="text-xs text-subtle mt-0.5">
+                                                {{ item.display.account_name }}
+                                            </div>
+                                        </div>
+                                        <button
+                                            @click="removeReviewItem(item.id)"
+                                            class="flex-shrink-0 p-1 mt-0.5 text-subtle hover:text-danger transition-colors"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="flex gap-3">
+                        <Button variant="outline" class="flex-1" @click="addMore">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                            </svg>
+                            Add More
+                        </Button>
+                        <Button variant="primary" class="flex-1" @click="createAll">
+                            Create All ({{ reviewItems.length }})
+                        </Button>
+                    </div>
+
+                    <!-- Cancel link -->
+                    <button
+                        @click="handleClose"
+                        class="w-full mt-3 text-subtle text-sm text-center py-1"
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+                <!-- CREATING STATE -->
+                <div v-else-if="state === 'creating'" class="relative w-full max-w-sm bg-surface rounded-2xl p-8 text-center">
+                    <div class="relative w-[88px] h-[88px] mx-auto mb-3">
+                        <div class="w-[72px] h-[72px] rounded-full absolute top-2 left-2 overflow-hidden shadow-[0_0_0_3px_rgb(var(--color-primary)/0.2)] z-[2] avatar-bob">
+                            <img src="/images/Avatar.png" alt="Budget Guy" class="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                    <div class="inline-flex gap-1.5 bg-surface-inset rounded-2xl px-4 py-2.5 mb-3">
+                        <div class="thinking-dot"></div>
+                        <div class="thinking-dot"></div>
+                        <div class="thinking-dot"></div>
+                    </div>
+                    <p class="text-body font-semibold mb-1">Creating {{ reviewItems.length }} transaction{{ reviewItems.length !== 1 ? 's' : '' }}...</p>
                 </div>
 
                 <!-- SUCCESS STATE -->
@@ -372,9 +579,17 @@ const displayTranscript = () => {
                     </p>
                     <div v-if="transcript && speechError !== 'not-allowed'" class="bg-surface-inset rounded-lg px-3 py-2 mb-4 text-left select-all">
                         <p class="text-subtle text-xs font-semibold mb-1">What I heard:</p>
-                        <p class="text-body text-sm italic">"{{ transcript }}"</p>
+                        <p class="text-body text-sm italic whitespace-pre-line">"{{ formattedTranscript() }}"</p>
                     </div>
-                    <div v-if="speechError !== 'not-allowed'" class="flex gap-3">
+                    <!-- With accumulated items: Back to List + Try Again -->
+                    <div v-if="hasAccumulatedItems() && speechError !== 'not-allowed'" class="flex gap-3">
+                        <Button variant="muted" class="flex-1" @click="backToReview">
+                            Back to List ({{ reviewItems.length }})
+                        </Button>
+                        <Button variant="primary" class="flex-1" @click="tryAgain">Try Again</Button>
+                    </div>
+                    <!-- No accumulated items: Cancel + Try Again -->
+                    <div v-else-if="speechError !== 'not-allowed'" class="flex gap-3">
                         <Button variant="muted" class="flex-1" @click="handleClose">Cancel</Button>
                         <Button variant="primary" class="flex-1" @click="tryAgain">Try Again</Button>
                     </div>

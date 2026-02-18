@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('onboarding.setup');
         }
 
-        return redirect()->intended(route('budget.index', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

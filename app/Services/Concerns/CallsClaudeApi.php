@@ -29,7 +29,7 @@ trait CallsClaudeApi
                 'content-type' => 'application/json',
             ])->post('https://api.anthropic.com/v1/messages', [
                 'model' => $model,
-                'max_tokens' => 1024,
+                'max_tokens' => 4096,
                 'system' => $systemPrompt,
                 'messages' => [
                     ['role' => 'user', 'content' => $userMessage],

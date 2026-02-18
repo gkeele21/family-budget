@@ -149,27 +149,39 @@ After saving with different category:
 
 Budget Guy supports voice-powered transaction creation. Users speak naturally (e.g., "Spent $45 at Target on groceries") and the app creates transactions automatically.
 
-### How It Works
+### How It Works (Accumulate & Review Flow)
 1. Tap the Budget Guy avatar FAB (positioned beside the main FAB)
 2. Full-screen overlay appears with the avatar in listening state
 3. Browser Speech Recognition captures the transcript in real-time
-4. Transcript is sent to the backend which uses Claude API to parse it
-5. Parsed transactions are created and displayed in the success state
+4. Transcript is sent to the backend with `preview: true` — Claude API parses it but nothing is created yet
+5. Parsed transactions appear in a **review list** where the user can inspect them
+6. User can tap **"Add More"** to record additional batches, which append to the review list
+7. User can remove individual items from the review list with the X button
+8. When satisfied, user taps **"Create All (N)"** to create everything in one batch
+9. All transactions share a single `voice_batch_id` for undo
 
 ### Voice Overlay States
 - **Listening**: Avatar with pulse rings + red mic badge, speech bubble shows live transcript
 - **Processing**: Avatar with bob animation + thinking dots bubble
-- **Success**: Avatar with green check badge, shows created transaction(s) with undo option
-- **Clarification**: Avatar asks follow-up question (e.g., which account?) with inline response
-- **Error**: Avatar with red `?` badge, retry option
+- **Review**: Avatar + scrollable transaction list + "Add More" / "Create All (N)" buttons
+- **Creating**: Avatar with bob animation + thinking dots (while batch is being saved)
+- **Success**: Avatar with green check badge, shows created transaction(s)
+- **Clarification**: Avatar asks follow-up question (e.g., which account?) with inline options
+- **Error**: Avatar with red `?` badge, shows transcript. "Back to List" if accumulated items exist, otherwise "Try Again" / "Cancel"
 
 ### Voice Trigger
 - Avatar FAB on Transactions Index page (side-by-side with main FAB)
 - Requires `aiEnabled`, `voiceSupported`, and `voiceInputEnabled` feature flags
 - Also available inline on the Create Transaction page
 
+### Backend Endpoints
+- `POST /transactions/voice/parse` — accepts `preview: true` to parse without creating (`preview()` method)
+- `POST /transactions/voice/clarify` — accepts `preview: true` to resolve clarifications without creating
+- `POST /transactions/voice/batch-create` — creates all accumulated transactions under one batch ID
+- `DELETE /transactions/voice/undo/{batchId}` — deletes all transactions in a batch
+
 ### Batch Creation
-Voice input can create multiple transactions from a single utterance (e.g., "I spent $30 on gas and $50 on groceries"). Success state shows all created transactions with a single undo action.
+Voice input can create multiple transactions across multiple recordings. Each recording is parsed independently by Claude API, and results accumulate in the review list. The "Create All" action creates everything in a single database transaction with a shared `voice_batch_id` for undo.
 
 ## Design Decisions
 

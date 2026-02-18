@@ -126,6 +126,129 @@ class VoiceTransactionService
     }
 
     /**
+     * Parse a voice transcript and return previewed transactions without creating.
+     */
+    public function preview(string $transcript, Budget $budget, User $user): array
+    {
+        $context = $this->buildBudgetContext($budget);
+        $systemPrompt = $this->buildSystemPrompt($context);
+
+        $claudeResponse = $this->callClaudeApi($systemPrompt, $transcript);
+
+        if ($claudeResponse === null) {
+            return [
+                'status' => 'error',
+                'message' => $this->getApiErrorMessage(),
+            ];
+        }
+
+        $parsed = $this->parseClaudeResponse($claudeResponse);
+
+        if ($parsed === null) {
+            return [
+                'status' => 'error',
+                'message' => "Couldn't understand that. Try speaking more clearly.",
+            ];
+        }
+
+        if ($parsed['status'] === 'error') {
+            return [
+                'status' => 'error',
+                'message' => $parsed['error_message'] ?? "Couldn't understand that.",
+            ];
+        }
+
+        if ($parsed['status'] === 'clarification_needed') {
+            $sessionContext = Crypt::encryptString(json_encode([
+                'transactions' => $parsed['transactions'],
+                'clarifications' => $parsed['clarifications'],
+                'transcript' => $transcript,
+            ]));
+
+            return [
+                'status' => 'clarification_needed',
+                'clarifications' => $parsed['clarifications'],
+                'session_context' => $sessionContext,
+            ];
+        }
+
+        $validated = $this->validateParsedTransactions($parsed['transactions'], $budget);
+        if ($validated['has_errors']) {
+            return [
+                'status' => 'error',
+                'message' => $validated['message'],
+            ];
+        }
+
+        return [
+            'status' => 'previewed',
+            'transactions' => $this->enrichForDisplay($validated['transactions'], $budget),
+        ];
+    }
+
+    /**
+     * Resolve clarifications and return previewed transactions without creating.
+     */
+    public function previewClarify(string $encryptedContext, array $answers, Budget $budget, User $user): array
+    {
+        $context = json_decode(Crypt::decryptString($encryptedContext), true);
+
+        if (!$context) {
+            return [
+                'status' => 'error',
+                'message' => 'Invalid session. Please try again.',
+            ];
+        }
+
+        $transactions = $context['transactions'];
+
+        foreach ($answers as $answer) {
+            $index = $answer['transaction_index'];
+            $field = $answer['field'];
+            $value = $answer['value'];
+
+            if (isset($transactions[$index])) {
+                $transactions[$index][$field] = $value;
+            }
+        }
+
+        $validated = $this->validateParsedTransactions($transactions, $budget);
+        if ($validated['has_errors']) {
+            return [
+                'status' => 'error',
+                'message' => $validated['message'],
+            ];
+        }
+
+        return [
+            'status' => 'previewed',
+            'transactions' => $this->enrichForDisplay($validated['transactions'], $budget),
+        ];
+    }
+
+    /**
+     * Create transactions from pre-validated data in a single batch.
+     */
+    public function batchCreate(array $transactionDataArray, Budget $budget, User $user): array
+    {
+        $validated = $this->validateParsedTransactions($transactionDataArray, $budget);
+        if ($validated['has_errors']) {
+            return [
+                'status' => 'error',
+                'message' => $validated['message'],
+            ];
+        }
+
+        $result = $this->createTransactions($validated['transactions'], $budget, $user);
+
+        return [
+            'status' => 'created',
+            'transactions' => $result['transactions'],
+            'batch_id' => $result['batch_id'],
+        ];
+    }
+
+    /**
      * Delete all transactions in a voice batch.
      */
     public function undoBatch(string $batchId, Budget $budget): array
@@ -196,7 +319,7 @@ Rules:
 - Default date is today: {$today}. If the user says "yesterday", use the previous day. Parse specific dates like "Feb 12" or "January 3rd" relative to the current year. Apply a spoken date to ALL transactions in the utterance unless different dates are specified.
 - Amount must always be a positive number. The system handles the sign based on type.
 - Match payee names to existing payees when clearly the same (fuzzy match). Use the spoken name if no close match. Transfers have no payee.
-- Match category names to existing categories when clearly the same (fuzzy match). If no match but the matched payee has a default_category_id, use that default. If still no match, set category_id to null and flag for clarification. Transfers have no category.
+- Match category names to existing categories when clearly the same (fuzzy match). If no match but the matched payee has a default_category_id, use that default. If still no match, set category_id to null (it will be "Unassigned") — do NOT flag for clarification. Transfers have no category.
 - Match account names to existing accounts when mentioned. If no account is mentioned and there is exactly {$accountCount} account(s), use the first one. If multiple accounts exist and none is mentioned, set account_id to null and flag for clarification.
 - For transfers: account_id is the source ("from") account, to_account_id is the destination ("to") account. Both must be resolved.
 - Split transactions: When the user specifies multiple categories for a single transaction (e.g. "$250 at Costco, $200 groceries and $50 household"), use the "splits" array. Each split has a category_id and amount. The split amounts must sum to the total transaction amount. Do NOT use splits for separate transactions at different payees.
@@ -247,7 +370,7 @@ Transaction field rules:
 - For transfer: payee_name must be null, category_id must be null, splits must be null, to_account_id required (different from account_id).
 - splits format (when used instead of category_id): [{"category_id": 1, "amount": 50.00}, ...]. Set category_id to null when using splits.
 
-If status is "success", all transaction fields must be fully resolved (no nulls for account_id, and no nulls for category_id unless splits are provided or type is transfer).
+If status is "success", all transaction fields must be fully resolved (no nulls for account_id). category_id may be null (meaning "Unassigned") if no category was spoken and the payee has no default — this is fine, do not flag for clarification.
 If status is "clarification_needed", include partial transactions and the clarifications array describing what needs user input.
 If status is "error", include error_message explaining why.
 PROMPT;
@@ -350,6 +473,40 @@ PROMPT;
     }
 
     /**
+     * Enrich validated transactions with display-friendly names for the frontend.
+     */
+    private function enrichForDisplay(array $transactions, Budget $budget): array
+    {
+        $accounts = $budget->accounts()->pluck('name', 'id')->toArray();
+        $categories = $budget->categoryGroups()
+            ->with('categories')
+            ->get()
+            ->flatMap(fn ($g) => $g->categories->pluck('name', 'id'))
+            ->toArray();
+
+        return array_map(function ($tx) use ($accounts, $categories) {
+            return [
+                'data' => $tx,
+                'display' => [
+                    'type' => $tx['type'],
+                    'amount' => $tx['amount'],
+                    'payee_name' => $tx['payee_name'] ?? null,
+                    'account_name' => $accounts[$tx['account_id']] ?? 'Unknown',
+                    'category_name' => $tx['type'] === 'transfer'
+                        ? null
+                        : (!empty($tx['splits']) ? null : ($categories[$tx['category_id'] ?? 0] ?? 'Unassigned')),
+                    'splits' => !empty($tx['splits']) ? array_map(fn ($s) => [
+                        'category' => $categories[$s['category_id'] ?? 0] ?? 'Unassigned',
+                        'amount' => $s['amount'],
+                    ], $tx['splits']) : null,
+                    'to_account_name' => isset($tx['to_account_id']) ? ($accounts[$tx['to_account_id']] ?? null) : null,
+                    'date' => $tx['date'],
+                ],
+            ];
+        }, $transactions);
+    }
+
+    /**
      * Create the actual transactions in the database.
      */
     private function createTransactions(array $transactions, Budget $budget, User $user): array
@@ -374,12 +531,18 @@ PROMPT;
     {
         // Resolve payee
         $payeeId = null;
+        $categoryId = $tx['category_id'];
         if ($tx['payee_name']) {
             $payee = Payee::firstOrCreate(
                 ['budget_id' => $budget->id, 'name' => $tx['payee_name']],
                 ['default_category_id' => $tx['category_id']]
             );
             $payeeId = $payee->id;
+
+            // Fallback to payee's default category if none was specified
+            if (!$categoryId && empty($tx['splits']) && $payee->default_category_id) {
+                $categoryId = $payee->default_category_id;
+            }
         }
 
         $amount = $tx['type'] === 'expense' ? -abs($tx['amount']) : abs($tx['amount']);
@@ -390,7 +553,7 @@ PROMPT;
         $transaction = Transaction::create([
             'budget_id' => $budget->id,
             'account_id' => $tx['account_id'],
-            'category_id' => $tx['category_id'],
+            'category_id' => $categoryId,
             'payee_id' => $payeeId,
             'amount' => $amount,
             'type' => $tx['type'],
@@ -421,7 +584,7 @@ PROMPT;
             'payee' => $tx['payee_name'],
             'amount' => $amount,
             'type' => $tx['type'],
-            'category' => !empty($tx['splits']) ? 'Split' : $transaction->category?->name,
+            'category' => !empty($tx['splits']) ? 'Split' : ($transaction->category?->name ?? 'Unassigned'),
             'account' => $account?->name,
             'date' => $tx['date'],
         ];

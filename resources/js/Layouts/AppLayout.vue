@@ -43,6 +43,17 @@ const isActive = (path) => {
         <nav class="bg-surface-header border-t border-border px-4 py-2 flex-shrink-0" style="padding-bottom: max(0.5rem, var(--safe-area-inset-bottom))">
             <div class="flex justify-around items-center max-w-md mx-auto">
                 <Link
+                    :href="route('dashboard')"
+                    class="flex flex-col items-center py-2 px-2"
+                    :class="isActive('/dashboard') ? 'text-primary' : 'text-subtle'"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <span class="text-xs mt-1 font-medium">Accounts</span>
+                </Link>
+
+                <Link
                     :href="route('budget.index')"
                     class="flex flex-col items-center py-2 px-2"
                     :class="isActive('/budget') ? 'text-primary' : 'text-subtle'"
@@ -62,17 +73,6 @@ const isActive = (path) => {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     <span class="text-xs mt-1 font-medium">Transactions</span>
-                </Link>
-
-                <Link
-                    :href="route('dashboard')"
-                    class="flex flex-col items-center py-2 px-2"
-                    :class="isActive('/dashboard') ? 'text-primary' : 'text-subtle'"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
-                    <span class="text-xs mt-1 font-medium">Accounts</span>
                 </Link>
 
                 <Link

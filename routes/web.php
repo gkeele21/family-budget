@@ -75,6 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Voice Transactions (JSON API)
     Route::post('/transactions/voice/parse', [VoiceTransactionController::class, 'parse'])->name('transactions.voice.parse');
     Route::post('/transactions/voice/clarify', [VoiceTransactionController::class, 'clarify'])->name('transactions.voice.clarify');
+    Route::post('/transactions/voice/batch-create', [VoiceTransactionController::class, 'batchCreate'])->name('transactions.voice.batch-create');
     Route::delete('/transactions/voice/undo/{batchId}', [VoiceTransactionController::class, 'undoBatch'])->name('transactions.voice.undo');
 
     // Voice Categories (JSON API)
