@@ -753,8 +753,8 @@ const formatNextDate = (dateStr, frequency) => {
 }
 
 .voice-avatar-fab {
-    position: absolute;
-    bottom: 19px;
+    position: fixed;
+    bottom: 83px;
     right: 76px;
     width: 48px;
     height: 48px;
