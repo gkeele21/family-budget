@@ -23,7 +23,7 @@ trait CallsClaudeApi
         }
 
         try {
-            $response = Http::timeout(15)->withHeaders([
+            $response = Http::timeout(30)->withHeaders([
                 'x-api-key' => $apiKey,
                 'anthropic-version' => '2023-06-01',
                 'content-type' => 'application/json',

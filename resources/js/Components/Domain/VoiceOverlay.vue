@@ -86,6 +86,10 @@ watch(() => props.show, (isOpen) => {
 const closeOnEscape = (e) => {
     if (e.key === 'Escape' && props.show) {
         if (state.value === 'review' || state.value === 'creating') return;
+        if (state.value === 'processing') {
+            cancelProcessing();
+            return;
+        }
         if (state.value === 'error' && reviewItems.value.length > 0) {
             backToReview();
             return;
@@ -121,7 +125,7 @@ async function sendToBackend(text) {
         const { data } = await window.axios.post(route('transactions.voice.parse'), {
             transcript: text,
             preview: true,
-        });
+        }, { timeout: 35000 });
 
         if (data.status === 'previewed') {
             const newItems = data.transactions.map(tx => ({
@@ -169,7 +173,7 @@ async function selectClarification(option) {
             session_context: sessionContext.value,
             answers: clarificationAnswers.value,
             preview: true,
-        });
+        }, { timeout: 35000 });
 
         if (data.status === 'previewed') {
             const newItems = data.transactions.map(tx => ({
@@ -194,7 +198,7 @@ async function createAll() {
     try {
         const { data } = await window.axios.post(route('transactions.voice.batch-create'), {
             transactions: reviewItems.value.map(item => item.data),
-        });
+        }, { timeout: 15000 });
 
         if (data.status === 'created') {
             createdTransactions.value = data.transactions;
@@ -246,6 +250,14 @@ function finishListening() {
 
 function tryAgain() {
     startListening();
+}
+
+function cancelProcessing() {
+    if (reviewItems.value.length > 0) {
+        backToReview();
+    } else {
+        handleClose();
+    }
 }
 
 const currentClarification = () => clarifications.value[currentClarificationIndex.value];
@@ -367,9 +379,15 @@ const groupedReviewItems = computed(() => {
                         <div class="thinking-dot"></div>
                     </div>
                     <p class="text-body font-semibold mb-1">Budget Guy is on it...</p>
-                    <p v-if="transcript" class="text-muted text-sm italic">
+                    <p v-if="transcript" class="text-muted text-sm italic mb-3">
                         "{{ transcript }}"
                     </p>
+                    <button
+                        @click="cancelProcessing"
+                        class="text-subtle text-sm mt-2 py-1"
+                    >
+                        Cancel
+                    </button>
                 </div>
 
                 <!-- REVIEW STATE (accumulated transactions) -->
