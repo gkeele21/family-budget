@@ -34,6 +34,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'scroll_to' => fn () => $request->session()->get('scroll_to'),
+            ],
         ];
     }
 }

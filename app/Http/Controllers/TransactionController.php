@@ -499,10 +499,16 @@ class TransactionController extends Controller
             }
         }
 
-        return redirect()->route('transactions.index');
+        $params = [];
+        if ($request->query('account')) {
+            $params['account'] = $request->query('account');
+        }
+
+        return redirect()->route('transactions.index', $params)
+            ->with('scroll_to', $transaction->id);
     }
 
-    public function destroy(Transaction $transaction)
+    public function destroy(Request $request, Transaction $transaction)
     {
         $this->authorize('delete', $transaction);
 
@@ -523,7 +529,12 @@ class TransactionController extends Controller
             Payee::where('id', $payeeId)->delete();
         }
 
-        return redirect()->route('transactions.index');
+        $params = [];
+        if ($request->query('account')) {
+            $params['account'] = $request->query('account');
+        }
+
+        return redirect()->route('transactions.index', $params);
     }
 
     public function toggleCleared(Transaction $transaction)

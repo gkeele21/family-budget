@@ -63,12 +63,19 @@ const selectPayee = (payee) => {
     }
 };
 
+// Preserve account filter through edit round-trip
+const accountFilter = new URLSearchParams(window.location.search).get('account');
+const buildRoute = (name, params) => {
+    const base = route(name, params);
+    return accountFilter ? base + '?account=' + accountFilter : base;
+};
+
 const submit = () => {
-    form.put(route('transactions.update', props.transaction.id));
+    form.put(buildRoute('transactions.update', props.transaction.id));
 };
 
 const deleteTransaction = () => {
-    router.delete(route('transactions.destroy', props.transaction.id));
+    router.delete(buildRoute('transactions.destroy', props.transaction.id));
 };
 
 // Split transaction functions
@@ -147,7 +154,7 @@ const getSaveButtonVariant = () => {
         <div class="bg-surface border-b border-border px-4 py-3 safe-area-top">
             <div class="flex items-center justify-between">
                 <Link
-                    :href="route('transactions.index')"
+                    :href="route('transactions.index', accountFilter ? { account: accountFilter } : {})"
                     class="text-subtle font-medium flex items-center gap-1"
                 >
                     <span class="text-lg">×</span> Cancel

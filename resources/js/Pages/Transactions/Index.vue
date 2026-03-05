@@ -11,11 +11,12 @@ import Button from '@/Components/Base/Button.vue';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition.js';
 import { useTheme } from '@/Composables/useTheme.js';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 const { isSupported: voiceSupported } = useSpeechRecognition();
 const { voiceInputEnabled } = useTheme();
-const aiEnabled = usePage().props.auth.user.ai_enabled;
+const page = usePage();
+const aiEnabled = page.props.auth.user.ai_enabled;
 
 const props = defineProps({
     transactions: Object,
@@ -350,6 +351,19 @@ const formatNextDate = (dateStr, frequency) => {
     }
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
+
+// Scroll to transaction after edit redirect
+onMounted(() => {
+    const scrollTo = page.props.flash?.scroll_to;
+    if (scrollTo) {
+        nextTick(() => {
+            const el = document.getElementById('tx-' + scrollTo);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+});
 </script>
 
 <template>
@@ -553,7 +567,8 @@ const formatNextDate = (dateStr, frequency) => {
                             @swipe-open="closeOtherSwipes(transaction.id)"
                         >
                             <Link
-                                :href="route('transactions.edit', transaction.id)"
+                                :id="'tx-' + transaction.id"
+                                :href="route('transactions.edit', { transaction: transaction.id, ...(currentAccountId ? { account: currentAccountId } : {}) })"
                                 class="block bg-surface rounded-card p-3 shadow-sm border-l-4"
                                 :class="{
                                     'border-danger': transaction.type === 'expense',
