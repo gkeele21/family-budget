@@ -23,6 +23,7 @@ const form = useForm({
     type: props.transaction.type,
     amount: parseFloat(props.transaction.amount).toFixed(2),
     account_id: props.transaction.account_id,
+    to_account_id: props.transaction.to_account_id ?? '',
     category_id: props.transaction.category_id ?? '',
     payee_name: props.transaction.payee_name || '',
     date: props.transaction.date,
@@ -223,10 +224,19 @@ const getSaveButtonVariant = () => {
                     />
                 </template>
 
-                <!-- Account -->
+                <!-- Account (labeled "From" for transfers) -->
                 <PickerField
                     v-model="form.account_id"
-                    label="Account"
+                    :label="form.type === 'transfer' ? 'From Account' : 'Account'"
+                    :options="accounts"
+                    placeholder="Select account"
+                />
+
+                <!-- To Account (transfers only) -->
+                <PickerField
+                    v-if="form.type === 'transfer'"
+                    v-model="form.to_account_id"
+                    label="To Account"
                     :options="accounts"
                     placeholder="Select account"
                 />

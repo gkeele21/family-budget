@@ -356,12 +356,27 @@ class TransactionController extends Controller
 
         $payees = $budget->payees()->orderBy('name')->get(['id', 'name', 'default_category_id']);
 
+        // For transfers, resolve the "to" account from the paired transaction
+        $toAccountId = null;
+        if ($transaction->type === 'transfer' && $transaction->transfer_pair_id) {
+            $pair = Transaction::find($transaction->transfer_pair_id);
+            // The outflow side (negative amount) is "from", inflow side is "to"
+            if ($transaction->amount < 0) {
+                $toAccountId = $pair?->account_id;
+            } else {
+                // User opened the inflow side — swap so "from" is the outflow
+                $toAccountId = $transaction->account_id;
+                $transaction->account_id = $pair?->account_id ?? $transaction->account_id;
+            }
+        }
+
         return Inertia::render('Transactions/Edit', [
             'transaction' => [
                 'id' => $transaction->id,
                 'type' => $transaction->type,
                 'amount' => abs((float) $transaction->amount),
                 'account_id' => $transaction->account_id,
+                'to_account_id' => $toAccountId,
                 'category_id' => $transaction->category_id,
                 'payee_name' => $transaction->payee?->name,
                 'date' => $transaction->date->format('Y-m-d'),
@@ -390,6 +405,7 @@ class TransactionController extends Controller
             'type' => 'required|in:expense,income,transfer',
             'amount' => 'required|numeric|min:0.01',
             'account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'nullable|exists:accounts,id|different:account_id',
             'category_id' => 'nullable|exists:categories,id',
             'payee_name' => 'nullable|string|max:255',
             'date' => 'required|date',
@@ -418,32 +434,58 @@ class TransactionController extends Controller
         }
 
         DB::transaction(function () use ($validated, $transaction, $payeeId, $amount) {
-            $transaction->update([
-                'account_id' => $validated['account_id'],
-                'category_id' => ($validated['is_split'] ?? false) ? null : $validated['category_id'],
-                'payee_id' => $payeeId,
-                'amount' => $amount,
-                'type' => $validated['type'],
-                'date' => $validated['date'],
-                'cleared' => $validated['cleared'] ?? false,
-                'memo' => $validated['memo'],
-            ]);
+            // For transfers, update both sides of the pair
+            if ($validated['type'] === 'transfer' && $transaction->transfer_pair_id) {
+                $pair = Transaction::find($transaction->transfer_pair_id);
 
-            // Delete existing splits
-            $transaction->splits()->delete();
+                // Determine which is the outflow (from) and inflow (to) side
+                $fromTransaction = $transaction->amount < 0 ? $transaction : $pair;
+                $toTransaction = $transaction->amount < 0 ? $pair : $transaction;
 
-            // Create new splits if this is a split transaction
-            if (($validated['is_split'] ?? false) && !empty($validated['splits'])) {
-                foreach ($validated['splits'] as $split) {
-                    $splitAmount = $validated['type'] === 'expense'
-                        ? -abs($split['amount'])
-                        : abs($split['amount']);
+                $fromTransaction->update([
+                    'account_id' => $validated['account_id'],
+                    'amount' => -abs($validated['amount']),
+                    'date' => $validated['date'],
+                    'cleared' => $validated['cleared'] ?? false,
+                    'memo' => $validated['memo'],
+                ]);
 
-                    SplitTransaction::create([
-                        'transaction_id' => $transaction->id,
-                        'category_id' => $split['category_id'],
-                        'amount' => $splitAmount,
+                if ($toTransaction) {
+                    $toTransaction->update([
+                        'account_id' => $validated['to_account_id'] ?? $toTransaction->account_id,
+                        'amount' => abs($validated['amount']),
+                        'date' => $validated['date'],
+                        'memo' => $validated['memo'],
                     ]);
+                }
+            } else {
+                $transaction->update([
+                    'account_id' => $validated['account_id'],
+                    'category_id' => ($validated['is_split'] ?? false) ? null : $validated['category_id'],
+                    'payee_id' => $payeeId,
+                    'amount' => $amount,
+                    'type' => $validated['type'],
+                    'date' => $validated['date'],
+                    'cleared' => $validated['cleared'] ?? false,
+                    'memo' => $validated['memo'],
+                ]);
+
+                // Delete existing splits
+                $transaction->splits()->delete();
+
+                // Create new splits if this is a split transaction
+                if (($validated['is_split'] ?? false) && !empty($validated['splits'])) {
+                    foreach ($validated['splits'] as $split) {
+                        $splitAmount = $validated['type'] === 'expense'
+                            ? -abs($split['amount'])
+                            : abs($split['amount']);
+
+                        SplitTransaction::create([
+                            'transaction_id' => $transaction->id,
+                            'category_id' => $split['category_id'],
+                            'amount' => $splitAmount,
+                        ]);
+                    }
                 }
             }
         });
