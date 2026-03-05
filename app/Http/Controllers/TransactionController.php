@@ -7,6 +7,7 @@ use App\Models\Payee;
 use App\Models\SplitTransaction;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -28,6 +29,14 @@ class TransactionController extends Controller
         $clearedFilter = $request->get('cleared'); // 'all', 'cleared', 'uncleared'
         $recurringFilter = $request->get('recurring'); // 'all', 'recurring'
         $unassignedFilter = $request->boolean('unassigned');
+        $monthFilter = $request->get('month'); // format: 'YYYY-MM'
+
+        // Month filter overrides date range
+        if ($monthFilter) {
+            $monthDate = Carbon::createFromFormat('Y-m', $monthFilter);
+            $startDate = $monthDate->startOfMonth()->toDateString();
+            $endDate = $monthDate->copy()->endOfMonth()->toDateString();
+        }
 
         $query = $budget->transactions()
             ->with(['account', 'category', 'payee', 'splits.category', 'transferPair.account'])
@@ -99,6 +108,14 @@ class TransactionController extends Controller
             });
         }
 
+        // Compute summary stats from the same filtered query
+        $summaryStats = DB::query()
+            ->fromSub((clone $query)->reorder()->toBase(), 'filtered')
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as income")
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as spent")
+            ->selectRaw("COALESCE(SUM(CASE WHEN type != 'transfer' THEN amount ELSE 0 END), 0) as net")
+            ->first();
+
         $transactions = $query->get()->map(fn($t) => [
             'id' => $t->id,
             'date' => $t->date->format('Y-m-d'),
@@ -162,6 +179,12 @@ class TransactionController extends Controller
             'recurringFilter' => $recurringFilter ?? 'all',
             'unassignedFilter' => $unassignedFilter,
             'recurring' => $recurringTransactions,
+            'monthFilter' => $monthFilter,
+            'summary' => [
+                'income' => (float) $summaryStats->income,
+                'spent' => (float) $summaryStats->spent,
+                'net' => (float) $summaryStats->net,
+            ],
         ]);
     }
 

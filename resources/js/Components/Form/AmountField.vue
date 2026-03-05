@@ -42,7 +42,7 @@ const colorClass = computed(() => {
 
 const displayValue = computed(() => {
     if (inputValue.value) {
-        return '$' + inputValue.value;
+        return inputValue.value.startsWith('-') ? '-$' + inputValue.value.slice(1) : '$' + inputValue.value;
     }
     return '';
 });
@@ -61,8 +61,10 @@ const startEditing = () => {
 const onInput = (e) => {
     let value = e.target.value;
 
-    // Strip $ and any non-numeric chars except decimal
+    // Strip $ and any non-numeric chars except decimal and minus
+    const isNegative = value.includes('-');
     value = value.replace(/[^\d.]/g, '');
+    if (isNegative) value = '-' + value;
 
     // Ensure only one decimal point
     const parts = value.split('.');
@@ -116,7 +118,7 @@ watch(() => props.modelValue, (newVal) => {
                 ref="inputRef"
                 type="text"
                 inputmode="decimal"
-                :value="inputValue ? '$' + inputValue : '$'"
+                :value="inputValue ? displayValue : '$'"
                 @input="onInput"
                 @blur="onBlur"
                 @keyup.enter="$event.target.blur()"
@@ -144,7 +146,7 @@ watch(() => props.modelValue, (newVal) => {
         ref="inputRef"
         type="text"
         inputmode="decimal"
-        :value="inputValue ? '$' + inputValue : '$'"
+        :value="inputValue ? displayValue : '$'"
         @input="onInput"
         @blur="onBlur"
         @keyup.enter="$event.target.blur()"

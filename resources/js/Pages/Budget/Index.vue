@@ -461,15 +461,15 @@ const showMoveToast = (amount, from, to, remaining = null) => {
             <!-- Summary Stats -->
             <div class="grid grid-cols-2 gap-2">
                 <div class="bg-surface rounded-card px-3 py-2 text-center">
-                    <div class="text-xs text-subtle uppercase">Budgeted</div>
-                    <div class="font-semibold text-body">
-                        {{ formatCurrency(summary.budgeted) }}
+                    <div class="text-xs text-subtle uppercase">Income</div>
+                    <div class="font-semibold text-success">
+                        {{ formatCurrency(summary.thisMonthIncome ?? 0) }}
                     </div>
                 </div>
                 <div class="bg-surface rounded-card px-3 py-2 text-center">
-                    <div class="text-xs text-subtle uppercase">Spent</div>
-                    <div class="font-semibold text-danger">
-                        {{ formatCurrency(summary.spent) }}
+                    <div class="text-xs text-subtle uppercase">Budgeted</div>
+                    <div class="font-semibold text-body">
+                        {{ formatCurrency(summary.budgeted) }}
                     </div>
                 </div>
             </div>
@@ -597,7 +597,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                     class="block bg-surface rounded-card overflow-hidden tabular-nums"
                 >
                     <!-- Column Headers -->
-                    <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 py-2 bg-surface-header text-xs text-subtle uppercase border-b border-border">
+                    <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 py-2 bg-surface-header text-xs text-subtle uppercase border-b border-border">
                         <div>Category</div>
                         <div class="text-right">Budget</div>
                         <div class="text-right">Spent</div>
@@ -605,7 +605,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                     </div>
 
                     <!-- Unassigned Row -->
-                    <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 pt-3 pb-1 items-center">
+                    <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 pt-3 pb-1 items-center">
                         <div class="min-w-0">
                             <span class="text-sm text-body">Unassigned</span>
                             <div class="text-xs text-subtle italic">{{ unassignedSpending.count }} transaction{{ unassignedSpending.count !== 1 ? 's' : '' }}</div>
@@ -618,7 +618,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                     </div>
 
                     <!-- Total Row -->
-                    <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 py-2 bg-info/30 text-sm font-semibold border-t-2 border-info/40">
+                    <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 py-2 bg-info/30 text-sm font-semibold border-t-2 border-info/40">
                         <div class="text-info uppercase">Total</div>
                         <div class="text-right text-subtle">&mdash;</div>
                         <div class="text-right text-subtle">${{ formatNumber(unassignedSpending.total) }}</div>
@@ -637,7 +637,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
 
                 <div class="bg-surface rounded-card overflow-hidden tabular-nums">
                     <!-- Column Headers -->
-                    <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 py-2 bg-surface-header text-xs text-subtle uppercase border-b border-border">
+                    <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 py-2 bg-surface-header text-xs text-subtle uppercase border-b border-border">
                         <div>Category</div>
                         <div class="text-right">Budget</div>
                         <div class="text-right">Spent</div>
@@ -651,7 +651,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                         class="border-b border-border last:border-b-0"
                     >
                         <!-- Main Row -->
-                        <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 pt-3 pb-1 items-center">
+                        <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 pt-3 pb-1 items-center">
                             <!-- Category Name (Clickable) -->
                             <a
                                 :href="route('budget.category-detail', { month: month, category: category.id })"
@@ -689,7 +689,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                         <!-- Detail Row (Default & Avg Spent) -->
                         <div
                             v-if="showDetails && (category.default_amount > 0 || category.avg_spent > 0)"
-                            class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 pb-2 items-center"
+                            class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 pb-2 items-center"
                         >
                             <div></div>
                             <div class="col-span-3 flex items-center gap-3 text-xs text-subtle">
@@ -705,7 +705,7 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                     </div>
 
                     <!-- Group Totals Row -->
-                    <div class="grid grid-cols-[1fr_4.5rem_3.5rem_5rem] gap-px px-2 py-2 bg-info/30 text-sm font-semibold border-t-2 border-info/40">
+                    <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 py-2 bg-info/30 text-sm font-semibold border-t-2 border-info/40">
                         <div class="text-info uppercase">Total</div>
                         <div class="text-right text-body">
                             ${{ formatNumber(getGroupTotals(group).budgeted) }}
@@ -719,6 +719,25 @@ const showMoveToast = (amount, from, to, remaining = null) => {
                         >
                             {{ formatCurrency(getGroupTotals(group).available) }}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grand Total -->
+            <div v-if="categoryGroups.length > 0" class="bg-surface rounded-card overflow-hidden tabular-nums">
+                <div class="grid grid-cols-[1fr_5rem_5rem_5rem] gap-px px-2 py-2.5 text-sm font-bold">
+                    <div class="text-body uppercase">Grand Total</div>
+                    <div class="text-right text-body">
+                        ${{ formatNumber(summary.budgeted) }}
+                    </div>
+                    <div class="text-right text-subtle">
+                        ${{ formatNumber(summary.spent) }}
+                    </div>
+                    <div
+                        class="text-right"
+                        :class="(summary.budgeted - summary.spent) >= 0 ? 'text-success' : 'text-danger'"
+                    >
+                        {{ formatCurrency(summary.budgeted - summary.spent) }}
                     </div>
                 </div>
             </div>

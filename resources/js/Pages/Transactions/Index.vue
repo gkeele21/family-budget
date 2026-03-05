@@ -28,6 +28,8 @@ const props = defineProps({
     clearedFilter: String,
     unassignedFilter: Boolean,
     recurring: Array,
+    monthFilter: String,
+    summary: Object,
 });
 
 // Search state
@@ -39,18 +41,34 @@ const localEndDate = ref(props.endDate || '');
 const localClearedFilter = ref(props.clearedFilter || 'all');
 const localRecurringFilter = ref('all');
 const localUnassignedFilter = ref(!!props.unassignedFilter);
+const localMonthFilter = ref(props.monthFilter || '');
 const searchInputRef = ref(null);
+const monthChipsRef = ref(null);
 
 // View mode toggle: 'all' or 'recurring'
 const viewMode = ref('all');
 
 // Build params for router calls
+// Month chip options (current year)
+const monthChips = computed(() => {
+    const year = new Date().getFullYear();
+    const names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return names.map((label, i) => ({
+        value: `${year}-${String(i + 1).padStart(2, '0')}`,
+        label,
+    }));
+});
+
 const buildParams = () => {
     const params = {};
     if (props.currentAccountId) params.account = props.currentAccountId;
     if (localSearchQuery.value) params.search = localSearchQuery.value;
-    if (localStartDate.value) params.start_date = localStartDate.value;
-    if (localEndDate.value) params.end_date = localEndDate.value;
+    if (localMonthFilter.value) {
+        params.month = localMonthFilter.value;
+    } else {
+        if (localStartDate.value) params.start_date = localStartDate.value;
+        if (localEndDate.value) params.end_date = localEndDate.value;
+    }
     if (localClearedFilter.value && localClearedFilter.value !== 'all') {
         params.cleared = localClearedFilter.value;
     }
@@ -89,6 +107,7 @@ const toggleFilters = () => {
 };
 
 const applyFilters = () => {
+    showFilters.value = false;
     router.get(route('transactions.index'), buildParams(), {
         preserveState: true,
         preserveScroll: true,
@@ -96,6 +115,7 @@ const applyFilters = () => {
 };
 
 const clearFilters = () => {
+    localMonthFilter.value = '';
     localStartDate.value = '';
     localEndDate.value = '';
     localClearedFilter.value = 'all';
@@ -107,8 +127,20 @@ const clearFilters = () => {
     });
 };
 
+const selectMonth = (monthValue) => {
+    if (localMonthFilter.value === monthValue) {
+        localMonthFilter.value = '';
+    } else {
+        localMonthFilter.value = monthValue;
+        localStartDate.value = '';
+        localEndDate.value = '';
+    }
+    applyFilters();
+};
+
 const hasActiveFilters = computed(() => {
-    return localStartDate.value || localEndDate.value ||
+    return localMonthFilter.value ||
+           localStartDate.value || localEndDate.value ||
            (localClearedFilter.value && localClearedFilter.value !== 'all') ||
            localUnassignedFilter.value;
 });
@@ -237,7 +269,11 @@ const deleteTransaction = (transaction) => {
 
 const activeFilterDescription = computed(() => {
     const parts = [];
-    if (localStartDate.value && localEndDate.value) {
+    if (localMonthFilter.value) {
+        const [year, month] = localMonthFilter.value.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1);
+        parts.push(date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+    } else if (localStartDate.value && localEndDate.value) {
         parts.push(`${localStartDate.value} to ${localEndDate.value}`);
     } else if (localStartDate.value) {
         parts.push(`from ${localStartDate.value}`);
@@ -352,6 +388,34 @@ const formatNextDate = (dateStr, frequency) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
+// Clear month when date range is manually set
+watch([localStartDate, localEndDate], ([newStart, newEnd]) => {
+    if (newStart || newEnd) {
+        localMonthFilter.value = '';
+    }
+});
+
+// Auto-scroll month chips to active month when filter panel opens
+watch(showFilters, async (isOpen) => {
+    if (isOpen && localMonthFilter.value && monthChipsRef.value) {
+        await nextTick();
+        const container = monthChipsRef.value;
+        const chipIndex = monthChips.value.findIndex(c => c.value === localMonthFilter.value);
+        if (chipIndex >= 0) {
+            const buttons = container.querySelectorAll('button');
+            const target = buttons[chipIndex + 1]; // +1 for the "All" chip
+            if (target) {
+                const containerRect = container.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                container.scrollTo({
+                    left: target.offsetLeft - containerRect.width / 2 + targetRect.width / 2,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    }
+});
+
 // Scroll to transaction after edit redirect
 onMounted(() => {
     const scrollTo = page.props.flash?.scroll_to;
@@ -461,12 +525,34 @@ onMounted(() => {
                     leave-to-class="transform -translate-y-2 opacity-0"
                 >
                     <div v-if="showFilters" class="bg-surface rounded-card overflow-hidden">
+                        <!-- Month Filter Chips -->
+                        <div class="px-4 py-3 border-b border-border">
+                            <label class="block text-xs text-subtle mb-2">Month</label>
+                            <div ref="monthChipsRef" class="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+                                <FilterChip
+                                    :active="!localMonthFilter"
+                                    @click="selectMonth('')"
+                                >
+                                    All
+                                </FilterChip>
+                                <FilterChip
+                                    v-for="chip in monthChips"
+                                    :key="chip.value"
+                                    :active="localMonthFilter === chip.value"
+                                    @click="selectMonth(chip.value)"
+                                >
+                                    {{ chip.label }}
+                                </FilterChip>
+                            </div>
+                        </div>
+
                         <!-- Date Range -->
-                        <div class="divide-y divide-border">
+                        <div class="divide-y divide-border" :class="{ 'opacity-40 pointer-events-none': localMonthFilter }">
                             <DateField
                                 v-model="localStartDate"
                                 label="From"
                                 :max="localEndDate || undefined"
+                                :disabled="!!localMonthFilter"
                                 clearable
                                 @clear="localStartDate = ''"
                             />
@@ -474,6 +560,7 @@ onMounted(() => {
                                 v-model="localEndDate"
                                 label="To"
                                 :min="localStartDate || undefined"
+                                :disabled="!!localMonthFilter"
                                 :border-bottom="false"
                                 clearable
                                 @clear="localEndDate = ''"
@@ -516,10 +603,28 @@ onMounted(() => {
                     <button @click="clearFilters" class="text-primary ml-2">Clear</button>
                 </div>
 
+                <!-- Income / Spent / Net Summary -->
+                <div v-if="summary" class="bg-surface rounded-card px-4 py-2.5 flex items-center justify-center gap-0 text-sm tabular-nums">
+                    <div class="text-center flex-1">
+                        <div class="text-xs text-subtle">Income</div>
+                        <div class="font-semibold text-success font-mono">{{ formatCurrency(summary.income) }}</div>
+                    </div>
+                    <div class="w-px h-8 bg-border"></div>
+                    <div class="text-center flex-1">
+                        <div class="text-xs text-subtle">Spent</div>
+                        <div class="font-semibold text-danger font-mono">{{ formatCurrency(summary.spent) }}</div>
+                    </div>
+                    <div class="w-px h-8 bg-border"></div>
+                    <div class="text-center flex-1">
+                        <div class="text-xs text-subtle">Net</div>
+                        <div class="font-semibold font-mono" :class="summary.net >= 0 ? 'text-success' : 'text-danger'">{{ formatCurrency(summary.net) }}</div>
+                    </div>
+                </div>
+
                 <!-- Account Filter -->
                 <div class="-mx-4 px-4 relative">
                     <div class="absolute bottom-0 left-0 right-0 h-px bg-border"></div>
-                    <div class="flex gap-4 overflow-x-auto overflow-y-hidden relative">
+                    <div class="flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
                         <FilterChip
                             :active="!currentAccountId"
                             @click="filterByAccount(null)"
@@ -813,5 +918,13 @@ onMounted(() => {
     justify-content: center;
     border: 2px solid rgb(var(--color-bg));
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 </style>

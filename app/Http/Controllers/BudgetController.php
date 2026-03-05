@@ -263,7 +263,7 @@ class BudgetController extends Controller
         $validated = $request->validate([
             'budgets' => 'required|array',
             'budgets.*.category_id' => 'required|exists:categories,id',
-            'budgets.*.amount' => 'required|numeric|min:0',
+            'budgets.*.amount' => 'required|numeric',
         ]);
 
         foreach ($validated['budgets'] as $item) {
