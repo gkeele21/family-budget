@@ -239,7 +239,18 @@ class VoiceTransactionService
             ];
         }
 
-        $result = $this->createTransactions($validated['transactions'], $budget, $user);
+        try {
+            $result = $this->createTransactions($validated['transactions'], $budget, $user);
+        } catch (\Exception $e) {
+            Log::error('Voice: batchCreate failed', [
+                'error' => $e->getMessage(),
+                'transactions' => $validated['transactions'],
+            ]);
+            return [
+                'status' => 'error',
+                'message' => 'Failed to save transactions. Please try again.',
+            ];
+        }
 
         return [
             'status' => 'created',
