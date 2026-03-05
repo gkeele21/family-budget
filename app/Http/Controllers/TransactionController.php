@@ -418,6 +418,7 @@ class TransactionController extends Controller
         ]);
 
         // Handle payee
+        $oldPayeeId = $transaction->payee_id;
         $payeeId = null;
         if ($validated['payee_name'] && $validated['type'] !== 'transfer') {
             $payee = Payee::firstOrCreate(
@@ -490,12 +491,22 @@ class TransactionController extends Controller
             }
         });
 
+        // Clean up orphaned payee if it has no remaining transactions
+        if ($oldPayeeId && $oldPayeeId !== $payeeId) {
+            $stillUsed = Transaction::where('payee_id', $oldPayeeId)->exists();
+            if (!$stillUsed) {
+                Payee::where('id', $oldPayeeId)->delete();
+            }
+        }
+
         return redirect()->route('transactions.index');
     }
 
     public function destroy(Transaction $transaction)
     {
         $this->authorize('delete', $transaction);
+
+        $payeeId = $transaction->payee_id;
 
         // If it's a transfer, delete the paired transaction too
         if ($transaction->transfer_pair_id) {
@@ -506,6 +517,11 @@ class TransactionController extends Controller
         $transaction->splits()->delete();
 
         $transaction->delete();
+
+        // Clean up orphaned payee
+        if ($payeeId && !Transaction::where('payee_id', $payeeId)->exists()) {
+            Payee::where('id', $payeeId)->delete();
+        }
 
         return redirect()->route('transactions.index');
     }
