@@ -8,6 +8,7 @@ import SegmentedControl from '@/Components/Form/SegmentedControl.vue';
 import SearchField from '@/Components/Form/SearchField.vue';
 import DateField from '@/Components/Form/DateField.vue';
 import Button from '@/Components/Base/Button.vue';
+import Toggle from '@/Components/Base/Toggle.vue';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition.js';
 import { useTheme } from '@/Composables/useTheme.js';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
@@ -176,13 +177,6 @@ const filterByAccount = (accountId) => {
     }
 
     router.get(route('transactions.index'), params, {
-        preserveState: true,
-    });
-};
-
-const toggleUnassigned = () => {
-    localUnassignedFilter.value = !localUnassignedFilter.value;
-    router.get(route('transactions.index'), buildParams(), {
         preserveState: true,
     });
 };
@@ -581,6 +575,15 @@ onMounted(() => {
                             />
                         </div>
 
+                        <!-- Unassigned Filter -->
+                        <div class="px-4 py-3 border-t border-border flex items-center justify-between">
+                            <label class="text-xs text-subtle">Unassigned only</label>
+                            <Toggle
+                                :modelValue="localUnassignedFilter"
+                                @update:modelValue="localUnassignedFilter = $event"
+                            />
+                        </div>
+
                         <!-- Filter Actions -->
                         <div class="flex gap-2 px-4 py-3 border-t border-border">
                             <Button @click="applyFilters" full-width>
@@ -638,15 +641,6 @@ onMounted(() => {
                             @click="filterByAccount(account.id)"
                         >
                             {{ account.name }}
-                        </FilterChip>
-                        <!-- Separator -->
-                        <div class="w-px h-5 bg-border self-center flex-shrink-0"></div>
-                        <!-- Unassigned filter -->
-                        <FilterChip
-                            :active="localUnassignedFilter"
-                            @click="toggleUnassigned"
-                        >
-                            Unassigned
                         </FilterChip>
                     </div>
                 </div>

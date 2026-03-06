@@ -77,7 +77,7 @@ class TransactionController extends Controller
         // Unassigned filter
         if ($unassignedFilter) {
             $query->whereNull('category_id')
-                  ->where('type', '!=', 'transfer')
+                  ->whereNotIn('type', ['transfer', 'income'])
                   ->whereDoesntHave('splits');
         }
 
