@@ -667,7 +667,7 @@ onMounted(() => {
                         >
                             <Link
                                 :id="'tx-' + transaction.id"
-                                :href="route('transactions.edit', { transaction: transaction.id, ...(currentAccountId ? { account: currentAccountId } : {}) })"
+                                :href="route('transactions.edit', { transaction: transaction.id, ...buildParams() })"
                                 class="block bg-surface rounded-card p-3 shadow-sm border-l-4"
                                 :class="{
                                     'border-danger': transaction.type === 'expense',
@@ -710,8 +710,11 @@ onMounted(() => {
                                         </div>
                                     </div>
 
-                                    <!-- Right side: Amount + Account + Cleared dot -->
-                                    <div class="flex items-start gap-2 flex-shrink-0 ml-3">
+                                    <!-- Right side: Amount + Account + Cleared dot (tappable to toggle cleared) -->
+                                    <button
+                                        @click.prevent.stop="toggleCleared(transaction)"
+                                        class="flex items-start gap-2 flex-shrink-0 ml-3"
+                                    >
                                         <div class="text-right">
                                             <div :class="['font-medium', getAmountColor(transaction.type)]">
                                                 {{ transaction.type === 'transfer' ? formatCurrency(Math.abs(transaction.amount)) : formatCurrency(transaction.amount) }}
@@ -721,10 +724,7 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <!-- Cleared Dot -->
-                                        <button
-                                            @click.prevent.stop="toggleCleared(transaction)"
-                                            class="flex-shrink-0 p-1 mt-0.5"
-                                        >
+                                        <div class="flex-shrink-0 p-1 mt-0.5">
                                             <div
                                                 v-if="transaction.cleared"
                                                 class="w-2 h-2 rounded-full bg-success"
@@ -733,8 +733,8 @@ onMounted(() => {
                                                 v-else
                                                 class="w-2 h-2 rounded-full border-[1.5px] border-subtle"
                                             ></div>
-                                        </button>
-                                    </div>
+                                        </div>
+                                    </button>
                                 </div>
                             </Link>
                         </SwipeableRow>

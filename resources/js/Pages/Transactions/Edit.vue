@@ -63,11 +63,16 @@ const selectPayee = (payee) => {
     }
 };
 
-// Preserve account filter through edit round-trip
-const accountFilter = new URLSearchParams(window.location.search).get('account');
+// Preserve all filters through edit round-trip
+const searchParams = new URLSearchParams(window.location.search);
+const filterParams = {};
+for (const [key, value] of searchParams) {
+    if (key !== 'transaction') filterParams[key] = value;
+}
 const buildRoute = (name, params) => {
     const base = route(name, params);
-    return accountFilter ? base + '?account=' + accountFilter : base;
+    const qs = new URLSearchParams(filterParams).toString();
+    return qs ? base + '?' + qs : base;
 };
 
 const submit = () => {
@@ -154,7 +159,7 @@ const getSaveButtonVariant = () => {
         <div class="bg-surface border-b border-border px-4 py-3 safe-area-top">
             <div class="flex items-center justify-between">
                 <Link
-                    :href="route('transactions.index', accountFilter ? { account: accountFilter } : {})"
+                    :href="route('transactions.index', filterParams)"
                     class="text-subtle font-medium flex items-center gap-1"
                 >
                     <span class="text-lg">×</span> Cancel

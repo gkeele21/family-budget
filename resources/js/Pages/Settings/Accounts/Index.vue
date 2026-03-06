@@ -153,7 +153,7 @@ const closeModal = () => {
                                 </svg>
                             </div>
                             <Link
-                                :href="route('accounts.edit', account.id)"
+                                :href="route('transactions.index', { account: account.id })"
                                 class="flex items-center justify-between flex-1 py-4 pr-4 hover:bg-surface-overlay"
                             >
                                 <div class="flex items-center gap-3">
