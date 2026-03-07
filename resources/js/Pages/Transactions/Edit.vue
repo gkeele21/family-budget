@@ -173,7 +173,7 @@ const getSaveButtonVariant = () => {
         <div class="bg-surface border-b border-border px-4 py-3 safe-area-top">
             <div class="flex items-center justify-between">
                 <Link
-                    :href="route('transactions.index', filterParams)"
+                    :href="route('transactions.index', { ...filterParams, scroll_to: props.transaction.id })"
                     class="text-subtle font-medium flex items-center gap-1"
                 >
                     <span class="text-lg">×</span> Cancel

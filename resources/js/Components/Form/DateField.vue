@@ -74,9 +74,11 @@ const openPicker = () => {
 
     isOpen.value = true;
 
-    // Scroll to selected values after opening
+    // Wait for BottomSheet (Teleport + Transition) to render wheel elements
     nextTick(() => {
-        scrollToSelected();
+        requestAnimationFrame(() => {
+            scrollToSelected();
+        });
     });
 };
 

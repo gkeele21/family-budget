@@ -454,9 +454,10 @@ watch(showFilters, async (isOpen) => {
     }
 });
 
-// Scroll to transaction after edit redirect
+// Scroll to transaction after edit redirect or cancel
 onMounted(() => {
-    const scrollTo = page.props.flash?.scroll_to;
+    const scrollTo = page.props.flash?.scroll_to
+        || new URLSearchParams(window.location.search).get('scroll_to');
     if (scrollTo) {
         nextTick(() => {
             const el = document.getElementById('tx-' + scrollTo);
