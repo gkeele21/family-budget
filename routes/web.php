@@ -103,6 +103,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/settings/recurring/{recurring}', [RecurringTransactionController::class, 'update'])->name('recurring.update');
     Route::delete('/settings/recurring/{recurring}', [RecurringTransactionController::class, 'destroy'])->name('recurring.destroy');
     Route::post('/settings/recurring/{recurring}/toggle', [RecurringTransactionController::class, 'toggleActive'])->name('recurring.toggle');
+    Route::post('/settings/recurring/{recurring}/post', [RecurringTransactionController::class, 'post'])->name('recurring.post');
+    Route::post('/settings/recurring/post-all', [RecurringTransactionController::class, 'postAll'])->name('recurring.post-all');
 
     // Sharing / Multi-User
     Route::get('/settings/sharing', [SharingController::class, 'index'])->name('sharing.index');

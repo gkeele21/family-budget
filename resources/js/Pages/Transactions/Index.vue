@@ -45,6 +45,8 @@ const localUnassignedFilter = ref(!!props.unassignedFilter);
 const localMonthFilter = ref(props.monthFilter || '');
 const searchInputRef = ref(null);
 const monthChipsRef = ref(null);
+const accountFilterScroll = ref(null);
+const activeAccountChip = ref(null);
 
 // View mode toggle: 'all' or 'recurring'
 const viewMode = ref('all');
@@ -296,6 +298,25 @@ const frequencyLabels = {
 
 const frequencyOrder = ['daily', 'weekly', 'biweekly', 'monthly', 'yearly'];
 
+const dueItems = computed(() => {
+    if (!props.recurring) return [];
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return props.recurring.filter(item => item.is_active && item.next_date <= today);
+});
+
+const postRecurring = (item) => {
+    router.post(route('recurring.post', item.id), {}, {
+        onSuccess: () => { viewMode.value = 'all'; },
+    });
+};
+
+const postAllRecurring = () => {
+    router.post(route('recurring.post-all'), {}, {
+        onSuccess: () => { viewMode.value = 'all'; },
+    });
+};
+
 const groupedRecurring = computed(() => {
     if (!props.recurring) return [];
     const groups = {};
@@ -419,6 +440,13 @@ onMounted(() => {
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+        });
+    }
+
+    // Auto-scroll account filter to show the active chip
+    if (props.currentAccountId && activeAccountChip.value) {
+        nextTick(() => {
+            activeAccountChip.value.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         });
     }
 });
@@ -627,7 +655,7 @@ onMounted(() => {
                 <!-- Account Filter -->
                 <div class="-mx-4 px-4 relative">
                     <div class="absolute bottom-0 left-0 right-0 h-px bg-border"></div>
-                    <div class="flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
+                    <div ref="accountFilterScroll" class="flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
                         <FilterChip
                             :active="!currentAccountId"
                             @click="filterByAccount(null)"
@@ -637,6 +665,7 @@ onMounted(() => {
                         <FilterChip
                             v-for="account in accounts"
                             :key="account.id"
+                            :ref="el => { if (currentAccountId === account.id) activeAccountChip = el?.$el || el; }"
                             :active="currentAccountId === account.id"
                             @click="filterByAccount(account.id)"
                         >
@@ -710,11 +739,8 @@ onMounted(() => {
                                         </div>
                                     </div>
 
-                                    <!-- Right side: Amount + Account + Cleared dot (tappable to toggle cleared) -->
-                                    <button
-                                        @click.prevent.stop="toggleCleared(transaction)"
-                                        class="flex items-start gap-2 flex-shrink-0 ml-3"
-                                    >
+                                    <!-- Right side: Amount + Account + Cleared dot -->
+                                    <div class="flex items-start gap-2 flex-shrink-0 ml-3">
                                         <div class="text-right">
                                             <div :class="['font-medium', getAmountColor(transaction.type)]">
                                                 {{ transaction.type === 'transfer' ? formatCurrency(Math.abs(transaction.amount)) : formatCurrency(transaction.amount) }}
@@ -724,7 +750,10 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <!-- Cleared Dot -->
-                                        <div class="flex-shrink-0 p-1 mt-0.5">
+                                        <button
+                                            @click.prevent.stop="toggleCleared(transaction)"
+                                            class="flex-shrink-0 p-1 mt-0.5"
+                                        >
                                             <div
                                                 v-if="transaction.cleared"
                                                 class="w-2 h-2 rounded-full bg-success"
@@ -733,8 +762,8 @@ onMounted(() => {
                                                 v-else
                                                 class="w-2 h-2 rounded-full border-[1.5px] border-subtle"
                                             ></div>
-                                        </div>
-                                    </button>
+                                        </button>
+                                    </div>
                                 </div>
                             </Link>
                         </SwipeableRow>
@@ -772,6 +801,50 @@ onMounted(() => {
 
             <!-- RECURRING VIEW -->
             <template v-else>
+                <!-- Due Banner + Section -->
+                <template v-if="dueItems.length > 0">
+                    <div class="flex items-center justify-between bg-warning/15 border border-warning/30 rounded-card px-4 py-2.5">
+                        <span class="text-sm font-medium text-warning">{{ dueItems.length }} due</span>
+                        <Button variant="ghost" size="sm" @click="postAllRecurring">Post All Due</Button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">Due</h2>
+                        <div class="space-y-1.5">
+                            <div
+                                v-for="item in dueItems"
+                                :key="'due-' + item.id"
+                                class="bg-surface rounded-card p-3 shadow-sm border-l-4"
+                                :class="item.type === 'expense' ? 'border-danger' : item.type === 'income' ? 'border-success' : 'border-info'"
+                            >
+                                <div class="flex items-start justify-between">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="font-medium text-body truncate">
+                                            {{ item.payee }}
+                                        </div>
+                                        <div class="text-xs text-subtle mt-0.5 truncate">
+                                            <span v-if="item.category">{{ item.category }} &middot; </span>
+                                            {{ formatDate(item.next_date) }}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3 flex-shrink-0 ml-3">
+                                        <div class="text-right">
+                                            <div
+                                                class="font-medium"
+                                                :class="item.type === 'expense' ? 'text-danger' : 'text-success'"
+                                            >
+                                                {{ formatCurrency(Math.abs(item.amount)) }}
+                                            </div>
+                                            <div class="text-xs text-subtle mt-0.5">{{ item.account }}</div>
+                                        </div>
+                                        <Button variant="primary" size="sm" @click="postRecurring(item)">Post</Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
                 <template v-if="groupedRecurring.length > 0">
                     <div v-for="group in groupedRecurring" :key="group.frequency" class="space-y-2">
                         <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">

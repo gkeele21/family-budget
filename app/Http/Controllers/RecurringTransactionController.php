@@ -241,6 +241,91 @@ class RecurringTransactionController extends Controller
     }
 
     /**
+     * Post a single due recurring transaction.
+     */
+    public function post(RecurringTransaction $recurring)
+    {
+        $budget = Auth::user()->currentBudget;
+        abort_unless($recurring->budget_id === $budget->id, 403);
+
+        $today = now()->startOfDay();
+        abort_unless($recurring->is_active && $recurring->next_date->lte($today), 422);
+
+        $this->createTransactionFromRecurring($recurring);
+
+        return redirect()->route('transactions.index');
+    }
+
+    /**
+     * Post all due recurring transactions for the current budget.
+     */
+    public function postAll()
+    {
+        $budget = Auth::user()->currentBudget;
+        $today = now()->startOfDay();
+
+        $dueRecurring = RecurringTransaction::with(['account', 'budget'])
+            ->where('budget_id', $budget->id)
+            ->where('is_active', true)
+            ->where('next_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->get();
+
+        foreach ($dueRecurring as $recurring) {
+            $this->createTransactionFromRecurring($recurring);
+        }
+
+        return redirect()->route('transactions.index');
+    }
+
+    /**
+     * Create a transaction from a recurring template and advance its next_date.
+     */
+    private function createTransactionFromRecurring(RecurringTransaction $recurring): void
+    {
+        $amount = $recurring->type === 'expense'
+            ? -abs($recurring->amount)
+            : abs($recurring->amount);
+
+        // Auto-clear only cash account transactions
+        $cleared = $recurring->account->type === 'cash';
+
+        // Capture date before advancing (Carbon is mutable)
+        $transactionDate = $recurring->next_date->copy();
+
+        Transaction::create([
+            'budget_id' => $recurring->budget_id,
+            'account_id' => $recurring->account_id,
+            'category_id' => $recurring->category_id,
+            'payee_id' => $recurring->payee_id,
+            'amount' => $amount,
+            'type' => $recurring->type,
+            'date' => $transactionDate,
+            'cleared' => $cleared,
+            'recurring_id' => $recurring->id,
+            'created_by' => $recurring->budget->owner_id,
+        ]);
+
+        // Calculate next date
+        $nextDate = match ($recurring->frequency) {
+            'daily' => $recurring->next_date->copy()->addDay(),
+            'weekly' => $recurring->next_date->copy()->addWeek(),
+            'biweekly' => $recurring->next_date->copy()->addWeeks(2),
+            'monthly' => $recurring->next_date->copy()->addMonth(),
+            'yearly' => $recurring->next_date->copy()->addYear(),
+        };
+
+        if ($recurring->end_date && $nextDate->gt($recurring->end_date)) {
+            $recurring->update(['is_active' => false, 'next_date' => $nextDate]);
+        } else {
+            $recurring->update(['next_date' => $nextDate]);
+        }
+    }
+
+    /**
      * Process all due recurring transactions.
      * This can be called via artisan command or manually triggered.
      */
@@ -267,6 +352,8 @@ class RecurringTransactionController extends Controller
             // Auto-clear cash account transactions
             $cleared = $recurring->account->type === 'cash';
 
+            $transactionDate = $recurring->next_date->copy();
+
             Transaction::create([
                 'budget_id' => $recurring->budget_id,
                 'account_id' => $recurring->account_id,
@@ -274,7 +361,7 @@ class RecurringTransactionController extends Controller
                 'payee_id' => $recurring->payee_id,
                 'amount' => $amount,
                 'type' => $recurring->type,
-                'date' => $recurring->next_date,
+                'date' => $transactionDate,
                 'cleared' => $cleared,
                 'recurring_id' => $recurring->id,
                 'created_by' => $recurring->budget->owner_id,
@@ -282,11 +369,11 @@ class RecurringTransactionController extends Controller
 
             // Calculate next date
             $nextDate = match ($recurring->frequency) {
-                'daily' => $recurring->next_date->addDay(),
-                'weekly' => $recurring->next_date->addWeek(),
-                'biweekly' => $recurring->next_date->addWeeks(2),
-                'monthly' => $recurring->next_date->addMonth(),
-                'yearly' => $recurring->next_date->addYear(),
+                'daily' => $recurring->next_date->copy()->addDay(),
+                'weekly' => $recurring->next_date->copy()->addWeek(),
+                'biweekly' => $recurring->next_date->copy()->addWeeks(2),
+                'monthly' => $recurring->next_date->copy()->addMonth(),
+                'yearly' => $recurring->next_date->copy()->addYear(),
             };
 
             // Check if we should deactivate due to end_date
