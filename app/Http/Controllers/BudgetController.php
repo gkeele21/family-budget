@@ -117,7 +117,10 @@ class BudgetController extends Controller
             return redirect()->route('onboarding.setup');
         }
 
-        $month = $month ?? now()->format('Y-m');
+        $month = $month ?? session('budget_month', now()->format('Y-m'));
+
+        // Remember the selected month for next visit
+        session(['budget_month' => $month]);
 
         // Get all category groups with categories and their monthly budget data
         $groups = $budget->categoryGroups()
