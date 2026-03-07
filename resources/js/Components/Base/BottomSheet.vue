@@ -1,5 +1,5 @@
 <script setup>
-import { watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -19,8 +19,28 @@ const closeOnEscape = (e) => {
     }
 };
 
+// Track visual viewport to handle mobile keyboard
+const viewportHeight = ref(window.innerHeight);
+const viewportOffsetTop = ref(0);
+
+const updateViewport = () => {
+    const vv = window.visualViewport;
+    if (vv) {
+        viewportHeight.value = vv.height;
+        viewportOffsetTop.value = vv.offsetTop;
+    }
+};
+
 watch(() => props.show, (isOpen) => {
     document.body.style.overflow = isOpen ? 'hidden' : null;
+    if (isOpen && window.visualViewport) {
+        updateViewport();
+        window.visualViewport.addEventListener('resize', updateViewport);
+        window.visualViewport.addEventListener('scroll', updateViewport);
+    } else if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewport);
+        window.visualViewport.removeEventListener('scroll', updateViewport);
+    }
 });
 
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
@@ -28,6 +48,10 @@ onMounted(() => document.addEventListener('keydown', closeOnEscape));
 onUnmounted(() => {
     document.removeEventListener('keydown', closeOnEscape);
     document.body.style.overflow = null;
+    if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewport);
+        window.visualViewport.removeEventListener('scroll', updateViewport);
+    }
 });
 </script>
 
@@ -43,7 +67,8 @@ onUnmounted(() => {
         >
             <div
                 v-if="show"
-                class="fixed inset-0 z-50 flex items-end justify-center"
+                class="fixed left-0 right-0 z-50 flex items-end justify-center"
+                :style="{ top: viewportOffsetTop + 'px', height: viewportHeight + 'px' }"
                 @click.self="close"
             >
                 <!-- Backdrop -->
@@ -61,7 +86,7 @@ onUnmounted(() => {
                     <div
                         v-if="show"
                         class="relative w-full bg-surface rounded-t-2xl flex flex-col"
-                        :style="{ maxHeight }"
+                        :style="{ maxHeight: (viewportHeight * 0.85) + 'px' }"
                     >
                         <!-- Handle -->
                         <div class="flex justify-center pt-3 pb-1">
