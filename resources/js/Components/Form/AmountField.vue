@@ -177,9 +177,10 @@ watch(() => props.modelValue, (newVal) => {
             @blur="onBlur"
             @keyup.enter="$event.target.blur()"
             :class="[
-                'bg-transparent focus:outline-none font-semibold text-right text-sm flex-1 min-w-0',
+                'bg-transparent focus:outline-none font-semibold text-right flex-1 min-w-0 origin-right',
                 colorClass,
             ]"
+            style="font-size: 16px; transform: scale(0.875); transform-origin: right center;"
         />
     </div>
     <!-- Without label: bare inline, display -->
