@@ -61,19 +61,21 @@ class Category extends Model
         $startDate = $month . '-01';
         $endDate = date('Y-m-t', strtotime($startDate));
 
-        $directSpent = (float) abs($this->transactions()
-            ->where('type', 'expense')
+        $directActivity = (float) $this->transactions()
+            ->where('type', '!=', 'transfer')
             ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount'));
+            ->sum('amount');
 
-        $splitSpent = (float) abs($this->splitTransactions()
+        $splitActivity = (float) $this->splitTransactions()
             ->whereHas('transaction', function ($query) use ($startDate, $endDate) {
-                $query->where('type', 'expense')
+                $query->where('type', '!=', 'transfer')
                     ->whereBetween('date', [$startDate, $endDate]);
             })
-            ->sum('amount'));
+            ->sum('amount');
 
-        return $directSpent + $splitSpent;
+        // Expenses are negative, income/refunds are positive
+        // Negate so net outflow shows as a positive "spent" value
+        return (float) -($directActivity + $splitActivity);
     }
 
     public function getCumulativeBudgetedThrough(string $month): float
@@ -87,19 +89,19 @@ class Category extends Model
     {
         $endDate = date('Y-m-t', strtotime($month . '-01'));
 
-        $directSpent = (float) abs($this->transactions()
-            ->where('type', 'expense')
+        $directActivity = (float) $this->transactions()
+            ->where('type', '!=', 'transfer')
             ->where('date', '<=', $endDate)
-            ->sum('amount'));
+            ->sum('amount');
 
-        $splitSpent = (float) abs($this->splitTransactions()
+        $splitActivity = (float) $this->splitTransactions()
             ->whereHas('transaction', function ($query) use ($endDate) {
-                $query->where('type', 'expense')
+                $query->where('type', '!=', 'transfer')
                     ->where('date', '<=', $endDate);
             })
-            ->sum('amount'));
+            ->sum('amount');
 
-        return $directSpent + $splitSpent;
+        return (float) -($directActivity + $splitActivity);
     }
 
     public function getAvailableForMonth(string $month): float
