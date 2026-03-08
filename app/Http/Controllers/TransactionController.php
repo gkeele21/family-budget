@@ -339,8 +339,13 @@ class TransactionController extends Controller
             }
         }
 
-        // Amount arrives already signed from frontend (negative for expenses)
+        // Enforce correct sign: expenses negative, income positive
         $amount = (float) $validated['amount'];
+        if ($validated['type'] === 'expense') {
+            $amount = -abs($amount);
+        } elseif ($validated['type'] === 'income') {
+            $amount = abs($amount);
+        }
 
         // Auto-clear cash account transactions
         $account = Account::find($validated['account_id']);
@@ -516,8 +521,13 @@ class TransactionController extends Controller
             $payeeId = $payee->id;
         }
 
-        // Amount arrives already signed from frontend
+        // Enforce correct sign: expenses negative, income positive
         $amount = (float) $validated['amount'];
+        if ($validated['type'] === 'expense') {
+            $amount = -abs($amount);
+        } elseif ($validated['type'] === 'income') {
+            $amount = abs($amount);
+        }
 
         DB::transaction(function () use ($validated, $transaction, $payeeId, $amount) {
             // For transfers, update both sides of the pair
