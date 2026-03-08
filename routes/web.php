@@ -13,6 +13,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RecurringTransactionController;
 use App\Http\Controllers\SharingController;
+use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\VoiceCategoryController;
 use App\Http\Controllers\VoiceTransactionController;
@@ -114,6 +115,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/sharing/pending', [SharingController::class, 'pendingInvites'])->name('sharing.pending');
     Route::post('/settings/sharing/accept', [SharingController::class, 'acceptInvite'])->name('sharing.accept-invite');
     Route::post('/settings/sharing/decline', [SharingController::class, 'declineInvite'])->name('sharing.decline-invite');
+
+    // Tutorial
+    Route::get('/tutorial', [TutorialController::class, 'hub'])->name('tutorial.hub');
+    Route::post('/tutorial/learn', [TutorialController::class, 'startLearn'])->name('tutorial.start-learn');
+    Route::post('/tutorial/setup', [TutorialController::class, 'startSetup'])->name('tutorial.start-setup');
+    Route::put('/tutorial/step', [TutorialController::class, 'updateStep'])->name('tutorial.update-step');
+    Route::post('/tutorial/complete', [TutorialController::class, 'complete'])->name('tutorial.complete');
+    Route::get('/tutorial/tips', [TutorialController::class, 'tips'])->name('tutorial.tips');
+    Route::get('/tutorial/tips/{slug}', [TutorialController::class, 'tipShow'])->name('tutorial.tip-show');
 
     // Profile (from Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

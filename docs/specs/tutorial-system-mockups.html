@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Guy — Interactive Tutorial System Mockups</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #4a4a4a;
+            --surface: #1f1f1f;
+            --surface-elevated: #262626;
+            --surface-overlay: #333333;
+            --surface-inset: #0f0f0f;
+            --surface-header: #0f0f0f;
+            --text: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --text-subtle: #737373;
+            --border: #404040;
+            --border-strong: #525252;
+            --primary: #57d025;
+            --success: #57d025;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --warning: #f47612;
+        }
+
+        body {
+            font-family: 'Figtree', system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 32px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--warning);
+            margin: 48px 0 8px;
+        }
+
+        h2:first-of-type { margin-top: 0; }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .mockup-label {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .mockup-note {
+            color: var(--text-subtle);
+            font-size: 13px;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        /* Phone frame */
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: var(--bg);
+            border-radius: 40px;
+            border: 3px solid #555;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 40px;
+        }
+
+        .phone-row {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            height: 54px;
+            background: var(--surface-header);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .status-bar .notch {
+            width: 120px;
+            height: 28px;
+            background: #000;
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* App header */
+        .app-header {
+            background: var(--surface-header);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .app-header .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-header .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .app-header .app-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .app-header .gear {
+            color: var(--text-subtle);
+            font-size: 20px;
+        }
+
+        /* Page content area */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Bottom nav */
+        .bottom-nav {
+            background: var(--surface-header);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 8px 0 24px;
+            flex-shrink: 0;
+        }
+
+        .nav-tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            color: var(--text-subtle);
+        }
+
+        .nav-tab.active { color: var(--primary); }
+
+        .nav-tab .icon {
+            font-size: 20px;
+        }
+
+        /* ==========================================
+           TUTORIAL SELECTION SCREEN
+           ========================================== */
+
+        .tutorial-hero {
+            text-align: center;
+            padding: 32px 24px 24px;
+        }
+
+        .mascot-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a3e, #2a2a5e);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(87, 208, 37, 0.2);
+        }
+
+        .tutorial-hero h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .tutorial-hero p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .tutorial-cards {
+            padding: 0 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tutorial-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .tutorial-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .tutorial-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .tutorial-card .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-icon.learn {
+            background: rgba(87, 208, 37, 0.15);
+            border: 1px solid rgba(87, 208, 37, 0.3);
+        }
+
+        .card-icon.setup {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .card-icon.tips {
+            background: rgba(244, 118, 18, 0.15);
+            border: 1px solid rgba(244, 118, 18, 0.3);
+        }
+
+        .tutorial-card .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .tutorial-card .card-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .tutorial-card .card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .tutorial-card .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-subtle);
+        }
+
+        .card-meta .tag {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag.green {
+            background: rgba(87, 208, 37, 0.15);
+            color: var(--success);
+        }
+
+        .tag.blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
+
+        .tag.orange {
+            background: rgba(244, 118, 18, 0.15);
+            color: var(--warning);
+        }
+
+        .skip-link {
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            color: var(--text-subtle);
+        }
+
+        .skip-link a {
+            color: var(--text-muted);
+            text-decoration: underline;
+        }
+
+        /* ==========================================
+           TUTORIAL OVERLAY — MASCOT COACH
+           ========================================== */
+
+        .tutorial-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .coach-bubble {
+            margin: 0 12px 12px;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .coach-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px 0;
+        }
+
+        .coach-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a3e, #2a2a5e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            border: 2px solid var(--primary);
+        }
+
+        .coach-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .coach-step {
+            font-size: 11px;
+            color: var(--text-subtle);
+        }
+
+        .coach-body {
+            padding: 12px 16px 16px;
+        }
+
+        .coach-body p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .coach-body .highlight-text {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .coach-body .amount-highlight {
+            font-family: monospace;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .coach-body .concept {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .coach-actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 14px;
+        }
+
+        .coach-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .coach-btn.primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .coach-btn.ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .coach-progress {
+            display: flex;
+            gap: 3px;
+            padding: 0 16px 14px;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--border);
+        }
+
+        .progress-dot.done { background: var(--primary); }
+        .progress-dot.current { background: var(--warning); }
+
+        /* Spotlight dimmer */
+        .spotlight-dim {
+            background: rgba(0,0,0,0.5);
+        }
+
+        /* ==========================================
+           BUDGET PAGE WITH TUTORIAL
+           ========================================== */
+
+        .budget-month-header {
+            background: var(--surface-header);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-nav .arrow {
+            color: var(--text-subtle);
+            font-size: 16px;
+        }
+
+        .month-nav .month {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .ready-to-assign {
+            margin: 12px;
+            padding: 14px 16px;
+            background: rgba(87, 208, 37, 0.1);
+            border: 1px solid rgba(87, 208, 37, 0.25);
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ready-to-assign.highlighted {
+            border-color: var(--warning);
+            box-shadow: 0 0 0 2px rgba(244, 118, 18, 0.3), 0 0 20px rgba(244, 118, 18, 0.15);
+            position: relative;
+            z-index: 11;
+        }
+
+        .ready-to-assign .label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .ready-to-assign .amount {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .category-group {
+            margin: 0 12px 8px;
+        }
+
+        .group-header {
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .group-header .cols {
+            display: flex;
+            gap: 16px;
+        }
+
+        .category-row {
+            background: var(--surface);
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-row:first-of-type { border-radius: 10px 10px 0 0; }
+        .category-row:last-of-type { border-radius: 0 0 10px 10px; border-bottom: none; }
+        .category-row:only-of-type { border-radius: 10px; }
+
+        .category-row.highlighted {
+            border: 2px solid var(--warning);
+            box-shadow: 0 0 0 2px rgba(244, 118, 18, 0.3), 0 0 20px rgba(244, 118, 18, 0.15);
+            position: relative;
+            z-index: 11;
+            border-radius: 10px;
+        }
+
+        .category-row .cat-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-row .emoji {
+            font-size: 18px;
+        }
+
+        .category-row .cat-name {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .category-row .cat-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .category-row .cat-amount {
+            font-family: monospace;
+            font-size: 13px;
+            text-align: right;
+            min-width: 50px;
+        }
+
+        .cat-amount.positive { color: var(--success); }
+        .cat-amount.zero { color: var(--text-subtle); }
+        .cat-amount.negative { color: var(--danger); }
+        .cat-amount.muted { color: var(--text-subtle); }
+
+        /* Pointer arrow from coach to highlighted element */
+        .pointer-arrow {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--surface);
+            margin: 0 auto;
+            position: relative;
+            top: -1px;
+        }
+
+        /* ==========================================
+           SETUP TUTORIAL
+           ========================================== */
+
+        .setup-step {
+            padding: 24px 16px;
+        }
+
+        .setup-step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--info);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .setup-coach-inline {
+            display: flex;
+            gap: 12px;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .setup-coach-inline .mini-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a3e, #2a2a5e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            border: 1.5px solid var(--info);
+        }
+
+        .setup-coach-inline .tip-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .setup-coach-inline .tip-text strong {
+            color: var(--text);
+        }
+
+        .form-field {
+            margin-bottom: 16px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-field .input {
+            width: 100%;
+            padding: 12px;
+            background: var(--surface-inset);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .form-field .input::placeholder {
+            color: var(--text-subtle);
+        }
+
+        .form-field .input.filled {
+            border-color: var(--primary);
+        }
+
+        .account-type-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .type-btn.selected {
+            border-color: var(--info);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .type-btn .btn-emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ==========================================
+           COMPLETION SCREEN
+           ========================================== */
+
+        .completion-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+            height: 100%;
+        }
+
+        .completion-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(87, 208, 37, 0.15);
+            border: 3px solid var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .completion-screen h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .completion-screen p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .concepts-summary {
+            width: 100%;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .concepts-summary h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .concept-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .concept-item:last-child { border-bottom: none; }
+
+        .concept-item .check {
+            color: var(--success);
+            font-size: 16px;
+        }
+
+        .concept-item .concept-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .completion-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .completion-btn {
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .completion-btn.primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .completion-btn.outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* ==========================================
+           CONTEXTUAL TOOLTIP EXAMPLE
+           ========================================== */
+
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--surface-overlay);
+            color: var(--text-subtle);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .help-icon.active {
+            background: var(--warning);
+            color: #fff;
+        }
+
+        /* ==========================================
+           ARROW INDICATORS
+           ========================================== */
+
+        .highlight-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(244, 118, 18, 0.3), 0 0 20px rgba(244, 118, 18, 0.15); }
+            50% { box-shadow: 0 0 0 4px rgba(244, 118, 18, 0.4), 0 0 30px rgba(244, 118, 18, 0.25); }
+        }
+
+        /* Flow arrow between screens */
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            color: var(--text-subtle);
+            font-size: 32px;
+            padding: 0 8px;
+            align-self: center;
+        }
+
+        /* ==========================================
+           PROGRESS HEADER BAR
+           ========================================== */
+
+        .tutorial-progress-bar {
+            background: var(--surface-header);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tutorial-progress-bar .exit-btn {
+            font-size: 18px;
+            color: var(--text-subtle);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.green { background: var(--primary); }
+        .progress-fill.blue { background: var(--info); }
+
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-subtle);
+            white-space: nowrap;
+        }
+
+        /* Tutorial banner on budget header */
+        .tutorial-banner {
+            background: rgba(244, 118, 18, 0.1);
+            border-bottom: 1px solid rgba(244, 118, 18, 0.25);
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .tutorial-banner .banner-text {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .tutorial-banner .banner-exit {
+            color: var(--text-subtle);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           SETUP TUTORIAL CHECKLIST
+           ========================================== */
+
+        .setup-checklist {
+            padding: 16px;
+        }
+
+        .checklist-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            align-items: flex-start;
+        }
+
+        .checklist-item.active {
+            border-color: var(--info);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .checklist-item.done {
+            opacity: 0.6;
+        }
+
+        .checklist-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .checklist-check.done {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+
+        .checklist-check.current {
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .checklist-content .check-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .checklist-content .check-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================
+           ANNOTATION / SPEC LABELS
+           ========================================== */
+
+        .annotation {
+            position: absolute;
+            font-size: 11px;
+            color: var(--warning);
+            font-weight: 600;
+            background: rgba(244, 118, 18, 0.1);
+            border: 1px solid rgba(244, 118, 18, 0.3);
+            border-radius: 6px;
+            padding: 3px 8px;
+            white-space: nowrap;
+            z-index: 20;
+        }
+
+        .annotation::before {
+            content: '';
+            position: absolute;
+            border: 5px solid transparent;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Interactive Tutorial System</h1>
+<p class="page-subtitle">
+    Two-track tutorial system: <strong>"Learn Budgeting"</strong> (sandbox to learn envelope concepts) and
+    <strong>"Set Up My Budget"</strong> (guided walkthrough for creating a real budget). The mascot acts as a
+    friendly coach throughout.
+</p>
+
+<!-- ============================================================
+     SECTION 1: TUTORIAL SELECTION HUB
+     ============================================================ -->
+
+<h2>1. Tutorial Hub — Entry Point</h2>
+<p class="section-desc">Shown to new users after sign-up, or accessible from Settings at any time.</p>
+
+<div class="phone-row">
+    <div>
+        <div class="mockup-label">Tutorial Hub</div>
+        <div class="mockup-note">First thing a new user sees after creating their account</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+            <div class="page-content" style="background: var(--bg);">
+                <div class="tutorial-hero">
+                    <div class="mascot-large">🤓</div>
+                    <h3>Welcome to Budget Guy!</h3>
+                    <p>I'm here to help you take control of your money. How would you like to get started?</p>
+                </div>
+
+                <div class="tutorial-cards">
+                    <div class="tutorial-card">
+                        <div class="card-header">
+                            <div class="card-icon learn">🎓</div>
+                            <div>
+                                <div class="card-title">Learn Budgeting</div>
+                                <div class="card-subtitle">Try it with sample data</div>
+                            </div>
+                        </div>
+                        <div class="card-desc">
+                            Practice with a pre-built budget. Learn how envelope budgeting works
+                            by assigning money, recording transactions, and handling overspending.
+                        </div>
+                        <div class="card-meta">
+                            <span class="tag green">Interactive</span>
+                            <span>~5 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-card">
+                        <div class="card-header">
+                            <div class="card-icon setup">🚀</div>
+                            <div>
+                                <div class="card-title">Set Up My Budget</div>
+                                <div class="card-subtitle">I'm ready to start for real</div>
+                            </div>
+                        </div>
+                        <div class="card-desc">
+                            I'll walk you through creating your accounts, categories, and
+                            first month's budget step by step.
+                        </div>
+                        <div class="card-meta">
+                            <span class="tag blue">Guided Setup</span>
+                            <span>~10 minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-card">
+                        <div class="card-header">
+                            <div class="card-icon tips">💡</div>
+                            <div>
+                                <div class="card-title">Quick Tips</div>
+                                <div class="card-subtitle">Browse help topics</div>
+                            </div>
+                        </div>
+                        <div class="card-desc">
+                            Browse answers to common questions about budgeting, categories,
+                            transfers, and more.
+                        </div>
+                        <div class="card-meta">
+                            <span class="tag orange">Reference</span>
+                            <span>Browse anytime</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skip-link">
+                    <a>Skip — I know what I'm doing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     SECTION 2: LEARN BUDGETING — SANDBOX TUTORIAL
+     ============================================================ -->
+
+<h2>2. "Learn Budgeting" — Sandbox Tutorial Flow</h2>
+<p class="section-desc">A pre-populated tutorial budget with the mascot guiding users through each concept. The orange highlight shows which UI element the step is referring to.</p>
+
+<div class="phone-row">
+
+    <!-- Step 1: Introduction / Ready to Assign -->
+    <div>
+        <div class="mockup-label">Step 1 of 8</div>
+        <div class="mockup-note">Introducing "Ready to Assign" — the core concept</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <!-- Tutorial progress bar -->
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: 12%;"></div>
+                </div>
+                <div class="progress-label">1 / 8</div>
+            </div>
+
+            <div class="tutorial-banner">
+                <span class="banner-text">📚 Tutorial Budget</span>
+                <span class="banner-exit">Exit tutorial</span>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Budget Guy</span>
+                </div>
+                <span class="gear">⚙</span>
+            </div>
+
+            <div class="page-content" style="background: var(--bg); position: relative;">
+                <div class="budget-month-header">
+                    <div class="month-nav">
+                        <span class="arrow">‹</span>
+                        <span class="month">March 2026</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+
+                <!-- Highlighted Ready to Assign -->
+                <div class="ready-to-assign highlighted highlight-pulse">
+                    <span class="label">Ready to Assign</span>
+                    <span class="amount">$4,200.00</span>
+                </div>
+
+                <div class="category-group" style="opacity: 0.3;">
+                    <div class="group-header">
+                        <span>Bills</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row">
+                        <div class="cat-left">
+                            <span class="emoji">🏠</span>
+                            <span class="cat-name">Rent</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                    <div class="category-row">
+                        <div class="cat-left">
+                            <span class="emoji">⚡</span>
+                            <span class="cat-name">Electric</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach overlay -->
+                <div class="tutorial-overlay">
+                    <div class="coach-bubble">
+                        <div class="coach-header">
+                            <div class="coach-avatar">🤓</div>
+                            <div>
+                                <div class="coach-name">Budget Guy</div>
+                                <div class="coach-step">Getting Started</div>
+                            </div>
+                        </div>
+                        <div class="coach-body">
+                            <p>
+                                This is your <span class="concept">Ready to Assign</span> balance — it's all the money you have
+                                that hasn't been given a job yet. Right now you have
+                                <span class="amount-highlight">$4,200</span> to work with.
+                            </p>
+                            <p style="margin-top: 8px;">
+                                Your goal? <span class="highlight-text">Give every dollar a job</span> by assigning it to categories. Let's try it!
+                            </p>
+                        </div>
+                        <div class="coach-progress">
+                            <div class="progress-dot current"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                        </div>
+                        <div class="coach-actions">
+                            <div class="coach-btn ghost">Skip Tutorial</div>
+                            <div class="coach-btn primary">Got It →</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Assign Money -->
+    <div>
+        <div class="mockup-label">Step 3 of 8</div>
+        <div class="mockup-note">User taps a category to assign money — highlighted with pulse</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: 37%;"></div>
+                </div>
+                <div class="progress-label">3 / 8</div>
+            </div>
+
+            <div class="tutorial-banner">
+                <span class="banner-text">📚 Tutorial Budget</span>
+                <span class="banner-exit">Exit tutorial</span>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Budget Guy</span>
+                </div>
+                <span class="gear">⚙</span>
+            </div>
+
+            <div class="page-content" style="background: var(--bg); position: relative;">
+                <div class="budget-month-header">
+                    <div class="month-nav">
+                        <span class="arrow">‹</span>
+                        <span class="month">March 2026</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+
+                <div class="ready-to-assign">
+                    <span class="label">Ready to Assign</span>
+                    <span class="amount">$2,900.00</span>
+                </div>
+
+                <div class="category-group">
+                    <div class="group-header">
+                        <span>Bills</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">🏠</span>
+                            <span class="cat-name">Rent</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount positive">$1,300</span>
+                            <span class="cat-amount positive">$1,300</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="group-header">
+                        <span>Everyday</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row highlighted highlight-pulse">
+                        <div class="cat-left">
+                            <span class="emoji">🛒</span>
+                            <span class="cat-name">Groceries</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">⛽</span>
+                            <span class="cat-name">Gas</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">🍕</span>
+                            <span class="cat-name">Eating Out</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach overlay -->
+                <div class="tutorial-overlay">
+                    <div class="coach-bubble">
+                        <div class="coach-header">
+                            <div class="coach-avatar">🤓</div>
+                            <div>
+                                <div class="coach-name">Budget Guy</div>
+                                <div class="coach-step">Assign Money</div>
+                            </div>
+                        </div>
+                        <div class="coach-body">
+                            <p>
+                                Nice — you assigned <span class="amount-highlight">$1,300</span> to Rent! See how
+                                Ready to Assign went down?
+                            </p>
+                            <p style="margin-top: 8px;">
+                                Now <span class="highlight-text">tap on Groceries</span> and assign
+                                <span class="amount-highlight">$500</span>. Think about how much you
+                                actually spend on groceries each month.
+                            </p>
+                        </div>
+                        <div class="coach-progress">
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot current"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                        </div>
+                        <div class="coach-actions">
+                            <div class="coach-btn primary" style="flex: 1;">Tap Groceries to continue ☝</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 6: Record a Transaction -->
+    <div>
+        <div class="mockup-label">Step 6 of 8</div>
+        <div class="mockup-note">After recording a transaction — showing the effect on Available</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: 75%;"></div>
+                </div>
+                <div class="progress-label">6 / 8</div>
+            </div>
+
+            <div class="tutorial-banner">
+                <span class="banner-text">📚 Tutorial Budget</span>
+                <span class="banner-exit">Exit tutorial</span>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Budget Guy</span>
+                </div>
+                <span class="gear">⚙</span>
+            </div>
+
+            <div class="page-content" style="background: var(--bg); position: relative;">
+                <div class="budget-month-header">
+                    <div class="month-nav">
+                        <span class="arrow">‹</span>
+                        <span class="month">March 2026</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+
+                <div class="ready-to-assign">
+                    <span class="label">Ready to Assign</span>
+                    <span class="amount">$0.00</span>
+                </div>
+
+                <div class="category-group">
+                    <div class="group-header">
+                        <span>Everyday</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row highlighted highlight-pulse">
+                        <div class="cat-left">
+                            <span class="emoji">🛒</span>
+                            <span class="cat-name">Groceries</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount positive">$500</span>
+                            <span class="cat-amount positive">$432</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">⛽</span>
+                            <span class="cat-name">Gas</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount positive">$200</span>
+                            <span class="cat-amount positive">$200</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">🍕</span>
+                            <span class="cat-name">Eating Out</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount positive">$150</span>
+                            <span class="cat-amount negative">-$12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach overlay -->
+                <div class="tutorial-overlay">
+                    <div class="coach-bubble">
+                        <div class="coach-header">
+                            <div class="coach-avatar">🤓</div>
+                            <div>
+                                <div class="coach-name">Budget Guy</div>
+                                <div class="coach-step">Spending From Envelopes</div>
+                            </div>
+                        </div>
+                        <div class="coach-body">
+                            <p>
+                                You just spent <span class="amount-highlight">$68</span> at the grocery store.
+                                See how Groceries went from $500 → <span class="amount-highlight">$432</span>?
+                            </p>
+                            <p style="margin-top: 8px;">
+                                That's the magic — <span class="highlight-text">spending comes out of the category envelope,
+                                not your total balance</span>. You always know exactly how much you have left for groceries.
+                            </p>
+                            <p style="margin-top: 8px;">
+                                Also notice Eating Out is <span style="color: var(--danger); font-weight: 600;">-$12 overspent</span>.
+                                We'll fix that next!
+                            </p>
+                        </div>
+                        <div class="coach-progress">
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot done"></div>
+                            <div class="progress-dot current"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                        </div>
+                        <div class="coach-actions">
+                            <div class="coach-btn primary">Fix the Overspending →</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     SECTION 3: SETUP TUTORIAL — GUIDED REAL BUDGET CREATION
+     ============================================================ -->
+
+<h2>3. "Set Up My Budget" — Guided Real Setup</h2>
+<p class="section-desc">
+    Step-by-step walkthrough for creating a real budget. Uses a checklist format with inline coaching tips.
+    Each step opens the actual creation UI with guidance layered on top.
+</p>
+
+<div class="phone-row">
+
+    <!-- Setup Checklist Overview -->
+    <div>
+        <div class="mockup-label">Setup Checklist</div>
+        <div class="mockup-note">Overview of all setup steps — always visible as a progress tracker</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill blue" style="width: 25%;"></div>
+                </div>
+                <div class="progress-label">Step 2 of 6</div>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Set Up Your Budget</span>
+                </div>
+            </div>
+
+            <div class="page-content" style="background: var(--bg);">
+
+                <!-- Inline mascot tip -->
+                <div style="padding: 16px 16px 0;">
+                    <div class="setup-coach-inline">
+                        <div class="mini-avatar">🤓</div>
+                        <div class="tip-text">
+                            Great, your budget is named! Now let's <strong>add your bank accounts</strong> so
+                            Budget Guy knows how much money you're working with.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-checklist">
+                    <div class="checklist-item done">
+                        <div class="checklist-check done">✓</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Name Your Budget</div>
+                            <div class="check-desc">My Budget — starting March 2026</div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item active">
+                        <div class="checklist-check current">2</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Add Your Accounts</div>
+                            <div class="check-desc">Add at least one bank account with its current balance</div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-check">3</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Set Up Categories</div>
+                            <div class="check-desc">Pick a template or create custom categories</div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-check">4</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Assign Your Money</div>
+                            <div class="check-desc">Give every dollar a job for this month</div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-check">5</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Add Recurring Bills</div>
+                            <div class="check-desc">Set up rent, subscriptions, and other regular payments</div>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-check">6</div>
+                        <div class="checklist-content">
+                            <div class="check-title">Record Your First Transaction</div>
+                            <div class="check-desc">Try recording a recent purchase</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Add Account (with coaching) -->
+    <div>
+        <div class="mockup-label">Step 2 — Add Accounts</div>
+        <div class="mockup-note">The actual account creation form with coaching tips inline</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill blue" style="width: 25%;"></div>
+                </div>
+                <div class="progress-label">Step 2 of 6</div>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Add an Account</span>
+                </div>
+            </div>
+
+            <div class="page-content" style="background: var(--bg);">
+                <div class="setup-step">
+
+                    <div class="setup-coach-inline">
+                        <div class="mini-avatar">🤓</div>
+                        <div class="tip-text">
+                            Start with your <strong>main checking account</strong> — the one you spend from most.
+                            Use today's balance from your bank app. You can always add more accounts later!
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Account Name</label>
+                        <div class="input filled">Chase Checking</div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Current Balance</label>
+                        <div class="input" style="font-family: monospace; color: var(--success); font-weight: 600;">$3,847.52</div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Account Type</label>
+                        <div class="account-type-btns">
+                            <div class="type-btn selected">
+                                <span class="btn-emoji">🏦</span>
+                                Bank
+                            </div>
+                            <div class="type-btn">
+                                <span class="btn-emoji">💵</span>
+                                Cash
+                            </div>
+                            <div class="type-btn">
+                                <span class="btn-emoji">💳</span>
+                                Credit
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 8px;">
+                        <div class="setup-coach-inline" style="background: rgba(87, 208, 37, 0.08); border-color: rgba(87, 208, 37, 0.2);">
+                            <div class="mini-avatar" style="border-color: var(--success);">💡</div>
+                            <div class="tip-text">
+                                <strong>Tip:</strong> If you have a credit card, add it too! Enter the balance
+                                as a negative number (what you owe). This helps you budget to pay it off.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 24px;">
+                        <div class="coach-btn ghost" style="flex: 1; padding: 14px; border-radius: 12px; font-size: 14px;">+ Add Another</div>
+                        <div class="coach-btn primary" style="flex: 1; padding: 14px; border-radius: 12px; font-size: 14px;">Continue →</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: Assign Money (guided) -->
+    <div>
+        <div class="mockup-label">Step 4 — Assign Money</div>
+        <div class="mockup-note">The actual budget view with coaching for first-time assignment</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="tutorial-progress-bar">
+                <div class="exit-btn">✕</div>
+                <div class="progress-track">
+                    <div class="progress-fill blue" style="width: 58%;"></div>
+                </div>
+                <div class="progress-label">Step 4 of 6</div>
+            </div>
+
+            <div class="tutorial-banner" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.25);">
+                <span class="banner-text" style="color: var(--info);">🚀 Setup Guide Active</span>
+                <span class="banner-exit">Exit guide</span>
+            </div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Budget Guy</span>
+                </div>
+                <span class="gear">⚙</span>
+            </div>
+
+            <div class="page-content" style="background: var(--bg); position: relative;">
+                <div class="budget-month-header">
+                    <div class="month-nav">
+                        <span class="arrow">‹</span>
+                        <span class="month">March 2026</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+
+                <div class="ready-to-assign">
+                    <span class="label">Ready to Assign</span>
+                    <span class="amount">$3,847.52</span>
+                </div>
+
+                <div class="category-group">
+                    <div class="group-header">
+                        <span>Bills</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row highlighted highlight-pulse">
+                        <div class="cat-left">
+                            <span class="emoji">🏠</span>
+                            <span class="cat-name">Rent / Mortgage</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                    <div class="category-row" style="opacity: 0.5;">
+                        <div class="cat-left">
+                            <span class="emoji">📱</span>
+                            <span class="cat-name">Phone</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount muted">$0</span>
+                            <span class="cat-amount muted">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach overlay -->
+                <div class="tutorial-overlay">
+                    <div class="coach-bubble">
+                        <div class="coach-header">
+                            <div class="coach-avatar">🤓</div>
+                            <div>
+                                <div class="coach-name">Budget Guy</div>
+                                <div class="coach-step">Give Every Dollar a Job</div>
+                            </div>
+                        </div>
+                        <div class="coach-body">
+                            <p>
+                                Now the fun part! You have <span class="amount-highlight">$3,847.52</span>
+                                to assign. Start with your <span class="highlight-text">most important bills first</span> —
+                                what absolutely needs to be paid this month?
+                            </p>
+                            <p style="margin-top: 8px;">
+                                <span class="highlight-text">Tap Rent / Mortgage</span> to assign an amount.
+                            </p>
+                        </div>
+                        <div class="coach-actions">
+                            <div class="coach-btn ghost">I'll figure it out</div>
+                            <div class="coach-btn primary">Tap Rent ☝</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     SECTION 4: COMPLETION SCREEN
+     ============================================================ -->
+
+<h2>4. Tutorial Completion</h2>
+<p class="section-desc">Shown when the user finishes either tutorial track. Summarizes what they learned and gives clear next steps.</p>
+
+<div class="phone-row">
+
+    <!-- Learn Budgeting Complete -->
+    <div>
+        <div class="mockup-label">Learn Budgeting — Complete</div>
+        <div class="mockup-note">After finishing the sandbox tutorial</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+            <div class="page-content" style="background: var(--bg);">
+                <div class="completion-screen">
+                    <div class="completion-badge">🎉</div>
+                    <h3>You're a Budgeting Pro!</h3>
+                    <p>
+                        You've learned the basics of envelope budgeting.
+                        Here's what you covered:
+                    </p>
+
+                    <div class="concepts-summary">
+                        <h4>Concepts Learned</h4>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">Ready to Assign — your unbudgeted money</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">Assigning money to category envelopes</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">Recording transactions (spending from envelopes)</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">Moving money between categories</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">Handling overspending</span>
+                        </div>
+                    </div>
+
+                    <div class="completion-btns">
+                        <div class="completion-btn primary">Set Up My Real Budget →</div>
+                        <div class="completion-btn outline">Explore on My Own</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Complete -->
+    <div>
+        <div class="mockup-label">Setup Guide — Complete</div>
+        <div class="mockup-note">After finishing the guided setup</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+            <div class="page-content" style="background: var(--bg);">
+                <div class="completion-screen">
+                    <div class="completion-badge" style="border-color: var(--info); background: rgba(59, 130, 246, 0.15);">🚀</div>
+                    <h3>Your Budget is Ready!</h3>
+                    <p>
+                        You've set everything up. Here's what you built:
+                    </p>
+
+                    <div class="concepts-summary">
+                        <h4>Your Budget</h4>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">2 accounts — $4,247.52 total</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">12 categories across 4 groups</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">$3,847.52 assigned for March</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">3 recurring bills set up</span>
+                        </div>
+                        <div class="concept-item">
+                            <span class="check">✓</span>
+                            <span class="concept-text">First transaction recorded!</span>
+                        </div>
+                    </div>
+
+                    <div style="padding: 14px; background: rgba(244, 118, 18, 0.08); border: 1px solid rgba(244, 118, 18, 0.2); border-radius: 12px; margin-bottom: 20px; display: flex; gap: 10px;">
+                        <div style="font-size: 20px;">🤓</div>
+                        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                            <strong style="color: var(--text);">Pro tip:</strong> The key habit is recording transactions
+                            as they happen. I'll remind you if you haven't logged anything in a few days!
+                        </div>
+                    </div>
+
+                    <div class="completion-btns">
+                        <div class="completion-btn primary">Go to My Budget →</div>
+                        <div class="completion-btn outline">Browse Quick Tips</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     SECTION 5: QUICK TIPS / HELP REFERENCE
+     ============================================================ -->
+
+<h2>5. Quick Tips — Help Reference</h2>
+<p class="section-desc">
+    Browseable help topics accessible from the Tutorial Hub or Settings. Also serves as the destination
+    for contextual help icons (?) throughout the app.
+</p>
+
+<div class="phone-row">
+    <div>
+        <div class="mockup-label">Quick Tips Index</div>
+        <div class="mockup-note">Searchable list of help topics — accessible from Settings anytime</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <span style="font-size: 20px; color: var(--text-subtle); cursor: pointer;">‹</span>
+                    <span class="app-name">Quick Tips</span>
+                </div>
+            </div>
+
+            <div class="page-content" style="background: var(--bg);">
+                <!-- Search -->
+                <div style="padding: 12px 16px;">
+                    <div class="input" style="background: var(--surface-inset); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text-subtle); font-size: 14px;">
+                        🔍  Search tips...
+                    </div>
+                </div>
+
+                <!-- Topic groups -->
+                <div style="padding: 0 16px;">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 0;">
+                        Budgeting Basics
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; overflow: hidden;">
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">💰</span>
+                                <span style="font-size: 14px; color: var(--text);">What is "Ready to Assign"?</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">📦</span>
+                                <span style="font-size: 14px; color: var(--text);">How do envelopes work?</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">🔴</span>
+                                <span style="font-size: 14px; color: var(--text);">What if I overspend?</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 0 8px;">
+                        Common Tasks
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; overflow: hidden;">
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">🔄</span>
+                                <span style="font-size: 14px; color: var(--text);">Moving money between categories</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">↔️</span>
+                                <span style="font-size: 14px; color: var(--text);">Transfers between accounts</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">✂️</span>
+                                <span style="font-size: 14px; color: var(--text);">Splitting a transaction</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">🔁</span>
+                                <span style="font-size: 14px; color: var(--text);">Setting up recurring transactions</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 0 8px;">
+                        Tips & Tricks
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; overflow: hidden;">
+                        <div style="padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">🎤</span>
+                                <span style="font-size: 14px; color: var(--text);">Using voice to add transactions</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                        <div style="padding: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 18px;">📊</span>
+                                <span style="font-size: 14px; color: var(--text);">Using the Plan view for projections</span>
+                            </div>
+                            <span style="color: var(--text-subtle);">›</span>
+                        </div>
+                    </div>
+
+                    <div style="height: 24px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Individual tip expanded -->
+    <div>
+        <div class="mockup-label">Tip Detail</div>
+        <div class="mockup-note">Expanded help topic with mascot explanation</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <span style="font-size: 20px; color: var(--text-subtle); cursor: pointer;">‹</span>
+                    <span class="app-name">Quick Tips</span>
+                </div>
+            </div>
+
+            <div class="page-content" style="background: var(--bg);">
+                <div style="padding: 24px 16px;">
+
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                        <span style="font-size: 28px;">💰</span>
+                        <h3 style="font-size: 18px; font-weight: 700; color: var(--text);">What is "Ready to Assign"?</h3>
+                    </div>
+
+                    <div class="setup-coach-inline" style="margin-bottom: 20px;">
+                        <div class="mini-avatar">🤓</div>
+                        <div class="tip-text">
+                            Think of it like cash sitting on your kitchen table. It's real money you have,
+                            but you haven't decided what it's for yet.
+                        </div>
+                    </div>
+
+                    <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7;">
+                        <p style="margin-bottom: 12px;">
+                            <strong style="color: var(--text);">Ready to Assign</strong> shows how much money
+                            you have that hasn't been assigned to a category yet.
+                        </p>
+
+                        <p style="margin-bottom: 12px;">It's calculated as:</p>
+
+                        <div style="background: var(--surface); border-radius: 10px; padding: 14px; margin-bottom: 16px; font-family: monospace; font-size: 13px;">
+                            <div style="color: var(--success);">+ All your income</div>
+                            <div style="color: var(--danger);">− Everything you've assigned</div>
+                            <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px; color: var(--text); font-weight: 600;">= Ready to Assign</div>
+                        </div>
+
+                        <p style="margin-bottom: 12px;">
+                            <strong style="color: var(--text);">Your goal is to get this to $0.00</strong> —
+                            that means every dollar has a job. It doesn't mean you're broke!
+                        </p>
+
+                        <div style="background: rgba(244, 118, 18, 0.08); border: 1px solid rgba(244, 118, 18, 0.2); border-radius: 10px; padding: 12px; margin-top: 16px;">
+                            <div style="font-size: 13px; color: var(--warning); font-weight: 600; margin-bottom: 4px;">⚠️ If it's negative...</div>
+                            <div style="font-size: 13px; color: var(--text-muted);">
+                                You've assigned more money than you actually have. Go to your categories
+                                and reduce some amounts until Ready to Assign is $0 or more.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-subtle); text-transform: uppercase; margin-bottom: 8px;">Related</div>
+                        <div style="background: var(--surface); border-radius: 10px; overflow: hidden;">
+                            <div style="padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; color: var(--text);">📦 How do envelopes work?</span>
+                                <span style="color: var(--text-subtle);">›</span>
+                            </div>
+                            <div style="padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; color: var(--text);">🔴 What if I overspend?</span>
+                                <span style="color: var(--text-subtle);">›</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     SECTION 6: CONTEXTUAL HELP ICONS
+     ============================================================ -->
+
+<h2>6. Contextual Help Icons</h2>
+<p class="section-desc">
+    Small (?) icons next to key concepts throughout the app. Tapping opens a BottomSheet with a brief explanation
+    from the mascot. Links to the full Quick Tip for more detail.
+</p>
+
+<div class="phone-row">
+    <div>
+        <div class="mockup-label">Help Icon on Budget View</div>
+        <div class="mockup-note">Tapping the (?) next to "Ready to Assign" opens a brief explanation</div>
+        <div class="phone">
+            <div class="status-bar"><div class="notch"></div></div>
+
+            <div class="app-header">
+                <div class="logo-area">
+                    <div class="logo-icon">$</div>
+                    <span class="app-name">Budget Guy</span>
+                </div>
+                <span class="gear">⚙</span>
+            </div>
+
+            <div class="page-content" style="background: var(--bg); position: relative;">
+                <div class="budget-month-header">
+                    <div class="month-nav">
+                        <span class="arrow">‹</span>
+                        <span class="month">March 2026</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+
+                <div class="ready-to-assign">
+                    <span class="label">Ready to Assign <span class="help-icon active">?</span></span>
+                    <span class="amount">$847.00</span>
+                </div>
+
+                <div class="category-group" style="opacity: 0.3;">
+                    <div class="group-header">
+                        <span>Bills</span>
+                        <div class="cols">
+                            <span>Assigned</span>
+                            <span>Available</span>
+                        </div>
+                    </div>
+                    <div class="category-row">
+                        <div class="cat-left">
+                            <span class="emoji">🏠</span>
+                            <span class="cat-name">Rent</span>
+                        </div>
+                        <div class="cat-right">
+                            <span class="cat-amount positive">$1,300</span>
+                            <span class="cat-amount positive">$1,300</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom sheet tooltip -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;">
+                    <!-- Backdrop -->
+                    <div style="position: absolute; top: -500px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4);"></div>
+
+                    <div style="position: relative; background: var(--surface); border-radius: 16px 16px 0 0; padding: 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.3);">
+                        <!-- Handle -->
+                        <div style="display: flex; justify-content: center; padding: 10px 0 6px;">
+                            <div style="width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px;"></div>
+                        </div>
+
+                        <div style="padding: 4px 16px 8px;">
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <div class="coach-avatar" style="width: 36px; height: 36px; font-size: 18px;">🤓</div>
+                                <div>
+                                    <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px;">Ready to Assign</div>
+                                    <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                                        This is money you haven't assigned to a category yet.
+                                        Your goal is to get it to <strong style="color: var(--text);">$0</strong> —
+                                        give every dollar a job!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 8px 16px 28px; display: flex; gap: 8px;">
+                            <div class="coach-btn ghost" style="flex: 1; padding: 10px; border-radius: 10px; font-size: 13px;">Got it</div>
+                            <div class="coach-btn primary" style="flex: 1; padding: 10px; border-radius: 10px; font-size: 13px;">Learn More →</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     SECTION 7: FUTURE CONSIDERATIONS — NOT YET BUILT
+     ============================================================ -->
+
+<h2 style="margin-top: 64px; border-top: 2px solid var(--border); padding-top: 32px;">7. Future Considerations — Not Yet Built</h2>
+<p class="section-desc">
+    Integration points and enhancements needed to fully wire the tutorial system into the existing app.
+    These are documented here for future implementation.
+</p>
+
+<div style="max-width: 800px;">
+
+    <!-- Item 1 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🎯</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Add <code>data-tutorial</code> Attributes to Budget Page</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px;">
+            The tutorial overlay highlights elements using CSS selectors like <code>[data-tutorial="ready-to-assign"]</code>.
+            These attributes need to be added to the actual budget page components so the highlight targeting works.
+        </p>
+        <div style="background: var(--surface-inset); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--text-muted); line-height: 1.8;">
+            <div><span style="color: var(--warning);">data-tutorial="ready-to-assign"</span> → AvailableToBudget component</div>
+            <div><span style="color: var(--warning);">data-tutorial="category-list"</span> → Category groups wrapper</div>
+            <div><span style="color: var(--warning);">data-tutorial="category-rent"</span> → First Bills category row (Rent)</div>
+            <div><span style="color: var(--warning);">data-tutorial="category-groceries"</span> → Groceries category row</div>
+            <div><span style="color: var(--warning);">data-tutorial="fab-button"</span> → FAB / add transaction button</div>
+        </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🔌</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Integrate TutorialOverlay into Budget Page Layout</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px;">
+            The <code>TutorialOverlay</code> component needs to be rendered on the Budget page when an active tutorial is detected.
+            Use the <code>useTutorial()</code> composable to check <code>isActive</code> and pass the current step/track to the overlay.
+        </p>
+        <div style="background: var(--surface-inset); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--text-muted); line-height: 1.8;">
+            <div style="color: var(--text-subtle);">// In Budget/Index.vue or AppLayout.vue:</div>
+            <div><span style="color: var(--info);">const</span> { isActive, track, currentStep, steps, advance, skip } = <span style="color: var(--success);">useTutorial()</span>;</div>
+            <div style="margin-top: 4px;"><span style="color: var(--text-subtle);">&lt;TutorialOverlay</span></div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">:active</span>="isActive"</div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">:track</span>="track"</div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">:step</span>="currentStep?.id"</div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">:steps</span>="steps"</div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">@primary</span>="advance"</div>
+            <div>&nbsp;&nbsp;<span style="color: var(--warning);">@secondary</span>="skip"</div>
+            <div><span style="color: var(--text-subtle);">/&gt;</span></div>
+        </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">⚙️</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Add "Help & Tutorials" Link in Settings</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            Add a row in the Settings page that links to <code>/tutorial</code> (the Tutorial Hub).
+            This lets existing users access tutorials and Quick Tips at any time, not just on first sign-up.
+            Consider grouping it near existing support/about links if any exist.
+        </p>
+    </div>
+
+    <!-- Item 4 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🚪</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Redirect New Users to Tutorial Hub After Sign-Up</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            After a new user completes registration, redirect them to <code>/tutorial</code> instead of straight to the budget page
+            or onboarding. This gives them the choice between learning first (sandbox) or diving into setup.
+            Could be done in the <code>RegisteredUserController</code> or post-registration middleware.
+        </p>
+    </div>
+
+    <!-- Item 5 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">❓</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Add Contextual HelpTip Icons Throughout the App</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px;">
+            Place the <code>HelpTip</code> component (the small "?" icon) next to key concepts across the app.
+            Each links to the relevant Quick Tip for deeper learning.
+        </p>
+        <div style="background: var(--surface-inset); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-muted); line-height: 1.8;">
+            <div><span style="color: var(--warning);">Ready to Assign</span> → tipSlug: "ready-to-assign"</div>
+            <div><span style="color: var(--warning);">Available column header</span> → tipSlug: "budgeted-vs-available"</div>
+            <div><span style="color: var(--warning);">Transfer type selector</span> → tipSlug: "transfers"</div>
+            <div><span style="color: var(--warning);">Split transaction button</span> → tipSlug: "split-transactions"</div>
+            <div><span style="color: var(--warning);">Recurring transaction form</span> → tipSlug: "recurring-transactions"</div>
+            <div><span style="color: var(--warning);">Credit card account setup</span> → tipSlug: "credit-cards"</div>
+            <div><span style="color: var(--warning);">Voice button</span> → tipSlug: "voice-transactions"</div>
+            <div><span style="color: var(--warning);">Plan view header</span> → tipSlug: "plan-projections"</div>
+            <div><span style="color: var(--warning);">Overspent category (red)</span> → tipSlug: "overspending"</div>
+        </div>
+    </div>
+
+    <!-- Item 6 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🧹</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Tutorial Budget Cleanup</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            When the Learn tutorial completes, offer to delete the tutorial budget (or auto-delete it).
+            The completion step's "Set Up My Budget →" action should switch the user away from the tutorial budget
+            and optionally clean it up. Also consider preventing tutorial budgets from appearing in the budget switcher
+            after completion, or marking them with a visual indicator.
+        </p>
+    </div>
+
+    <!-- Item 7 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">📦</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Empty State Education</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            When sections are empty (no transactions, no budgeted categories, no accounts), show helpful guidance
+            instead of blank screens. Examples:
+        </p>
+        <div style="background: var(--surface-inset); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-muted); line-height: 1.8; margin-top: 8px;">
+            <div>"You haven't assigned any money this month — tap a category to get started"</div>
+            <div>"No transactions yet — record your first purchase with the + button"</div>
+            <div>"No recurring bills set up — add regular payments so you never miss one"</div>
+        </div>
+    </div>
+
+    <!-- Item 8 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🔔</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Gentle Nudges & Reminders</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            As mentioned in the Setup completion screen, the mascot could remind users if they haven't logged
+            transactions in a while. Could be implemented as a banner on the budget page or a notification.
+            Also consider nudges for: unassigned money sitting in Ready to Assign, overspent categories not yet resolved,
+            new month starting without assignments.
+        </p>
+    </div>
+
+    <!-- Item 9 -->
+    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 20px;">🔄</span>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin: 0;">Replay & Resume Tutorials</h3>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            Allow users to replay tutorials from the Tutorial Hub even after completing them (the "Completed" badge
+            already shows, but the card should still be tappable). If a user exits mid-tutorial, save their progress
+            so they can resume where they left off (the <code>tutorial_step</code> field already supports this —
+            just need UI to offer "Resume" vs "Start Over" when returning to the Hub).
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>

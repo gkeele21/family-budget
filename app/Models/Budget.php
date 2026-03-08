@@ -17,12 +17,14 @@ class Budget extends Model
         'owner_id',
         'default_monthly_income',
         'start_month',
+        'is_tutorial',
     ];
 
     protected function casts(): array
     {
         return [
             'default_monthly_income' => 'decimal:2',
+            'is_tutorial' => 'boolean',
         ];
     }
 

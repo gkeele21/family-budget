@@ -18,6 +18,10 @@ class User extends Authenticatable
         'email',
         'password',
         'current_budget_id',
+        'tutorial_track',
+        'tutorial_step',
+        'has_completed_learn_tutorial',
+        'has_completed_setup_tutorial',
     ];
 
     protected $hidden = [
@@ -31,6 +35,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'ai_enabled' => 'boolean',
+            'has_completed_learn_tutorial' => 'boolean',
+            'has_completed_setup_tutorial' => 'boolean',
         ];
     }
 
