@@ -37,6 +37,13 @@ const props = defineProps({
     summary: Object,
 });
 
+// View style toggle (card vs table)
+const viewStyle = ref(localStorage.getItem('txViewStyle') || 'card');
+const setViewStyle = (style) => {
+    viewStyle.value = style;
+    localStorage.setItem('txViewStyle', style);
+};
+
 // Search state
 const showSearch = ref(false);
 const showFilters = ref(false);
@@ -168,6 +175,11 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
+const formatShortDate = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 const formatDate = (dateStr) => {
     const date = new Date(dateStr + 'T00:00:00');
     const today = new Date();
@@ -213,6 +225,17 @@ const getAmountColor = (type) => {
 
 const transactionCount = computed(() => {
     return Object.values(props.transactions).reduce((sum, day) => sum + day.length, 0);
+});
+
+// Flattened transactions for table view (each item includes its date)
+const flatTransactions = computed(() => {
+    const flat = [];
+    for (const [date, dayTransactions] of Object.entries(props.transactions)) {
+        for (const tx of dayTransactions) {
+            flat.push({ ...tx, _date: date });
+        }
+    }
+    return flat;
 });
 
 // Toast state for cleared notifications
@@ -683,25 +706,47 @@ onMounted(() => {
                     <button @click="clearFilters" class="text-primary ml-2">Clear</button>
                 </div>
 
-                <!-- Account Filter -->
+                <!-- Account Filter + View Toggle -->
                 <div class="-mx-4 px-4 relative">
                     <div class="absolute bottom-0 left-0 right-0 h-px bg-border"></div>
-                    <div ref="accountFilterScroll" class="flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
-                        <FilterChip
-                            :active="!currentAccountId"
-                            @click="filterByAccount(null)"
-                        >
-                            All Accounts
-                        </FilterChip>
-                        <FilterChip
-                            v-for="account in accounts"
-                            :key="account.id"
-                            :ref="el => { if (currentAccountId === account.id) activeAccountChip = el?.$el || el; }"
-                            :active="currentAccountId === account.id"
-                            @click="filterByAccount(account.id)"
-                        >
-                            {{ account.name }}
-                        </FilterChip>
+                    <div class="flex items-center gap-2">
+                        <div ref="accountFilterScroll" class="flex-1 flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
+                            <FilterChip
+                                :active="!currentAccountId"
+                                @click="filterByAccount(null)"
+                            >
+                                All Accounts
+                            </FilterChip>
+                            <FilterChip
+                                v-for="account in accounts"
+                                :key="account.id"
+                                :ref="el => { if (currentAccountId === account.id) activeAccountChip = el?.$el || el; }"
+                                :active="currentAccountId === account.id"
+                                @click="filterByAccount(account.id)"
+                            >
+                                {{ account.name }}
+                            </FilterChip>
+                        </div>
+                        <div class="flex-shrink-0 flex items-center border border-border rounded-lg overflow-hidden">
+                            <button
+                                @click="setViewStyle('card')"
+                                class="p-1.5 transition-colors"
+                                :class="viewStyle === 'card' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
+                            >
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
+                                </svg>
+                            </button>
+                            <button
+                                @click="setViewStyle('table')"
+                                class="p-1.5 transition-colors"
+                                :class="viewStyle === 'table' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
+                            >
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -711,94 +756,118 @@ onMounted(() => {
                     <template v-if="searchQuery"> for "{{ searchQuery }}"</template>
                 </div>
 
-                <!-- Transactions by Date -->
-                <div v-for="(dayTransactions, date) in transactions" :key="date" class="space-y-2">
-                    <h2 class="text-sm font-semibold text-warning px-1">
-                        {{ formatDate(date) }}
-                    </h2>
+                <!-- Card View: Transactions by Date -->
+                <template v-if="viewStyle === 'card'">
+                    <div v-for="(dayTransactions, date) in transactions" :key="date" class="space-y-2">
+                        <h2 class="text-sm font-semibold text-warning px-1">
+                            {{ formatDate(date) }}
+                        </h2>
 
-                    <div class="space-y-1.5">
-                        <SwipeableRow
-                            v-for="transaction in dayTransactions"
-                            :key="transaction.id"
-                            :ref="el => { if (el) swipeRefs[transaction.id] = el }"
-                            @action="deleteTransaction(transaction)"
-                            @swipe-open="closeOtherSwipes(transaction.id)"
-                        >
-                            <Link
-                                :id="'tx-' + transaction.id"
-                                :href="route('transactions.edit', { transaction: transaction.id, ...buildParams() })"
-                                class="block bg-surface rounded-card p-3 shadow-sm border-l-4"
-                                :class="{
-                                    'border-danger': transaction.type === 'expense',
-                                    'border-success': transaction.type === 'income',
-                                    'border-info': transaction.type === 'transfer',
-                                    'voice-highlight': highlightedIds.has(transaction.id),
-                                }"
+                        <div class="space-y-1.5">
+                            <SwipeableRow
+                                v-for="transaction in dayTransactions"
+                                :key="transaction.id"
+                                :ref="el => { if (el) swipeRefs[transaction.id] = el }"
+                                @action="deleteTransaction(transaction)"
+                                @swipe-open="closeOtherSwipes(transaction.id)"
                             >
-                                <div class="flex items-start justify-between">
-                                    <!-- Left side: Payee + Category/Splits -->
-                                    <div class="min-w-0 flex-1">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="font-medium text-body truncate">
-                                                <template v-if="transaction.type === 'transfer'">
-                                                    <span class="text-info">↔</span>
-                                                    {{ transaction.payee }}
+                                <Link
+                                    :id="'tx-' + transaction.id"
+                                    :href="route('transactions.edit', { transaction: transaction.id, ...buildParams() })"
+                                    class="block bg-surface rounded-card p-3 shadow-sm border-l-4"
+                                    :class="{
+                                        'border-danger': transaction.type === 'expense',
+                                        'border-success': transaction.type === 'income',
+                                        'border-info': transaction.type === 'transfer',
+                                        'voice-highlight': highlightedIds.has(transaction.id),
+                                    }"
+                                >
+                                    <div class="flex items-start justify-between">
+                                        <!-- Left side: Payee + Category/Splits -->
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="font-medium text-body truncate">
+                                                    <template v-if="transaction.type === 'transfer'">
+                                                        <span class="text-info">↔</span>
+                                                        {{ transaction.payee }}
+                                                    </template>
+                                                    <template v-else>{{ transaction.payee }}</template>
+                                                </span>
+                                                <span v-if="transaction.recurring_id" class="text-primary text-xs">↻</span>
+                                            </div>
+                                            <!-- Split categories with amounts -->
+                                            <div v-if="transaction.is_split && transaction.splits" class="mt-0.5 grid grid-cols-[auto_auto] gap-x-1 gap-y-0.5 text-xs text-subtle w-fit">
+                                                <template v-for="split in transaction.splits" :key="split.id">
+                                                    <span :class="{ 'text-warning italic': !split.category && split.amount <= 0 }">{{ split.category || (split.amount > 0 ? 'Income' : 'Unassigned') }}:</span>
+                                                    <span>{{ formatCurrency(split.amount) }}</span>
                                                 </template>
-                                                <template v-else>{{ transaction.payee }}</template>
-                                            </span>
-                                            <span v-if="transaction.recurring_id" class="text-primary text-xs">↻</span>
+                                            </div>
+                                            <!-- Single category -->
+                                            <div v-else-if="transaction.category" class="text-xs text-subtle mt-0.5 truncate">
+                                                {{ transaction.category }}
+                                            </div>
+                                            <!-- Unassigned (not transfers, not splits) -->
+                                            <div v-else-if="transaction.type !== 'transfer' && !transaction.is_split" :class="['text-xs mt-0.5 truncate italic', transaction.type === 'income' ? 'text-subtle' : 'text-warning']">
+                                                {{ transaction.type === 'income' ? 'Income' : 'Unassigned' }}
+                                            </div>
+                                            <!-- Memo -->
+                                            <div v-if="transaction.memo" class="text-xs text-muted mt-0.5 truncate italic">
+                                                {{ transaction.memo }}
+                                            </div>
                                         </div>
-                                        <!-- Split categories with amounts -->
-                                        <div v-if="transaction.is_split && transaction.splits" class="mt-0.5 grid grid-cols-[auto_auto] gap-x-1 gap-y-0.5 text-xs text-subtle w-fit">
-                                            <template v-for="split in transaction.splits" :key="split.id">
-                                                <span :class="{ 'text-warning italic': !split.category && split.amount <= 0 }">{{ split.category || (split.amount > 0 ? 'Income' : 'Unassigned') }}:</span>
-                                                <span>{{ formatCurrency(split.amount) }}</span>
-                                            </template>
-                                        </div>
-                                        <!-- Single category -->
-                                        <div v-else-if="transaction.category" class="text-xs text-subtle mt-0.5 truncate">
-                                            {{ transaction.category }}
-                                        </div>
-                                        <!-- Unassigned (not transfers, not splits) -->
-                                        <div v-else-if="transaction.type !== 'transfer' && !transaction.is_split" :class="['text-xs mt-0.5 truncate italic', transaction.type === 'income' ? 'text-subtle' : 'text-warning']">
-                                            {{ transaction.type === 'income' ? 'Income' : 'Unassigned' }}
-                                        </div>
-                                        <!-- Memo -->
-                                        <div v-if="transaction.memo" class="text-xs text-muted mt-0.5 truncate italic">
-                                            {{ transaction.memo }}
-                                        </div>
-                                    </div>
 
-                                    <!-- Right side: Amount + Account + Cleared dot -->
-                                    <div class="flex items-start gap-2 flex-shrink-0 ml-3">
-                                        <div class="text-right">
-                                            <div :class="['font-medium', getAmountColor(transaction.type)]">
-                                                {{ transaction.type === 'transfer' ? formatCurrency(Math.abs(transaction.amount)) : formatCurrency(transaction.amount) }}
+                                        <!-- Right side: Amount + Account + Cleared dot -->
+                                        <div class="flex items-start gap-2 flex-shrink-0 ml-3">
+                                            <div class="text-right">
+                                                <div :class="['font-medium', getAmountColor(transaction.type)]">
+                                                    {{ transaction.type === 'transfer' ? formatCurrency(Math.abs(transaction.amount)) : formatCurrency(transaction.amount) }}
+                                                </div>
+                                                <div v-if="!currentAccountId && transaction.type !== 'transfer'" class="text-xs text-subtle mt-0.5">
+                                                    {{ transaction.account }}
+                                                </div>
                                             </div>
-                                            <div v-if="!currentAccountId && transaction.type !== 'transfer'" class="text-xs text-subtle mt-0.5">
-                                                {{ transaction.account }}
-                                            </div>
+                                            <!-- Cleared Dot -->
+                                            <button
+                                                @click.prevent.stop="toggleCleared(transaction)"
+                                                class="flex-shrink-0 p-1 mt-0.5"
+                                            >
+                                                <div
+                                                    v-if="transaction.cleared"
+                                                    class="w-2 h-2 rounded-full bg-success"
+                                                ></div>
+                                                <div
+                                                    v-else
+                                                    class="w-2 h-2 rounded-full border-[1.5px] border-subtle"
+                                                ></div>
+                                            </button>
                                         </div>
-                                        <!-- Cleared Dot -->
-                                        <button
-                                            @click.prevent.stop="toggleCleared(transaction)"
-                                            class="flex-shrink-0 p-1 mt-0.5"
-                                        >
-                                            <div
-                                                v-if="transaction.cleared"
-                                                class="w-2 h-2 rounded-full bg-success"
-                                            ></div>
-                                            <div
-                                                v-else
-                                                class="w-2 h-2 rounded-full border-[1.5px] border-subtle"
-                                            ></div>
-                                        </button>
                                     </div>
-                                </div>
-                            </Link>
-                        </SwipeableRow>
+                                </Link>
+                            </SwipeableRow>
+                        </div>
                     </div>
+                </template>
+
+                <!-- Table View: Flat list with date column -->
+                <div v-else-if="flatTransactions.length > 0" class="bg-surface rounded-card shadow-sm overflow-hidden divide-y divide-border">
+                    <Link
+                        v-for="tx in flatTransactions"
+                        :key="tx.id"
+                        :id="'tx-' + tx.id"
+                        :href="route('transactions.edit', { transaction: tx.id, ...buildParams() })"
+                        class="flex items-center px-3 py-2 text-sm"
+                        :class="{
+                            'voice-highlight': highlightedIds.has(tx.id),
+                        }"
+                    >
+                        <span class="text-subtle text-xs w-14 flex-shrink-0">{{ formatShortDate(tx._date) }}</span>
+                        <span class="flex-1 truncate text-body">
+                            <span v-if="tx.type === 'transfer'" class="text-info">↔ </span>{{ tx.payee }}
+                        </span>
+                        <span :class="['font-mono text-right flex-shrink-0 ml-2', getAmountColor(tx.type)]">
+                            {{ tx.type === 'transfer' ? formatCurrency(Math.abs(tx.amount)) : formatCurrency(tx.amount) }}
+                        </span>
+                    </Link>
                 </div>
 
                 <!-- Empty State -->

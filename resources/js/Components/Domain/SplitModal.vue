@@ -19,6 +19,21 @@ const emit = defineEmits(['close', 'save']);
 const splitItems = ref([{ category_id: '', amount: '' }]);
 const splitCategorySheetIndex = ref(null);
 const splitCategorySearch = ref('');
+const mixedMode = ref(false);
+
+// When turning off mixed mode, reset all items to the parent type
+watch(mixedMode, (isMixed) => {
+    if (!isMixed) {
+        splitItems.value.forEach(item => {
+            item.type = props.defaultType;
+            const num = parseFloat(item.amount);
+            if (!isNaN(num) && num !== 0) {
+                if (props.defaultType === 'expense' && num > 0) item.amount = (-num).toFixed(2);
+                if (props.defaultType === 'income' && num < 0) item.amount = (-num).toFixed(2);
+            }
+        });
+    }
+});
 
 const inferType = (amount, fallback) => {
     const amt = parseFloat(amount);
@@ -36,9 +51,14 @@ const makeSplitItem = (item) => ({
 // Initialize items when modal opens
 watch(() => props.show, (isOpen) => {
     if (isOpen) {
-        splitItems.value = props.initialItems.length > 0
+        const items = props.initialItems.length > 0
             ? props.initialItems.map(s => makeSplitItem(s))
-            : [makeSplitItem({})];
+            : [makeSplitItem({}), makeSplitItem({})];
+        splitItems.value = items;
+
+        // Auto-detect mixed mode if initial items have different types
+        const types = new Set(items.map(i => i.type).filter(Boolean));
+        mixedMode.value = types.size > 1;
     }
 });
 
@@ -85,6 +105,9 @@ const addSplitItem = () => {
 const removeSplitItem = (index) => {
     if (splitItems.value.length > 1) {
         splitItems.value.splice(index, 1);
+    } else {
+        // Last item — clear it instead of removing
+        splitItems.value[0] = makeSplitItem({});
     }
 };
 
@@ -129,6 +152,17 @@ const onSplitAmountUpdate = (item, value) => {
     }
 };
 
+// In simple mode, apply the sign from the parent transaction type
+const onSimpleAmountUpdate = (item, value) => {
+    item.amount = value;
+    const num = parseFloat(value);
+    if (!isNaN(num) && num !== 0) {
+        const shouldBeNegative = props.defaultType === 'expense';
+        if (shouldBeNegative && num > 0) item.amount = (-num).toFixed(2);
+        if (!shouldBeNegative && num < 0) item.amount = (-num).toFixed(2);
+    }
+};
+
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 };
@@ -148,8 +182,12 @@ const handleCancel = () => {
 
 <template>
     <Modal :show="show" title="Split Transaction" @close="$emit('close')">
-        <div class="px-4 pb-2 text-sm text-subtle">
-            Total: {{ formatCurrency(absTotal) }}
+        <div class="px-4 pb-2 flex items-center justify-between">
+            <span class="text-sm text-subtle">Total: {{ formatCurrency(absTotal) }}</span>
+            <label class="flex items-center gap-1.5 text-xs text-subtle cursor-pointer">
+                <input type="checkbox" v-model="mixedMode" class="rounded border-border text-primary focus-glow-sm" />
+                Mix income &amp; expenses
+            </label>
         </div>
 
         <div class="flex-1 overflow-y-auto">
@@ -159,11 +197,12 @@ const handleCancel = () => {
                     :key="index"
                     class="px-4 py-3 border-b border-border last:border-b-0"
                 >
-                    <div class="flex items-center justify-between mb-2">
+                    <!-- Simple mode: category, amount, and × on one line -->
+                    <div v-if="!mixedMode" class="flex items-center">
                         <button
                             type="button"
                             @click="splitCategorySheetIndex = index"
-                            class="flex items-center gap-1 text-sm font-medium min-w-0"
+                            class="flex items-center gap-1 text-sm font-medium min-w-0 flex-1"
                             :class="item.category_id ? 'text-secondary' : 'text-subtle'"
                         >
                             <span class="truncate">{{ getSplitCategoryDisplay(item.category_id) || 'Select category' }}</span>
@@ -171,32 +210,64 @@ const handleCancel = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
+                        <AmountField
+                            :model-value="item.amount"
+                            :transaction-type="defaultType"
+                            @update:model-value="onSimpleAmountUpdate(item, $event)"
+                            class="w-24 flex-shrink-0 ml-3"
+                        />
                         <button
                             type="button"
                             @click="removeSplitItem(index)"
-                            class="p-1 text-border-strong hover:text-danger transition-colors"
-                            :class="{ 'opacity-30 pointer-events-none': splitItems.length <= 0 }"
+                            class="ml-2 p-1 text-border-strong hover:text-danger transition-colors"
+
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <SegmentedControl
-                            :model-value="item.type"
-                            :options="splitTypeOptions"
-                            size="md"
-                            @update:model-value="onSplitTypeChange(item, $event)"
-                            class="flex-1"
-                        />
-                        <AmountField
-                            :model-value="item.amount"
-                            :transaction-type="item.type"
-                            @update:model-value="onSplitAmountUpdate(item, $event)"
-                            class="w-24 flex-shrink-0"
-                        />
-                    </div>
+                    <!-- Mixed mode: category + × on first line, type toggle + amount on second -->
+                    <template v-else>
+                        <div class="flex items-center justify-between mb-2">
+                            <button
+                                type="button"
+                                @click="splitCategorySheetIndex = index"
+                                class="flex items-center gap-1 text-sm font-medium min-w-0"
+                                :class="item.category_id ? 'text-secondary' : 'text-subtle'"
+                            >
+                                <span class="truncate">{{ getSplitCategoryDisplay(item.category_id) || 'Select category' }}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-subtle shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                @click="removeSplitItem(index)"
+                                class="p-1 text-border-strong hover:text-danger transition-colors"
+    
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <SegmentedControl
+                                :model-value="item.type"
+                                :options="splitTypeOptions"
+                                size="md"
+                                @update:model-value="onSplitTypeChange(item, $event)"
+                                class="flex-1"
+                            />
+                            <AmountField
+                                :model-value="item.amount"
+                                :transaction-type="item.type"
+                                @update:model-value="onSplitAmountUpdate(item, $event)"
+                                class="w-24 flex-shrink-0"
+                            />
+                        </div>
+                    </template>
                 </div>
             </div>
 
