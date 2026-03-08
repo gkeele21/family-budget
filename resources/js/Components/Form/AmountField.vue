@@ -18,7 +18,7 @@ const props = defineProps({
     allowNegative: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['update:modelValue', 'blur', 'toggle-sign']);
+const emit = defineEmits(['update:modelValue', 'blur']);
 
 // Local input value for display
 const inputValue = ref(formatInitialValue());
@@ -63,7 +63,6 @@ const toggleSign = () => {
         inputValue.value = '-';
     }
     emit('update:modelValue', inputValue.value);
-    emit('toggle-sign', inputValue.value.startsWith('-') ? 'expense' : 'income');
 };
 
 const startEditing = () => {
