@@ -228,16 +228,25 @@ const transactionCount = computed(() => {
     return Object.values(props.transactions).reduce((sum, day) => sum + day.length, 0);
 });
 
-// Flattened transactions for table view (each item includes its date)
-const flatTransactions = computed(() => {
-    const flat = [];
+// Transactions grouped by month for table view
+const transactionsByMonth = computed(() => {
+    const months = {};
     for (const [date, dayTransactions] of Object.entries(props.transactions)) {
+        const d = new Date(date + 'T00:00:00');
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!months[key]) months[key] = [];
         for (const tx of dayTransactions) {
-            flat.push({ ...tx, _date: date });
+            months[key].push({ ...tx, _date: date });
         }
     }
-    return flat;
+    return months;
 });
+
+const formatMonth = (monthKey) => {
+    const [year, month] = monthKey.split('-');
+    const d = new Date(parseInt(year), parseInt(month) - 1, 1);
+    return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+};
 
 // Toast state for cleared notifications
 const toast = ref({ show: false, message: '', payee: '', transactionId: null, wasCleared: false });
@@ -350,13 +359,13 @@ const dueItems = computed(() => {
 
 const postRecurring = (item) => {
     router.post(route('recurring.post', item.id), {}, {
-        onSuccess: () => { viewMode.value = 'all'; },
+        preserveScroll: true,
     });
 };
 
 const postAllRecurring = () => {
     router.post(route('recurring.post-all'), {}, {
-        onSuccess: () => { viewMode.value = 'all'; },
+        preserveScroll: true,
     });
 };
 
@@ -372,7 +381,7 @@ const groupedRecurring = computed(() => {
         .map(freq => ({
             frequency: freq,
             label: frequencyLabels[freq],
-            items: groups[freq],
+            items: groups[freq].sort((a, b) => a.next_date.localeCompare(b.next_date)),
         }));
 });
 
@@ -552,15 +561,38 @@ onMounted(() => {
         </Teleport>
 
         <div class="p-4 space-y-4">
-            <!-- All | Recurring Toggle -->
-            <SegmentedControl
-                v-model="viewMode"
-                :options="[
-                    { value: 'all', label: 'All' },
-                    { value: 'recurring', label: 'Recurring' },
-                ]"
-                size="sm"
-            />
+            <!-- All | Recurring Toggle + View Style -->
+            <div class="flex items-center gap-3">
+                <SegmentedControl
+                    v-model="viewMode"
+                    :options="[
+                        { value: 'all', label: 'All' },
+                        { value: 'recurring', label: 'Recurring' },
+                    ]"
+                    size="sm"
+                    class="flex-1"
+                />
+                <div class="flex-shrink-0 flex items-center border border-border rounded-lg overflow-hidden">
+                    <button
+                        @click="setViewStyle('card')"
+                        class="p-1.5 transition-colors"
+                        :class="viewStyle === 'card' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
+                    >
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </button>
+                    <button
+                        @click="setViewStyle('table')"
+                        class="p-1.5 transition-colors"
+                        :class="viewStyle === 'table' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
+                    >
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18M3 6h18M3 18h18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
             <!-- ALL TRANSACTIONS VIEW -->
             <template v-if="viewMode === 'all'">
@@ -707,49 +739,29 @@ onMounted(() => {
                     <button @click="clearFilters" class="text-primary ml-2">Clear</button>
                 </div>
 
-                <!-- Account Filter + View Toggle -->
+                <!-- Account Filter -->
                 <div class="-mx-4 px-4 relative">
                     <div class="absolute bottom-0 left-0 right-0 h-px bg-border"></div>
-                    <div class="flex items-center gap-2">
-                        <div ref="accountFilterScroll" class="flex-1 flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
-                            <FilterChip
-                                :active="!currentAccountId"
-                                @click="filterByAccount(null)"
-                            >
-                                All Accounts
-                            </FilterChip>
-                            <FilterChip
-                                v-for="account in accounts"
-                                :key="account.id"
-                                :ref="el => { if (currentAccountId === account.id) activeAccountChip = el?.$el || el; }"
-                                :active="currentAccountId === account.id"
-                                @click="filterByAccount(account.id)"
-                            >
-                                {{ account.name }}
-                            </FilterChip>
-                        </div>
-                        <div class="flex-shrink-0 flex items-center border border-border rounded-lg overflow-hidden">
-                            <button
-                                @click="setViewStyle('card')"
-                                class="p-1.5 transition-colors"
-                                :class="viewStyle === 'card' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
-                            >
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
-                                </svg>
-                            </button>
-                            <button
-                                @click="setViewStyle('table')"
-                                class="p-1.5 transition-colors"
-                                :class="viewStyle === 'table' ? 'bg-primary/15 text-primary' : 'text-subtle hover:text-body'"
-                            >
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
-                        </div>
+                    <div ref="accountFilterScroll" class="flex gap-4 overflow-x-auto overflow-y-hidden hide-scrollbar relative">
+                        <FilterChip
+                            :active="!currentAccountId"
+                            @click="filterByAccount(null)"
+                        >
+                            All Accounts
+                        </FilterChip>
+                        <FilterChip
+                            v-for="account in accounts"
+                            :key="account.id"
+                            :ref="el => { if (currentAccountId === account.id) activeAccountChip = el?.$el || el; }"
+                            :active="currentAccountId === account.id"
+                            @click="filterByAccount(account.id)"
+                        >
+                            {{ account.name }}
+                        </FilterChip>
                     </div>
                 </div>
+
+
 
                 <!-- Results Count (when searching or filtering) -->
                 <div v-if="searchQuery || hasActiveFilters" class="text-sm text-subtle px-1">
@@ -849,27 +861,34 @@ onMounted(() => {
                     </div>
                 </template>
 
-                <!-- Table View: Flat list with date column -->
-                <div v-else-if="flatTransactions.length > 0" class="bg-surface rounded-card shadow-sm overflow-hidden divide-y divide-border">
-                    <Link
-                        v-for="tx in flatTransactions"
-                        :key="tx.id"
-                        :id="'tx-' + tx.id"
-                        :href="route('transactions.edit', { transaction: tx.id, ...buildParams() })"
-                        class="flex items-center px-3 py-2 text-sm"
-                        :class="{
-                            'voice-highlight': highlightedIds.has(tx.id),
-                        }"
-                    >
-                        <span class="text-subtle text-xs w-14 flex-shrink-0">{{ formatShortDate(tx._date) }}</span>
-                        <span class="flex-1 truncate text-body">
-                            <span v-if="tx.type === 'transfer'" class="text-info">↔ </span>{{ tx.payee }}
-                        </span>
-                        <span :class="['font-mono text-right flex-shrink-0 ml-2', getAmountColor(tx.type)]">
-                            {{ tx.type === 'transfer' ? formatCurrency(Math.abs(tx.amount)) : formatCurrency(tx.amount) }}
-                        </span>
-                    </Link>
-                </div>
+                <!-- Table View: Grouped by month -->
+                <template v-else-if="Object.keys(transactionsByMonth).length > 0">
+                    <div v-for="(monthTxs, monthKey) in transactionsByMonth" :key="monthKey" class="space-y-2">
+                        <h2 class="text-sm font-semibold text-warning px-1">
+                            {{ formatMonth(monthKey) }}
+                        </h2>
+                        <div class="bg-surface rounded-card shadow-sm overflow-hidden divide-y divide-border">
+                            <Link
+                                v-for="tx in monthTxs"
+                                :key="tx.id"
+                                :id="'tx-' + tx.id"
+                                :href="route('transactions.edit', { transaction: tx.id, ...buildParams() })"
+                                class="flex items-center px-3 py-2 text-sm"
+                                :class="{
+                                    'voice-highlight': highlightedIds.has(tx.id),
+                                }"
+                            >
+                                <span class="text-subtle text-xs w-14 flex-shrink-0">{{ formatShortDate(tx._date) }}</span>
+                                <span class="flex-1 truncate text-body">
+                                    <span v-if="tx.type === 'transfer'" class="text-info">↔ </span>{{ tx.payee }}
+                                </span>
+                                <span :class="['font-mono text-right flex-shrink-0 ml-2', getAmountColor(tx.type)]">
+                                    {{ tx.type === 'transfer' ? formatCurrency(Math.abs(tx.amount)) : formatCurrency(tx.amount) }}
+                                </span>
+                            </Link>
+                        </div>
+                    </div>
+                </template>
 
                 <!-- Empty State -->
                 <div
@@ -902,20 +921,22 @@ onMounted(() => {
 
             <!-- RECURRING VIEW -->
             <template v-else>
-                <!-- Due Banner + Section -->
+                <!-- Due Banner -->
                 <template v-if="dueItems.length > 0">
                     <div class="flex items-center justify-between bg-warning/15 border border-warning/30 rounded-card px-4 py-2.5">
                         <span class="text-sm font-medium text-warning">{{ dueItems.length }} due</span>
                         <Button variant="ghost" size="sm" @click="postAllRecurring">Post All Due</Button>
                     </div>
 
-                    <div class="space-y-2">
+                    <!-- Due: Card View -->
+                    <div v-if="viewStyle === 'card'" class="space-y-2">
                         <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">Due</h2>
                         <div class="space-y-1.5">
-                            <div
+                            <Link
                                 v-for="item in dueItems"
                                 :key="'due-' + item.id"
-                                class="bg-surface rounded-card p-3 shadow-sm border-l-4"
+                                :href="route('recurring.edit', item.id)"
+                                class="block bg-surface rounded-card p-3 shadow-sm border-l-4"
                                 :class="item.type === 'expense' ? 'border-danger' : item.type === 'income' ? 'border-success' : 'border-info'"
                             >
                                 <div class="flex items-start justify-between">
@@ -946,15 +967,35 @@ onMounted(() => {
                                             </div>
                                             <div class="text-xs text-subtle mt-0.5">{{ item.account }}</div>
                                         </div>
-                                        <Button variant="primary" size="sm" @click="postRecurring(item)">Post</Button>
+                                        <Button variant="primary" size="sm" @click.prevent.stop="postRecurring(item)">Post</Button>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- Due: Table View -->
+                    <div v-else class="space-y-2">
+                        <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">Due</h2>
+                        <div class="bg-surface rounded-card shadow-sm overflow-hidden divide-y divide-border">
+                            <Link
+                                v-for="item in dueItems"
+                                :key="'due-t-' + item.id"
+                                :href="route('recurring.edit', item.id)"
+                                class="flex items-center px-3 py-2 text-sm"
+                            >
+                                <span class="flex-1 truncate text-body">{{ item.payee }}</span>
+                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : 'text-success']">
+                                    {{ formatCurrency(Math.abs(item.amount)) }}
+                                </span>
+                                <Button variant="primary" size="sm" class="ml-2 flex-shrink-0" @click.prevent.stop="postRecurring(item)">Post</Button>
+                            </Link>
                         </div>
                     </div>
                 </template>
 
-                <template v-if="groupedRecurring.length > 0">
+                <!-- Grouped Recurring: Card View -->
+                <template v-if="viewStyle === 'card' && groupedRecurring.length > 0">
                     <div v-for="group in groupedRecurring" :key="group.frequency" class="space-y-2">
                         <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">
                             {{ group.label }}
@@ -998,6 +1039,30 @@ onMounted(() => {
                                         <div class="text-xs text-subtle mt-0.5">{{ item.account }}</div>
                                     </div>
                                 </div>
+                            </Link>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Grouped Recurring: Table View -->
+                <template v-else-if="viewStyle === 'table' && groupedRecurring.length > 0">
+                    <div v-for="group in groupedRecurring" :key="group.frequency" class="space-y-2">
+                        <h2 class="text-sm font-semibold text-warning uppercase tracking-wide px-1">
+                            {{ group.label }}
+                        </h2>
+                        <div class="bg-surface rounded-card shadow-sm overflow-hidden divide-y divide-border">
+                            <Link
+                                v-for="item in group.items"
+                                :key="item.id"
+                                :href="route('recurring.edit', item.id)"
+                                class="flex items-center px-3 py-2 text-sm"
+                                :class="{ 'opacity-50': !item.is_active }"
+                            >
+                                <span class="text-subtle text-xs w-10 flex-shrink-0">{{ formatNextDate(item.next_date, item.frequency) }}</span>
+                                <span class="flex-1 truncate text-body">{{ item.payee }}</span>
+                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : 'text-success']">
+                                    {{ formatCurrency(Math.abs(item.amount)) }}
+                                </span>
                             </Link>
                         </div>
                     </div>
