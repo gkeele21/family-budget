@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import BottomSheet from '@/Components/Base/BottomSheet.vue';
 
 const props = defineProps({
@@ -127,6 +127,56 @@ function getOperatorSymbol(op) {
 const isActiveOperator = (op) => operator.value === op && waitingForOperand.value;
 
 const btnBase = 'flex items-center justify-center rounded-xl font-semibold active:scale-95 transition-transform select-none';
+
+function handleKeydown(e) {
+    if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        inputDigit(parseInt(e.key));
+    } else if (e.key === '.') {
+        e.preventDefault();
+        inputDecimal();
+    } else if (e.key === '+') {
+        e.preventDefault();
+        performOperation('+');
+    } else if (e.key === '-') {
+        e.preventDefault();
+        performOperation('-');
+    } else if (e.key === '*') {
+        e.preventDefault();
+        performOperation('*');
+    } else if (e.key === '/') {
+        e.preventDefault();
+        performOperation('/');
+    } else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        equals();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        clear();
+    } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (!waitingForOperand.value && display.value.length > 1) {
+            display.value = display.value.slice(0, -1);
+        } else {
+            display.value = '0';
+        }
+    } else if (e.key === '%') {
+        e.preventDefault();
+        inputPercent();
+    }
+}
+
+watch(() => props.show, (isOpen) => {
+    if (isOpen) {
+        window.addEventListener('keydown', handleKeydown);
+    } else {
+        window.removeEventListener('keydown', handleKeydown);
+    }
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <template>
