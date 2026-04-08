@@ -226,7 +226,7 @@ const logout = () => {
                             <span class="text-xl">👤</span>
                             <div>
                                 <div class="text-body">{{ user.name }}</div>
-                                <div class="text-sm text-subtle">{{ user.email }}</div>
+                                <div class="text-sm text-subtle">{{ user.username }}</div>
                             </div>
                         </div>
                         <span class="text-subtle">›</span>

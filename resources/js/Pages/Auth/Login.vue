@@ -5,16 +5,13 @@ import Button from '@/Components/Base/Button.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
     status: {
         type: String,
     },
 });
 
 const form = useForm({
-    email: '',
+    username: '',
     password: '',
     remember: true,
 });
@@ -36,14 +33,13 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <TextField
-                v-model="form.email"
-                label="Email"
-                type="email"
-                placeholder="you@example.com"
+                v-model="form.username"
+                label="Username"
+                placeholder="yourname"
                 autocomplete="username"
                 autofocus
                 required
-                :error="form.errors.email"
+                :error="form.errors.username"
             />
             <TextField
                 v-model="form.password"
@@ -56,20 +52,11 @@ const submit = () => {
                 :error="form.errors.password"
             />
 
-            <!-- Forgot Password -->
-            <div class="flex justify-end mt-3 mb-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="text-sm text-primary font-medium hover:text-primary/80 transition-colors"
-                >
-                    Forgot password?
-                </Link>
+            <div class="mt-6">
+                <Button type="submit" :loading="form.processing" full-width size="lg">
+                    Sign In
+                </Button>
             </div>
-
-            <Button type="submit" :loading="form.processing" full-width size="lg">
-                Sign In
-            </Button>
 
             <!-- Sign Up Link -->
             <p class="mt-6 text-sm text-subtle text-center">

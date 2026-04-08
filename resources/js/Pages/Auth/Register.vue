@@ -6,7 +6,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     name: '',
-    email: '',
+    username: '',
     password: '',
     password_confirmation: '',
 });
@@ -33,13 +33,12 @@ const submit = () => {
                 :error="form.errors.name"
             />
             <TextField
-                v-model="form.email"
-                label="Email"
-                type="email"
-                placeholder="you@example.com"
+                v-model="form.username"
+                label="Username"
+                placeholder="jane"
                 autocomplete="username"
                 required
-                :error="form.errors.email"
+                :error="form.errors.username"
             />
             <TextField
                 v-model="form.password"

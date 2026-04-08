@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import Button from '@/Components/Base/Button.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -10,19 +11,37 @@ const props = defineProps({
     budgetName: String,
 });
 
+const page = usePage();
 const showInviteForm = ref(false);
-const inviteForm = useForm({
-    email: '',
-});
+const inviteForm = useForm({});
+const copiedId = ref(null);
+const newInviteUrl = ref(null);
 
 const submitInvite = () => {
     inviteForm.post(route('sharing.invite'), {
         preserveScroll: true,
         onSuccess: () => {
-            inviteForm.reset();
-            showInviteForm.value = false;
+            newInviteUrl.value = page.props.flash?.inviteUrl || null;
         },
     });
+};
+
+const copyLink = async (url, id = 'new') => {
+    try {
+        await navigator.clipboard.writeText(url);
+        copiedId.value = id;
+        setTimeout(() => { copiedId.value = null; }, 2000);
+    } catch {
+        // Fallback for older browsers
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        copiedId.value = id;
+        setTimeout(() => { copiedId.value = null; }, 2000);
+    }
 };
 
 const cancelInvite = (inviteId) => {
@@ -112,7 +131,7 @@ const getAvatarColor = (name) => {
                                         (you)
                                     </span>
                                 </div>
-                                <div class="text-sm text-subtle">{{ member.email }}</div>
+                                <div class="text-sm text-subtle">{{ member.username }}</div>
                             </div>
                         </div>
                         <!-- Remove button (only for owner, not for themselves) -->
@@ -138,26 +157,43 @@ const getAvatarColor = (name) => {
                     <div
                         v-for="invite in pendingInvites"
                         :key="invite.id"
-                        class="flex items-center justify-between p-4"
+                        class="p-4 space-y-2"
                     >
-                        <div class="flex items-center gap-3">
-                            <!-- Placeholder avatar -->
-                            <div class="w-10 h-10 rounded-full bg-surface-overlay flex items-center justify-center text-subtle">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <!-- Placeholder avatar -->
+                                <div class="w-10 h-10 rounded-full bg-surface-overlay flex items-center justify-center text-subtle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-body">Invite link</div>
+                                    <div class="text-sm text-subtle">Created {{ invite.created_at }}</div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="font-medium text-body">{{ invite.email }}</div>
-                                <div class="text-sm text-subtle">Invited {{ invite.created_at }}</div>
-                            </div>
+                            <button
+                                @click="cancelInvite(invite.id)"
+                                class="text-sm text-subtle hover:text-danger transition-colors"
+                            >
+                                Cancel
+                            </button>
                         </div>
-                        <button
-                            @click="cancelInvite(invite.id)"
-                            class="text-sm text-subtle hover:text-danger transition-colors"
-                        >
-                            Cancel
-                        </button>
+                        <div class="flex items-center gap-2 pl-13">
+                            <input
+                                type="text"
+                                :value="invite.invite_url"
+                                readonly
+                                class="flex-1 px-2 py-1 bg-surface-overlay border border-border rounded text-xs text-subtle truncate"
+                            />
+                            <button
+                                @click="copyLink(invite.invite_url, invite.id)"
+                                class="text-xs text-primary hover:text-primary/80 font-medium whitespace-nowrap transition-colors"
+                            >
+                                {{ copiedId === invite.id ? 'Copied!' : 'Copy link' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -168,7 +204,33 @@ const getAvatarColor = (name) => {
                     Invite Someone
                 </h3>
 
-                <div v-if="!showInviteForm" class="bg-surface rounded-card">
+                <!-- Show invite link after creation -->
+                <div v-if="newInviteUrl" class="bg-surface rounded-card p-4 space-y-3 mb-4">
+                    <p class="text-sm font-medium text-body">Invite link created! Share it with your invitee:</p>
+                    <div class="flex items-center gap-2">
+                        <input
+                            type="text"
+                            :value="newInviteUrl"
+                            readonly
+                            class="flex-1 px-3 py-2 bg-surface-overlay border border-border rounded-lg text-sm text-body truncate"
+                        />
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            @click="copyLink(newInviteUrl)"
+                        >
+                            {{ copiedId === 'new' ? 'Copied!' : 'Copy' }}
+                        </Button>
+                    </div>
+                    <button
+                        @click="newInviteUrl = null; showInviteForm = false;"
+                        class="text-sm text-subtle hover:text-body transition-colors"
+                    >
+                        Done
+                    </button>
+                </div>
+
+                <div v-if="!showInviteForm && !newInviteUrl" class="bg-surface rounded-card">
                     <button
                         @click="showInviteForm = true"
                         class="w-full flex items-center gap-3 p-4 text-primary hover:bg-surface-overlay transition-colors"
@@ -180,41 +242,26 @@ const getAvatarColor = (name) => {
                     </button>
                 </div>
 
-                <form v-else @submit.prevent="submitInvite" class="bg-surface rounded-card p-4 space-y-4">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-body mb-1">
-                            Email Address
-                        </label>
-                        <input
-                            id="email"
-                            v-model="inviteForm.email"
-                            type="email"
-                            placeholder="Enter email address"
-                            class="w-full px-4 py-3 border border-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-                            :class="{ 'border-danger': inviteForm.errors.email }"
-                        />
-                        <p v-if="inviteForm.errors.email" class="mt-1 text-sm text-danger">
-                            {{ inviteForm.errors.email }}
-                        </p>
-                    </div>
-
+                <div v-else-if="!newInviteUrl" class="bg-surface rounded-card p-4 space-y-3">
+                    <p class="text-sm text-subtle">Generate a link you can share via text or email.</p>
                     <div class="flex gap-3">
-                        <button
-                            type="button"
-                            @click="showInviteForm = false; inviteForm.reset();"
-                            class="flex-1 py-3 bg-surface-overlay text-body rounded-card font-medium hover:bg-surface-overlay transition-colors"
+                        <Button
+                            variant="secondary"
+                            class="flex-1"
+                            @click="showInviteForm = false"
                         >
                             Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            :disabled="inviteForm.processing || !inviteForm.email"
-                            class="flex-1 py-3 bg-primary text-body rounded-card font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        </Button>
+                        <Button
+                            variant="primary"
+                            class="flex-1"
+                            :disabled="inviteForm.processing"
+                            @click="submitInvite"
                         >
-                            {{ inviteForm.processing ? 'Sending...' : 'Send Invite' }}
-                        </button>
+                            {{ inviteForm.processing ? 'Creating...' : 'Create Invite Link' }}
+                        </Button>
                     </div>
-                </form>
+                </div>
             </div>
 
             <!-- Non-owner message -->

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invite;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -13,10 +12,8 @@ class SettingsController extends Controller
         $user = Auth::user();
         $budget = $user->currentBudget;
 
-        // Count pending invites for this user
-        $pendingInviteCount = Invite::where('email', strtolower($user->email))
-            ->whereNull('accepted_at')
-            ->count();
+        // Count pending invites for this user (legacy email-based invites)
+        $pendingInviteCount = 0;
 
         // Get counts for settings display
         $accountCount = $budget ? $budget->accounts()->count() : 0;
@@ -27,7 +24,7 @@ class SettingsController extends Controller
         return Inertia::render('Settings/Index', [
             'user' => [
                 'name' => $user->name,
-                'email' => $user->email,
+                'username' => $user->username,
                 'ai_enabled' => $user->ai_enabled,
             ],
             'budgetName' => $budget?->name,

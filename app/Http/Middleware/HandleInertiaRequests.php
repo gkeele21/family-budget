@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'scroll_to' => fn () => $request->session()->get('scroll_to'),
+                'inviteUrl' => fn () => $request->session()->get('inviteUrl'),
             ],
         ];
     }

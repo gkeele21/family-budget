@@ -4,21 +4,12 @@ import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, nextTick } from 'vue';
 import Button from '@/Components/Base/Button.vue';
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
-
 const user = usePage().props.auth.user;
 
 // Profile form
 const profileForm = useForm({
     name: user.name,
-    email: user.email,
+    username: user.username,
 });
 
 const profileSaved = ref(false);
@@ -98,7 +89,7 @@ const closeDeleteModal = () => {
             <!-- Profile Information -->
             <div class="bg-surface rounded-card p-4">
                 <h2 class="text-lg font-semibold text-body mb-1">Profile Information</h2>
-                <p class="text-sm text-subtle mb-4">Update your name and email address.</p>
+                <p class="text-sm text-subtle mb-4">Update your name and username.</p>
 
                 <form @submit.prevent="updateProfile" class="space-y-4">
                     <div>
@@ -114,27 +105,15 @@ const closeDeleteModal = () => {
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-body mb-1">Email</label>
+                        <label for="username" class="block text-sm font-medium text-body mb-1">Username</label>
                         <input
-                            id="email"
-                            v-model="profileForm.email"
-                            type="email"
+                            id="username"
+                            v-model="profileForm.username"
+                            type="text"
                             class="w-full px-4 py-3 bg-surface-inset rounded-lg border-0 text-body focus:outline-none"
                             required
                         />
-                        <p v-if="profileForm.errors.email" class="text-danger text-sm mt-1">{{ profileForm.errors.email }}</p>
-                    </div>
-
-                    <div v-if="mustVerifyEmail && user.email_verified_at === null" class="text-sm text-subtle">
-                        Your email address is unverified.
-                        <Link
-                            :href="route('verification.send')"
-                            method="post"
-                            as="button"
-                            class="text-primary underline"
-                        >
-                            Click here to re-send the verification email.
-                        </Link>
+                        <p v-if="profileForm.errors.username" class="text-danger text-sm mt-1">{{ profileForm.errors.username }}</p>
                     </div>
 
                     <div class="flex items-center gap-3">

@@ -6,7 +6,6 @@ use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class SharingController extends Controller
@@ -25,7 +24,7 @@ class SharingController extends Controller
             ->map(fn($user) => [
                 'id' => $user->id,
                 'name' => $user->name,
-                'email' => $user->email,
+                'username' => $user->username,
                 'role' => $user->pivot->role,
                 'avatar' => $this->getInitials($user->name),
                 'is_current_user' => $user->id === Auth::id(),
@@ -38,6 +37,7 @@ class SharingController extends Controller
             ->map(fn($invite) => [
                 'id' => $invite->id,
                 'email' => $invite->email,
+                'invite_url' => url('/invite/' . $invite->token),
                 'created_at' => $invite->created_at->diffForHumans(),
             ]);
 
@@ -65,38 +65,15 @@ class SharingController extends Controller
             abort(403, 'Only the budget owner can invite members.');
         }
 
-        $validated = $request->validate([
-            'email' => 'required|email|max:255',
-        ]);
-
-        $email = strtolower($validated['email']);
-
-        // Check if already a member
-        $existingMember = $budget->users()->where('email', $email)->exists();
-        if ($existingMember) {
-            return back()->withErrors(['email' => 'This person is already a member of this budget.']);
-        }
-
-        // Check if already invited
-        $existingInvite = $budget->invites()
-            ->where('email', $email)
-            ->whereNull('accepted_at')
-            ->exists();
-        if ($existingInvite) {
-            return back()->withErrors(['email' => 'An invite has already been sent to this email.']);
-        }
-
         // Create invite
         $invite = Invite::create([
             'budget_id' => $budget->id,
-            'email' => $email,
             'invited_by' => Auth::id(),
         ]);
 
-        // In a real app, send email here
-        // Mail::to($email)->send(new BudgetInvite($invite));
+        $inviteUrl = url('/invite/' . $invite->token);
 
-        return back()->with('success', 'Invite sent successfully.');
+        return back()->with('success', 'Invite created!')->with('inviteUrl', $inviteUrl);
     }
 
     public function cancelInvite(Invite $invite)
@@ -144,23 +121,8 @@ class SharingController extends Controller
 
     public function pendingInvites()
     {
-        $user = Auth::user();
-
-        // Get invites for this user's email
-        $invites = Invite::with('budget.owner')
-            ->where('email', strtolower($user->email))
-            ->whereNull('accepted_at')
-            ->get()
-            ->map(fn($invite) => [
-                'id' => $invite->id,
-                'token' => $invite->token,
-                'budget_name' => $invite->budget->name,
-                'invited_by' => $invite->budget->owner->name,
-                'created_at' => $invite->created_at->diffForHumans(),
-            ]);
-
         return Inertia::render('Settings/Sharing/PendingInvites', [
-            'invites' => $invites,
+            'invites' => [],
         ]);
     }
 
@@ -176,9 +138,9 @@ class SharingController extends Controller
 
         $user = Auth::user();
 
-        // Verify email matches (case-insensitive)
-        if (strtolower($user->email) !== strtolower($invite->email)) {
-            return back()->withErrors(['error' => 'This invite was sent to a different email address.']);
+        // Check if already a member
+        if ($invite->budget->users()->where('user_id', $user->id)->exists()) {
+            return redirect()->route('dashboard')->with('success', 'You are already a member of this budget.');
         }
 
         // Add user to budget
@@ -197,6 +159,31 @@ class SharingController extends Controller
         return redirect()->route('dashboard')->with('success', 'You have joined the budget!');
     }
 
+    public function acceptViaLink(string $token)
+    {
+        $invite = Invite::where('token', $token)
+            ->whereNull('accepted_at')
+            ->first();
+
+        if (!$invite) {
+            return redirect()->route('dashboard')->with('error', 'This invite link is no longer valid.');
+        }
+
+        $user = Auth::user();
+
+        // Check if already a member
+        if ($invite->budget->users()->where('user_id', $user->id)->exists()) {
+            return redirect()->route('dashboard')->with('success', 'You are already a member of this budget.');
+        }
+
+        // Show the invite acceptance page
+        return Inertia::render('Settings/Sharing/AcceptInvite', [
+            'token' => $invite->token,
+            'budgetName' => $invite->budget->name,
+            'invitedBy' => $invite->budget->owner->name,
+        ]);
+    }
+
     public function declineInvite(Request $request)
     {
         $validated = $request->validate([
@@ -206,13 +193,6 @@ class SharingController extends Controller
         $invite = Invite::where('token', $validated['token'])
             ->whereNull('accepted_at')
             ->firstOrFail();
-
-        $user = Auth::user();
-
-        // Verify email matches
-        if (strtolower($user->email) !== strtolower($invite->email)) {
-            return back()->withErrors(['error' => 'This invite was sent to a different email address.']);
-        }
 
         // Delete the invite
         $invite->delete();

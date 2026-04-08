@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 // Welcome page for guests
 Route::get('/', [OnboardingController::class, 'welcome'])->name('welcome');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Onboarding
     Route::get('/setup', [OnboardingController::class, 'setup'])->name('onboarding.setup');
     Route::post('/setup', [OnboardingController::class, 'store'])->name('onboarding.store');
@@ -115,6 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/sharing/pending', [SharingController::class, 'pendingInvites'])->name('sharing.pending');
     Route::post('/settings/sharing/accept', [SharingController::class, 'acceptInvite'])->name('sharing.accept-invite');
     Route::post('/settings/sharing/decline', [SharingController::class, 'declineInvite'])->name('sharing.decline-invite');
+    Route::get('/invite/{token}', [SharingController::class, 'acceptViaLink'])->name('sharing.accept-via-link');
 
     // Tutorial
     Route::get('/tutorial', [TutorialController::class, 'hub'])->name('tutorial.hub');
