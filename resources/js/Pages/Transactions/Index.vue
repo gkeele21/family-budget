@@ -123,6 +123,12 @@ const toggleSearch = () => {
 
 const toggleFilters = () => {
     showFilters.value = !showFilters.value;
+    if (showFilters.value) {
+        nextTick(() => {
+            const main = document.querySelector('main');
+            (main ?? window).scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 };
 
 const applyFilters = () => {

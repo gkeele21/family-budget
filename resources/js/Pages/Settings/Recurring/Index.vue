@@ -129,6 +129,10 @@ const toggleActive = (id) => {
                                     <div v-else-if="item.category" class="text-xs text-subtle mt-0.5 truncate">
                                         {{ item.category }}
                                     </div>
+                                    <!-- Unassigned -->
+                                    <div v-else :class="['text-xs mt-0.5 truncate italic', item.type === 'income' ? 'text-subtle' : 'text-warning']">
+                                        {{ item.type === 'income' ? 'Income' : 'Unassigned' }}
+                                    </div>
                                     <!-- Next due date -->
                                     <div class="text-xs text-muted mt-0.5">
                                         Next: {{ formatFullDate(item.next_date) }}

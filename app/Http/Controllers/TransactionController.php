@@ -605,12 +605,12 @@ class TransactionController extends Controller
             }
         }
 
-        $params = [];
-        if ($request->query('account')) {
-            $params['account'] = $request->query('account');
-        }
+        $params = $request->only([
+            'account', 'search', 'month', 'start_date', 'end_date',
+            'cleared', 'unassigned', 'type', 'payee',
+        ]);
 
-        return redirect()->route('transactions.index', $params)
+        return redirect()->route('transactions.index', array_filter($params))
             ->with('scroll_to', $transaction->id);
     }
 
@@ -635,12 +635,12 @@ class TransactionController extends Controller
             Payee::where('id', $payeeId)->delete();
         }
 
-        $params = [];
-        if ($request->query('account')) {
-            $params['account'] = $request->query('account');
-        }
+        $params = $request->only([
+            'account', 'search', 'month', 'start_date', 'end_date',
+            'cleared', 'unassigned', 'type', 'payee',
+        ]);
 
-        return redirect()->route('transactions.index', $params);
+        return redirect()->route('transactions.index', array_filter($params));
     }
 
     public function toggleCleared(Transaction $transaction)

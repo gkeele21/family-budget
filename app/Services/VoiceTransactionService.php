@@ -426,6 +426,10 @@ PROMPT;
                 'memo' => $tx['memo'] ?? null,
             ];
 
+            if (array_key_exists('cleared', $tx)) {
+                $entry['cleared'] = (bool) $tx['cleared'];
+            }
+
             if ($type === 'transfer') {
                 // Transfers need a valid to_account_id
                 $toAccountId = $tx['to_account_id'] ?? null;

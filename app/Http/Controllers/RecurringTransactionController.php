@@ -137,12 +137,19 @@ class RecurringTransactionController extends Controller
             $payeeId = $payee->id;
         }
 
+        $amount = (float) $validated['amount'];
+        if ($validated['type'] === 'expense') {
+            $amount = -abs($amount);
+        } elseif ($validated['type'] === 'income') {
+            $amount = abs($amount);
+        }
+
         RecurringTransaction::create([
             'budget_id' => $budget->id,
             'account_id' => $validated['account_id'],
             'categories' => $validated['categories'] ?? null,
             'payee_id' => $payeeId,
-            'amount' => (float) $validated['amount'],
+            'amount' => $amount,
             'type' => $validated['type'],
             'frequency' => $validated['frequency'],
             'next_date' => $validated['next_date'],
@@ -234,11 +241,18 @@ class RecurringTransactionController extends Controller
             $payeeId = $payee->id;
         }
 
+        $amount = (float) $validated['amount'];
+        if ($validated['type'] === 'expense') {
+            $amount = -abs($amount);
+        } elseif ($validated['type'] === 'income') {
+            $amount = abs($amount);
+        }
+
         $recurring->update([
             'account_id' => $validated['account_id'],
             'categories' => $validated['categories'] ?? null,
             'payee_id' => $payeeId,
-            'amount' => (float) $validated['amount'],
+            'amount' => $amount,
             'type' => $validated['type'],
             'frequency' => $validated['frequency'],
             'next_date' => $validated['next_date'],
@@ -322,6 +336,11 @@ class RecurringTransactionController extends Controller
     private function createTransactionFromRecurring(RecurringTransaction $recurring): void
     {
         $amount = (float) $recurring->amount;
+        if ($recurring->type === 'expense') {
+            $amount = -abs($amount);
+        } elseif ($recurring->type === 'income') {
+            $amount = abs($amount);
+        }
 
         // Auto-clear only cash account transactions
         $cleared = $recurring->account->type === 'cash';

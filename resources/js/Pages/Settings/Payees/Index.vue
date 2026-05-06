@@ -105,7 +105,9 @@ const deletePayee = () => {
                     <div class="flex-1 min-w-0">
                         <div class="font-medium text-body">{{ payee.name }}</div>
                         <div class="text-sm text-subtle">
-                            Default: {{ payee.default_category_name || 'None' }}
+                            Default:
+                            <span v-if="payee.default_category_name">{{ payee.default_category_name }}</span>
+                            <span v-else class="text-warning italic">Unassigned</span>
                             <span v-if="payee.transaction_count > 0" class="ml-2">
                                 &middot; {{ payee.transaction_count }} transaction{{ payee.transaction_count !== 1 ? 's' : '' }}
                             </span>
@@ -158,8 +160,8 @@ const deletePayee = () => {
                         v-model="editForm.default_category_id"
                         label="Default Category"
                         :options="categories"
-                        placeholder="None"
-                        :null-option="{ label: 'None' }"
+                        placeholder="Unassigned"
+                        :null-option="{ label: 'Unassigned' }"
                         grouped
                         group-items-key="categories"
                         searchable
