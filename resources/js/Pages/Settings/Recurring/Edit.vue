@@ -22,12 +22,17 @@ const form = useForm({
     type: props.recurring.type,
     amount: parseFloat(props.recurring.amount).toFixed(2),
     account_id: props.recurring.account_id,
+    to_account_id: props.recurring.to_account_id || '',
     categories: initCategories,
     payee_name: props.recurring.payee_name || '',
     frequency: props.recurring.frequency,
     next_date: props.recurring.next_date,
     end_date: props.recurring.end_date || '',
 });
+
+const toAccountOptions = computed(() =>
+    props.accounts.filter(a => a.id !== form.account_id)
+);
 
 const showDeleteConfirm = ref(false);
 
@@ -60,7 +65,7 @@ const selectPayee = (payee) => {
 
 // When type changes via SegmentedControl, flip the amount sign to match
 watch(() => form.type, (newType, oldType) => {
-    if (!oldType || newType === oldType) return;
+    if (!oldType || newType === oldType || newType === 'transfer' || oldType === 'transfer') return;
     const num = parseFloat(form.amount);
     if (isNaN(num) || num === 0) return;
     if (newType === 'expense' && num > 0) form.amount = (-num).toFixed(2);
@@ -78,6 +83,7 @@ const deleteRecurring = () => {
 const typeOptions = [
     { value: 'expense', label: 'Expense', color: 'expense' },
     { value: 'income', label: 'Income', color: 'income' },
+    { value: 'transfer', label: 'Transfer', color: 'transfer' },
 ];
 
 const frequencyOptions = [
@@ -102,7 +108,7 @@ watch(() => form.end_date, (newValue) => {
 });
 
 const getSaveButtonVariant = () => {
-    return form.type === 'expense' ? 'expense' : 'income';
+    return form.type === 'expense' ? 'expense' : form.type === 'income' ? 'income' : 'transfer';
 };
 
 // Split transaction state
@@ -162,7 +168,8 @@ const handleSplitClose = () => {
                     :disabled="form.processing"
                     :class="[
                         'font-semibold',
-                        form.type === 'expense' ? 'text-danger' : 'text-success'
+                        form.type === 'expense' ? 'text-danger' :
+                        form.type === 'income' ? 'text-success' : 'text-info'
                     ]"
                 >
                     Save
@@ -187,16 +194,26 @@ const handleSplitClose = () => {
                     label="Next Date"
                 />
 
-                <!-- Account -->
+                <!-- Account / From -->
                 <PickerField
                     v-model="form.account_id"
-                    label="Account"
+                    :label="form.type === 'transfer' ? 'From' : 'Account'"
                     :options="accounts"
                     placeholder="Select account"
                 />
 
-                <!-- Payee -->
+                <!-- To Account (transfers only) -->
+                <PickerField
+                    v-if="form.type === 'transfer'"
+                    v-model="form.to_account_id"
+                    label="To"
+                    :options="toAccountOptions"
+                    placeholder="Select destination"
+                />
+
+                <!-- Payee (not for transfers) -->
                 <AutocompleteField
+                    v-if="form.type !== 'transfer'"
                     v-model="form.payee_name"
                     label="Payee"
                     placeholder="Who is this for?"

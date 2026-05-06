@@ -967,7 +967,7 @@ onMounted(() => {
                                         <div class="text-right">
                                             <div
                                                 class="font-medium"
-                                                :class="item.type === 'expense' ? 'text-danger' : 'text-success'"
+                                                :class="item.type === 'expense' ? 'text-danger' : item.type === 'income' ? 'text-success' : 'text-info'"
                                             >
                                                 {{ formatCurrency(Math.abs(item.amount)) }}
                                             </div>
@@ -991,7 +991,7 @@ onMounted(() => {
                                 class="flex items-center px-3 py-2 text-sm"
                             >
                                 <span class="flex-1 truncate text-body">{{ item.payee }}</span>
-                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : 'text-success']">
+                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : item.type === 'income' ? 'text-success' : 'text-info']">
                                     {{ formatCurrency(Math.abs(item.amount)) }}
                                 </span>
                                 <Button variant="primary" size="sm" class="ml-2 flex-shrink-0" @click.prevent.stop="postRecurring(item)">Post</Button>
@@ -1038,7 +1038,7 @@ onMounted(() => {
                                     <div class="flex-shrink-0 ml-3 text-right">
                                         <div
                                             class="font-medium"
-                                            :class="item.type === 'expense' ? 'text-danger' : 'text-success'"
+                                            :class="item.type === 'expense' ? 'text-danger' : item.type === 'income' ? 'text-success' : 'text-info'"
                                         >
                                             {{ formatCurrency(Math.abs(item.amount)) }}
                                         </div>
@@ -1066,7 +1066,7 @@ onMounted(() => {
                             >
                                 <span class="text-subtle text-xs w-10 flex-shrink-0">{{ formatNextDate(item.next_date, item.frequency) }}</span>
                                 <span class="flex-1 truncate text-body">{{ item.payee }}</span>
-                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : 'text-success']">
+                                <span :class="['font-mono text-right flex-shrink-0 ml-2', item.type === 'expense' ? 'text-danger' : item.type === 'income' ? 'text-success' : 'text-info']">
                                     {{ formatCurrency(Math.abs(item.amount)) }}
                                 </span>
                             </Link>

@@ -259,15 +259,16 @@ const getSaveButtonVariant = () => {
                 />
             </div>
 
-            <!-- Make Recurring Link (only for expense/income, not transfers or already recurring) -->
-            <div v-if="form.type !== 'transfer' && !props.transaction.recurring_id" class="mx-3 mt-4">
+            <!-- Make Recurring Link (hidden when already recurring) -->
+            <div v-if="!props.transaction.recurring_id" class="mx-3 mt-4">
                 <Link
                     :href="route('recurring.create', {
                         type: form.type,
-                        payee_name: form.payee_name,
+                        payee_name: form.type === 'transfer' ? undefined : form.payee_name,
                         amount: form.amount,
                         account_id: form.account_id,
-                        category_id: form.category_id,
+                        to_account_id: form.type === 'transfer' ? form.to_account_id : undefined,
+                        category_id: form.type === 'transfer' ? undefined : form.category_id,
                     })"
                     class="block w-full py-3 text-center text-secondary font-medium text-sm"
                 >

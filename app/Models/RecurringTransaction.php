@@ -14,6 +14,7 @@ class RecurringTransaction extends Model
     protected $fillable = [
         'budget_id',
         'account_id',
+        'to_account_id',
         'categories',
         'payee_id',
         'amount',
@@ -44,6 +45,11 @@ class RecurringTransaction extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function toAccount(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'to_account_id');
     }
 
     public function payee(): BelongsTo

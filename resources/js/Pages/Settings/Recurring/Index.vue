@@ -129,8 +129,8 @@ const toggleActive = (id) => {
                                     <div v-else-if="item.category" class="text-xs text-subtle mt-0.5 truncate">
                                         {{ item.category }}
                                     </div>
-                                    <!-- Unassigned -->
-                                    <div v-else :class="['text-xs mt-0.5 truncate italic', item.type === 'income' ? 'text-subtle' : 'text-warning']">
+                                    <!-- Unassigned (only for non-transfer) -->
+                                    <div v-else-if="!item.is_transfer" :class="['text-xs mt-0.5 truncate italic', item.type === 'income' ? 'text-subtle' : 'text-warning']">
                                         {{ item.type === 'income' ? 'Income' : 'Unassigned' }}
                                     </div>
                                     <!-- Next due date -->
@@ -142,7 +142,7 @@ const toggleActive = (id) => {
                                 <div class="flex-shrink-0 ml-3 text-right">
                                     <div
                                         class="font-medium"
-                                        :class="item.type === 'expense' ? 'text-danger' : 'text-success'"
+                                        :class="item.type === 'expense' ? 'text-danger' : item.type === 'income' ? 'text-success' : 'text-info'"
                                     >
                                         {{ formatCurrency(item.amount) }}
                                     </div>

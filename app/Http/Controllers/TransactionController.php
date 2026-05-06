@@ -213,14 +213,17 @@ class TransactionController extends Controller
             ->pluck('name', 'id');
 
         $recurringTransactions = $budget->recurringTransactions()
-            ->with(['account', 'payee'])
+            ->with(['account', 'toAccount', 'payee'])
             ->orderBy('next_date')
             ->get()
             ->map(function ($r) use ($categoryNames) {
                 $categories = $r->categories ?? [];
                 $isSplit = $r->isSplit();
+                $isTransfer = $r->type === 'transfer';
 
-                if ($isSplit) {
+                if ($isTransfer) {
+                    $categoryDisplay = null;
+                } elseif ($isSplit) {
                     $categoryDisplay = 'Split (' . count($categories) . ')';
                 } elseif (!empty($categories)) {
                     $categoryDisplay = $categoryNames[$categories[0]['category_id']] ?? null;
@@ -228,17 +231,21 @@ class TransactionController extends Controller
                     $categoryDisplay = null;
                 }
 
-                $splits = $isSplit ? collect($categories)->map(fn($c) => [
+                $splits = (!$isTransfer && $isSplit) ? collect($categories)->map(fn($c) => [
                     'category' => $c['category_id'] ? ($categoryNames[$c['category_id']] ?? null) : null,
                     'amount' => (float) $c['amount'],
                 ]) : null;
 
                 return [
                     'id' => $r->id,
-                    'payee' => $r->payee?->name ?? 'Unknown',
+                    'payee' => $isTransfer
+                        ? ('Transfer to ' . ($r->toAccount?->name ?? 'Unknown'))
+                        : ($r->payee?->name ?? 'Unknown'),
                     'account' => $r->account->name,
+                    'to_account' => $r->toAccount?->name,
                     'category' => $categoryDisplay,
-                    'is_split' => $isSplit,
+                    'is_split' => !$isTransfer && $isSplit,
+                    'is_transfer' => $isTransfer,
                     'splits' => $splits,
                     'amount' => (float) $r->amount,
                     'type' => $r->type,

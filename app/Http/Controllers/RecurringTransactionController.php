@@ -29,14 +29,17 @@ class RecurringTransactionController extends Controller
             ->pluck('name', 'id');
 
         $recurring = $budget->recurringTransactions()
-            ->with(['account', 'payee'])
+            ->with(['account', 'toAccount', 'payee'])
             ->orderBy('next_date')
             ->get()
             ->map(function ($r) use ($categoryNames) {
                 $categories = $r->categories ?? [];
                 $isSplit = $r->isSplit();
+                $isTransfer = $r->type === 'transfer';
 
-                if ($isSplit) {
+                if ($isTransfer) {
+                    $categoryDisplay = null;
+                } elseif ($isSplit) {
                     $categoryDisplay = 'Split (' . count($categories) . ')';
                 } elseif (!empty($categories)) {
                     $categoryDisplay = $categoryNames[$categories[0]['category_id']] ?? null;
@@ -44,17 +47,21 @@ class RecurringTransactionController extends Controller
                     $categoryDisplay = null;
                 }
 
-                $splits = $isSplit ? collect($categories)->map(fn($c) => [
+                $splits = (!$isTransfer && $isSplit) ? collect($categories)->map(fn($c) => [
                     'category' => $c['category_id'] ? ($categoryNames[$c['category_id']] ?? null) : null,
                     'amount' => (float) $c['amount'],
                 ]) : null;
 
                 return [
                     'id' => $r->id,
-                    'payee' => $r->payee?->name ?? 'Unknown',
+                    'payee' => $isTransfer
+                        ? ('Transfer to ' . ($r->toAccount?->name ?? 'Unknown'))
+                        : ($r->payee?->name ?? 'Unknown'),
                     'account' => $r->account->name,
+                    'to_account' => $r->toAccount?->name,
                     'category' => $categoryDisplay,
-                    'is_split' => $isSplit,
+                    'is_split' => !$isTransfer && $isSplit,
+                    'is_transfer' => $isTransfer,
                     'splits' => $splits,
                     'amount' => (float) $r->amount,
                     'type' => $r->type,
@@ -114,9 +121,10 @@ class RecurringTransactionController extends Controller
         }
 
         $validated = $request->validate([
-            'type' => 'required|in:expense,income',
+            'type' => 'required|in:expense,income,transfer',
             'amount' => 'required|numeric|not_in:0',
             'account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required_if:type,transfer|nullable|exists:accounts,id|different:account_id',
             'categories' => 'nullable|array',
             'categories.*.category_id' => 'nullable|exists:categories,id',
             'categories.*.amount' => 'required_with:categories|numeric',
@@ -126,10 +134,12 @@ class RecurringTransactionController extends Controller
             'end_date' => 'nullable|date|after:next_date',
         ]);
 
-        // Handle payee
+        $isTransfer = $validated['type'] === 'transfer';
+
+        // Handle payee (skip for transfers)
         $payeeId = null;
-        $defaultCategoryId = !empty($validated['categories']) ? $validated['categories'][0]['category_id'] : null;
-        if ($validated['payee_name']) {
+        if (!$isTransfer && !empty($validated['payee_name'])) {
+            $defaultCategoryId = !empty($validated['categories']) ? $validated['categories'][0]['category_id'] : null;
             $payee = Payee::firstOrCreate(
                 ['budget_id' => $budget->id, 'name' => $validated['payee_name']],
                 ['default_category_id' => $defaultCategoryId]
@@ -142,12 +152,15 @@ class RecurringTransactionController extends Controller
             $amount = -abs($amount);
         } elseif ($validated['type'] === 'income') {
             $amount = abs($amount);
+        } else {
+            $amount = abs($amount);
         }
 
         RecurringTransaction::create([
             'budget_id' => $budget->id,
             'account_id' => $validated['account_id'],
-            'categories' => $validated['categories'] ?? null,
+            'to_account_id' => $isTransfer ? $validated['to_account_id'] : null,
+            'categories' => $isTransfer ? null : ($validated['categories'] ?? null),
             'payee_id' => $payeeId,
             'amount' => $amount,
             'type' => $validated['type'],
@@ -195,6 +208,7 @@ class RecurringTransactionController extends Controller
                 'type' => $recurring->type,
                 'amount' => (float) $recurring->amount,
                 'account_id' => $recurring->account_id,
+                'to_account_id' => $recurring->to_account_id,
                 'categories' => $recurring->categories,
                 'payee_name' => $recurring->payee?->name,
                 'frequency' => $recurring->frequency,
@@ -217,9 +231,10 @@ class RecurringTransactionController extends Controller
         }
 
         $validated = $request->validate([
-            'type' => 'required|in:expense,income',
+            'type' => 'required|in:expense,income,transfer',
             'amount' => 'required|numeric|not_in:0',
             'account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required_if:type,transfer|nullable|exists:accounts,id|different:account_id',
             'categories' => 'nullable|array',
             'categories.*.category_id' => 'nullable|exists:categories,id',
             'categories.*.amount' => 'required_with:categories|numeric',
@@ -230,10 +245,12 @@ class RecurringTransactionController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        // Handle payee
+        $isTransfer = $validated['type'] === 'transfer';
+
+        // Handle payee (skip for transfers)
         $payeeId = null;
-        $defaultCategoryId = !empty($validated['categories']) ? $validated['categories'][0]['category_id'] : null;
-        if ($validated['payee_name']) {
+        if (!$isTransfer && !empty($validated['payee_name'])) {
+            $defaultCategoryId = !empty($validated['categories']) ? $validated['categories'][0]['category_id'] : null;
             $payee = Payee::firstOrCreate(
                 ['budget_id' => $budget->id, 'name' => $validated['payee_name']],
                 ['default_category_id' => $defaultCategoryId]
@@ -246,11 +263,14 @@ class RecurringTransactionController extends Controller
             $amount = -abs($amount);
         } elseif ($validated['type'] === 'income') {
             $amount = abs($amount);
+        } else {
+            $amount = abs($amount);
         }
 
         $recurring->update([
             'account_id' => $validated['account_id'],
-            'categories' => $validated['categories'] ?? null,
+            'to_account_id' => $isTransfer ? $validated['to_account_id'] : null,
+            'categories' => $isTransfer ? null : ($validated['categories'] ?? null),
             'payee_id' => $payeeId,
             'amount' => $amount,
             'type' => $validated['type'],
@@ -335,43 +355,78 @@ class RecurringTransactionController extends Controller
      */
     private function createTransactionFromRecurring(RecurringTransaction $recurring): void
     {
-        $amount = (float) $recurring->amount;
-        if ($recurring->type === 'expense') {
-            $amount = -abs($amount);
-        } elseif ($recurring->type === 'income') {
-            $amount = abs($amount);
-        }
-
-        // Auto-clear only cash account transactions
-        $cleared = $recurring->account->type === 'cash';
-
         // Capture date before advancing (Carbon is mutable)
         $transactionDate = $recurring->next_date->copy();
 
-        // Determine category_id: null if split, otherwise first category
-        $categoryId = $recurring->isSplit() ? null : $recurring->primaryCategoryId();
+        if ($recurring->type === 'transfer') {
+            $absAmount = abs((float) $recurring->amount);
+            $fromCleared = $recurring->account->type === 'cash';
+            $toCleared = $recurring->toAccount && $recurring->toAccount->type === 'cash';
 
-        $transaction = Transaction::create([
-            'budget_id' => $recurring->budget_id,
-            'account_id' => $recurring->account_id,
-            'category_id' => $categoryId,
-            'payee_id' => $recurring->payee_id,
-            'amount' => $amount,
-            'type' => $recurring->type,
-            'date' => $transactionDate,
-            'cleared' => $cleared,
-            'recurring_id' => $recurring->id,
-            'created_by' => $recurring->budget->owner_id,
-        ]);
+            $fromTransaction = Transaction::create([
+                'budget_id' => $recurring->budget_id,
+                'account_id' => $recurring->account_id,
+                'category_id' => null,
+                'payee_id' => null,
+                'amount' => -$absAmount,
+                'type' => 'transfer',
+                'date' => $transactionDate,
+                'cleared' => $fromCleared,
+                'recurring_id' => $recurring->id,
+                'created_by' => $recurring->budget->owner_id,
+            ]);
 
-        // Create split transactions if split
-        if ($recurring->isSplit()) {
-            foreach ($recurring->categories as $split) {
-                SplitTransaction::create([
-                    'transaction_id' => $transaction->id,
-                    'category_id' => $split['category_id'] ?: null,
-                    'amount' => (float) $split['amount'],
-                ]);
+            $toTransaction = Transaction::create([
+                'budget_id' => $recurring->budget_id,
+                'account_id' => $recurring->to_account_id,
+                'category_id' => null,
+                'payee_id' => null,
+                'amount' => $absAmount,
+                'type' => 'transfer',
+                'date' => $transactionDate,
+                'cleared' => $toCleared,
+                'transfer_pair_id' => $fromTransaction->id,
+                'recurring_id' => $recurring->id,
+                'created_by' => $recurring->budget->owner_id,
+            ]);
+
+            $fromTransaction->update(['transfer_pair_id' => $toTransaction->id]);
+        } else {
+            $amount = (float) $recurring->amount;
+            if ($recurring->type === 'expense') {
+                $amount = -abs($amount);
+            } elseif ($recurring->type === 'income') {
+                $amount = abs($amount);
+            }
+
+            // Auto-clear only cash account transactions
+            $cleared = $recurring->account->type === 'cash';
+
+            // Determine category_id: null if split, otherwise first category
+            $categoryId = $recurring->isSplit() ? null : $recurring->primaryCategoryId();
+
+            $transaction = Transaction::create([
+                'budget_id' => $recurring->budget_id,
+                'account_id' => $recurring->account_id,
+                'category_id' => $categoryId,
+                'payee_id' => $recurring->payee_id,
+                'amount' => $amount,
+                'type' => $recurring->type,
+                'date' => $transactionDate,
+                'cleared' => $cleared,
+                'recurring_id' => $recurring->id,
+                'created_by' => $recurring->budget->owner_id,
+            ]);
+
+            // Create split transactions if split
+            if ($recurring->isSplit()) {
+                foreach ($recurring->categories as $split) {
+                    SplitTransaction::create([
+                        'transaction_id' => $transaction->id,
+                        'category_id' => $split['category_id'] ?: null,
+                        'amount' => (float) $split['amount'],
+                    ]);
+                }
             }
         }
 
